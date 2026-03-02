@@ -64,3 +64,80 @@ footer {
   padding: 20px;
   color: #777;
 }
+/* ===== NỀN BIỂN CHO INDEX ===== */
+body.index {
+  background: linear-gradient(
+    180deg,
+    #0f4c75 0%,
+    #3282b8 40%,
+    #bbe1fa 100%
+  );
+  color: #f5faff;
+}
+
+/* ===== CHỮ LƯỢN SÓNG NHẸ ===== */
+.wave-text span {
+  display: inline-block;
+  animation: wave 3s ease-in-out infinite;
+}
+
+.wave-text span:nth-child(odd) {
+  animation-delay: 0.15s;
+}
+.wave-text span:nth-child(even) {
+  animation-delay: 0.3s;
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* ===== CARD THƠ TRÊN BIỂN ===== */
+.index .poem-card {
+  background: rgba(255, 255, 255, 0.92);
+  color: #333;
+  backdrop-filter: blur(6px);
+}
+/* ===== PHONG CÁCH THƠ ===== */
+
+/* Thơ quê hương */
+.poem-que {
+  background: #faf7f2;
+  border-left: 6px solid #c2a15f;
+  font-family: "Merriweather", serif;
+  font-size: 1.05em;
+}
+
+/* Thơ gia đình */
+.poem-gia-dinh {
+  background: #fff5f5;
+  border: 2px dashed #d98c8c;
+  font-size: 1.1em;
+}
+
+/* Thơ trữ tình */
+.poem-tru-tinh {
+  background: linear-gradient(135deg, #fdeff9, #ec38bc);
+  color: #3b003b;
+  font-style: italic;
+}
+
+/* Thơ trải đời */
+.poem-trai-doi {
+  background: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #444;
+  font-size: 1em;
+}
+
+/* Khung chung cho bài thơ */
+.poem-box {
+  padding: 30px;
+  border-radius: 12px;
+  line-height: 1.8;
+}
