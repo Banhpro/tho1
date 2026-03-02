@@ -1,111 +1,28 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="google-site-verification" content="WnEl-G5Of572fhYxv-lR3KfxcbRIZ_E0p2VSQmO-Fzg" />
+  <meta charset="UTF-8">
   <title>Thơ Nguyễn Bành</title>
+  <meta name="description" content="Trang thơ cá nhân của Nguyễn Bành">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- SEO -->
-  <meta name="description" content="Trang thơ cá nhân của Nguyễn Bành – thơ quê hương, gia đình, trữ tình và trải đời." />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background: #f4f6f8;
-      margin: 0;
-      color: #333;
-    }
-
-    header {
-      background: linear-gradient(135deg, #2c3e50, #4ca1af);
-      color: white;
-      padding: 40px 20px;
-      text-align: center;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 2.5em;
-    }
-
-    header p {
-      opacity: 0.9;
-    }
-
-    .container {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 0 15px;
-    }
-
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    input, select {
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-    }
-
-    input {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .poem {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      transition: transform 0.2s;
-    }
-
-    .poem:hover {
-      transform: translateY(-3px);
-    }
-
-    .poem h2 {
-      margin-top: 0;
-      color: #2c3e50;
-    }
-
-    .meta {
-      font-size: 0.9em;
-      color: #777;
-      margin-bottom: 10px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: #777;
-      font-size: 0.9em;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header>
   <h1>Thơ Nguyễn Bành</h1>
-  <p>Nơi lưu giữ những vần thơ quê, đời và người</p>
+  <p>Nơi lưu giữ những vần thơ đời & người</p>
 </header>
 
 <div class="container">
 
-  <!-- Bộ lọc -->
   <div class="filters">
-    <input type="text" id="search" placeholder="🔍 Tìm kiếm thơ..." />
+    <input id="search" placeholder="🔍 Tìm kiếm thơ...">
 
     <select id="category">
-      <option value="">📂 Chủ đề</option>
+      <option value="">Chủ đề</option>
       <option value="gia đình">Gia đình</option>
       <option value="quê hương">Quê hương</option>
       <option value="trữ tình">Trữ tình</option>
@@ -113,85 +30,21 @@
     </select>
 
     <select id="form">
-      <option value="">📜 Thể thơ</option>
+      <option value="">Thể thơ</option>
       <option value="lục bát">Lục bát</option>
       <option value="tự do">Tự do</option>
       <option value="thất ngôn">Thất ngôn</option>
-      <option value="song thất lục bát">Song thất lục bát</option>
     </select>
   </div>
 
-  <!-- Danh sách thơ -->
-  <div id="poems"></div>
+  <div id="poemList"></div>
+
 </div>
 
 <footer>
-  © 2026 – Thơ Nguyễn Bành
+  © 2026 – Nguyễn Bành
 </footer>
 
-<script>
-  const poems = [
-    {
-      title: "Về quê",
-      category: "quê hương",
-      form: "lục bát",
-      content: `Con về thấy nửa vườn sau
-Cây đơm hoa quả ba xâu đôi giàng
-Trưởng thành gian khổ chẳng than
-Sao về quê lại hai hàng rưng rưng...`
-    },
-    {
-      title: "Bữa cơm chiều",
-      category: "gia đình",
-      form: "lục bát",
-      content: `Canh rau mẹ nấu khổ qua
-Khói lam bảng lảng mái nhà năm xưa`
-    },
-    {
-      title: "Đời người",
-      category: "trải đời",
-      form: "tự do",
-      content: `Người đi qua gió bụi
-Mới hay mình từng non dại`
-    }
-  ];
-
-  const poemsDiv = document.getElementById("poems");
-  const searchInput = document.getElementById("search");
-  const categorySelect = document.getElementById("category");
-  const formSelect = document.getElementById("form");
-
-  function renderPoems() {
-    const search = searchInput.value.toLowerCase();
-    const category = categorySelect.value;
-    const form = formSelect.value;
-
-    poemsDiv.innerHTML = "";
-
-    poems.filter(p =>
-      (!category || p.category === category) &&
-      (!form || p.form === form) &&
-      (p.title.toLowerCase().includes(search) ||
-       p.content.toLowerCase().includes(search))
-    ).forEach(p => {
-      poemsDiv.innerHTML += `
-        <div class="poem">
-          <h2>${p.title}</h2>
-          <div class="meta">
-            Chủ đề: ${p.category} • Thể thơ: ${p.form}
-          </div>
-          <pre style="white-space: pre-wrap; font-family: inherit;">${p.content}</pre>
-        </div>
-      `;
-    });
-  }
-
-  searchInput.oninput = renderPoems;
-  categorySelect.onchange = renderPoems;
-  formSelect.onchange = renderPoems;
-
-  renderPoems();
-</script>
-
+<script src="main.js"></script>
 </body>
 </html>
