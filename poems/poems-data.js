@@ -1,17 +1,22 @@
 const poems = [
-  {
-    title: "Về Quê",
-    file: "poems/ve-que.html",
-    theloai: "Trữ tình",
-    content: "Con đò năm ấy xa sông mẹ ngồi vá áo chờ mong...",
-    thetho: "Lục bát"
-  },
-  {
-    title: "Mưa Chiều",
-    file: "poems/me-gia.html",
-    content: "Mưa rơi nhạt phố chiều nghiêng bước chân ai lạc...",
-    theloai: "Buồn",
-    thetho: "Tự do"
-  }
-  // thêm tới 100 bài
+{
+    title: "Mẹ Già",
+    file: "me-gia.html",
+    image: "images/me-gia.jpg",
+    date: "12/05/2023",
+    author: "Bành",
+    category: "GIA ĐÌNH",
+    type: "LỤC BÁT",
+    audio: true
+},
+{
+    title: "VỀ QUÊ",
+    file: "ve-que.html",
+    image: "images/ve-que.jpg",
+    date: "01/08/2023",
+    author: "Bành",
+    category: "QUÊ HƯƠNG",
+    type: "TỰ DO",
+    audio: false
+}
 ];
