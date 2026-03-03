@@ -23,6 +23,7 @@ body{
     background:white;
 }
 
+/* HEADER */
 header{
     background:url("header.jpg") center/cover no-repeat;
     height:220px;
@@ -39,6 +40,7 @@ header{
     text-shadow:2px 2px 6px rgba(0,0,0,0.3);
 }
 
+/* MENU */
 nav{
     background:black;
 }
@@ -72,7 +74,7 @@ nav{
     left:0;
     background:black;
     list-style:none;
-    min-width:300px;
+    min-width:250px;
 }
 
 .submenu li a{
@@ -156,19 +158,7 @@ footer{
 }
 </style>
 </head>
-<script>
-function loadPage(page){
-    fetch(page)
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById("main-content").innerHTML = data;
-        })
-        .catch(error => {
-            document.getElementById("main-content").innerHTML = 
-                "<h2>Lỗi tải trang</h2>";
-        });
-}
-</script>
+
 <body>
 
 <div class="container">
@@ -185,34 +175,38 @@ function loadPage(page){
 <li>
 <a href="#">TỰ ĐỘNG ▾</a>
 <ul class="submenu">
-<li><a href="scada.html">SCADA</a></li>
-<li><a href="hmi.html">HMI UNIFIED</a></li>
-<li><a href="bms.html">BMS</a></li>
+<li><a href="#" onclick="loadPage('scada.html'); return false;">SCADA</a></li>
+<li><a href="#" onclick="loadPage('hmi.html'); return false;">HMI UNIFIED</a></li>
+<li><a href="#" onclick="loadPage('bms.html'); return false;">BMS</a></li>
 </ul>
 </li>
 
 <li>
 <a href="#">MẠCH & VI MẠCH ▾</a>
 <ul class="submenu">
-<li><a href="chip.html">CHIP</a></li>
-<li><a href="mach.html">MẠCH</a></li>
-<li><a href="plb.html">PLB</a></li>
+<li><a href="#" onclick="loadPage('chip.html'); return false;">CHIP</a></li>
+<li><a href="#" onclick="loadPage('mach.html'); return false;">MẠCH</a></li>
+<li><a href="#" onclick="loadPage('plb.html'); return false;">PLB</a></li>
 </ul>
 </li>
 
 <li>
 <a href="#">THƠ ▾</a>
 <ul class="submenu">
-<a href="#" onclick="loadPage('poems/tho-banh-content.html'); return false;">THƠ CỦA BÀNH</a>
-<li><a href="chia-se.html">CHIA SẺ THƠ CỦA BẠN</a></li>
+<li>
+<a href="#" onclick="loadPage('poems/tho-banh-content.html'); return false;">
+THƠ CỦA BÀNH
+</a>
+</li>
+<li><a href="#" onclick="loadPage('chia-se-content.html'); return false;">CHIA SẺ THƠ CỦA BẠN</a></li>
 </ul>
 </li>
 
 <li>
 <a href="#">HƯỚNG DẪN ▾</a>
 <ul class="submenu">
-<li><a href="huongdan1.html">XEM TÀI LIỆU</a></li>
-<li><a href="huongdan2.html">ĐỌC & CHIA SẺ THƠ</a></li>
+<li><a href="#" onclick="loadPage('huongdan1.html'); return false;">XEM TÀI LIỆU</a></li>
+<li><a href="#" onclick="loadPage('huongdan2.html'); return false;">ĐỌC & CHIA SẺ THƠ</a></li>
 </ul>
 </li>
 
@@ -230,8 +224,8 @@ function loadPage(page){
 <div class="footer-col">
 <h3>Về chúng tôi</h3>
 <ul>
-<li><a href="gioithieu.html">Giới thiệu</a></li>
-<li><a href="tacgia.html">Tác giả</a></li>
+<li><a href="#" onclick="loadPage('gioithieu.html'); return false;">Giới thiệu</a></li>
+<li><a href="#" onclick="loadPage('tacgia.html'); return false;">Tác giả</a></li>
 </ul>
 </div>
 
@@ -243,9 +237,6 @@ function loadPage(page){
 <div class="footer-col">
 <h3>Theo dõi</h3>
 <a href="https://www.facebook.com/banh.nguyen.35110418" class="social-btn fb">Facebook</a>
-<a href="#" class="social-btn tw">Twitter</a>
-<a href="#" class="social-btn ig">Instagram</a>
-<a href="#" class="social-btn li">LinkedIn</a>
 <a href="https://www.youtube.com/@thanhkietnguyen7333" class="social-btn yt">YouTube</a>
 </div>
 
@@ -253,6 +244,21 @@ function loadPage(page){
 </footer>
 
 </div>
+
+<script>
+function loadPage(page){
+    fetch(page)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("main-content").innerHTML = data;
+            window.scrollTo(0,0);
+        })
+        .catch(error => {
+            document.getElementById("main-content").innerHTML =
+                "<h2>Lỗi tải nội dung</h2><p>Không tìm thấy file hoặc sai đường dẫn.</p>";
+        });
+}
+</script>
 
 </body>
 </html>
