@@ -1,55 +1,261 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Thơ Nguyễn Bành</title>
-  <meta name="description" content="Trang thơ cá nhân của Nguyễn Bành">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nguyễn Bành</title>
 
-  <link rel="stylesheet" href="style.css">
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+    background:#f4f6f8;
+}
+
+/* ================= HEADER ================= */
+
+header{
+    position:relative;
+    height:300px;
+    background:url("header.jpg") center/cover no-repeat;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+
+/* Overlay tối nhẹ */
+header::after{
+    content:"";
+    position:absolute;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.4);
+}
+
+/* Chữ trôi sóng */
+.header-title{
+    position:relative;
+    font-size:60px;
+    font-weight:bold;
+    color:white;
+    letter-spacing:5px;
+    animation: wave 6s ease-in-out infinite alternate;
+}
+
+/* Hiệu ứng trôi ngang */
+@keyframes wave{
+    0%{ transform:translateX(-20px); }
+    50%{ transform:translateX(20px); }
+    100%{ transform:translateX(-20px); }
+}
+
+/* ================= MENU ================= */
+
+nav{
+    position:absolute;
+    top:0;
+    width:100%;
+    backdrop-filter: blur(10px);
+    background:rgba(255,255,255,0.1);
+}
+
+.menu{
+    list-style:none;
+    display:flex;
+    justify-content:center;
+}
+
+.menu > li{
+    position:relative;
+    padding:20px 30px;
+    color:white;
+    font-weight:500;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.menu > li:hover{
+    color:#00e0ff;
+}
+
+/* Dropdown mượt */
+.submenu{
+    position:absolute;
+    top:100%;
+    left:0;
+    background:rgba(0,0,0,0.8);
+    list-style:none;
+    min-width:220px;
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(10px);
+    transition:0.3s ease;
+}
+
+.submenu li{
+    padding:12px 20px;
+}
+
+.submenu li:hover{
+    background:#00e0ff;
+}
+
+.submenu a{
+    color:white;
+    text-decoration:none;
+}
+
+.menu li:hover .submenu{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+}
+
+/* ================= CONTENT ================= */
+
+main{
+    padding:80px 40px;
+    text-align:center;
+    font-size:22px;
+    color:#444;
+    min-height:500px;
+}
+
+/* ================= FOOTER ================= */
+
+footer{
+    background:#111;
+    color:white;
+    padding:50px;
+}
+
+.footer-container{
+    display:flex;
+    justify-content:space-around;
+    flex-wrap:wrap;
+}
+
+.footer-section h3{
+    border-bottom:2px solid #00e0ff;
+    margin-bottom:15px;
+    padding-bottom:5px;
+}
+
+.footer-section ul{
+    list-style:none;
+}
+
+.footer-section li{
+    margin:10px 0;
+}
+
+.footer-section a{
+    text-decoration:none;
+    color:#ccc;
+}
+
+.footer-section a:hover{
+    color:#00e0ff;
+}
+
+.copyright{
+    text-align:center;
+    margin-top:30px;
+    color:#888;
+    font-size:14px;
+}
+
+</style>
 </head>
-<body class="index">
+<body>
 
 <header>
-  <h1 class="wave-text">
-  <span>T</span><span>h</span><span>ơ</span>
-  <span> </span>
-  <span>N</span><span>g</span><span>u</span><span>y</span><span>ễ</span><span>n</span>
-  <span> </span>
-  <span>B</span><span>à</span><span>n</span><span>h</span>
-</h1>
-  <p>Nơi lưu giữ những vần thơ đời & người</p>
+
+    <nav>
+        <ul class="menu">
+            <li>
+                TỰ ĐỘNG
+                <ul class="submenu">
+                    <li><a href="scada.html">SCADA</a></li>
+                    <li><a href="hmi.html">HMI UNIFIED</a></li>
+                    <li><a href="bms.html">BMS</a></li>
+                </ul>
+            </li>
+
+            <li>
+                MẠCH & VI MẠCH
+                <ul class="submenu">
+                    <li><a href="chip.html">CHIP</a></li>
+                    <li><a href="mach.html">MẠCH</a></li>
+                    <li><a href="plb.html">PLB</a></li>
+                </ul>
+            </li>
+
+            <li>
+                THƠ
+                <ul class="submenu">
+                    <li><a href="tho-banh.html">THƠ CỦA BÀNH</a></li>
+                    <li><a href="phan-tich.html">PHÂN TÍCH Ý NGHĨA</a></li>
+                </ul>
+            </li>
+
+            <li>
+                ĐÓNG GÓP
+                <ul class="submenu">
+                    <li><a href="dong-gop-tu-dong.html">TỰ ĐỘNG</a></li>
+                    <li><a href="dong-gop-mach.html">MẠCH & VI MẠCH</a></li>
+                    <li><a href="dong-gop-tho.html">THƠ</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="header-title">
+        NGUYỄN BÀNH
+    </div>
+
 </header>
 
-<div class="container">
-
-  <div class="filters">
-    <input id="search" placeholder="🔍 Tìm kiếm thơ...">
-
-    <select id="category">
-      <option value="">Chủ đề</option>
-      <option value="gia đình">Gia đình</option>
-      <option value="quê hương">Quê hương</option>
-      <option value="trữ tình">Trữ tình</option>
-      <option value="trải đời">Trải đời</option>
-    </select>
-
-    <select id="form">
-      <option value="">Thể thơ</option>
-      <option value="lục bát">Lục bát</option>
-      <option value="tự do">Tự do</option>
-      <option value="thất ngôn">Thất ngôn</option>
-    </select>
-  </div>
-
-  <div id="poemList"></div>
-
-</div>
+<main>
+    PHẦN NỘI DUNG  
+    <br><br>
+    (Chỉ cần thêm file HTML riêng là xong)
+</main>
 
 <footer>
-  © 2026 – Nguyễn Bành
+    <div class="footer-container">
+        <div class="footer-section">
+            <h3>Giới thiệu</h3>
+            <ul>
+                <li><a href="#">Về Website</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h3>Tác giả</h3>
+            <ul>
+                <li><a href="#">Nguyễn Bành</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h3>Tài trợ</h3>
+            <ul>
+                <li><a href="#">Ủng hộ phát triển</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="copyright">
+        © 2026 Nguyễn Bành. Portfolio Website
+    </div>
 </footer>
 
-<script src="main.js"></script>
 </body>
 </html>
