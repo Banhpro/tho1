@@ -17,7 +17,7 @@ body{
     background:#e6e6e6;
 }
 
-/* ================= KHUNG GIỮA ================= */
+/* ================= CONTAINER GIỮA ================= */
 
 .container{
     width:1100px;
@@ -29,18 +29,20 @@ body{
 
 header{
     background:url("header.jpg") center/cover no-repeat;
-    height:200px;
+    height:220px;
     display:flex;
     align-items:center;
     justify-content:center;
+    overflow:hidden;
 }
 
 .header-title{
-    font-size:55px;
+    font-size:60px;
     font-weight:bold;
     color:black;
-    margin-top:20px; /* cho chữ xa xa ra */
     letter-spacing:4px;
+    position:relative;
+    display:flex;
 }
 
 /* ================= MENU ================= */
@@ -52,12 +54,12 @@ nav{
 .menu{
     list-style:none;
     display:flex;
-    padding-left:20px;
+    justify-content:center;
 }
 
 .menu > li{
     position:relative;
-    padding:15px 25px;
+    padding:15px 30px;
 }
 
 .menu > li > a{
@@ -99,51 +101,16 @@ nav{
     display:block;
 }
 
-/* ================= NỘI DUNG ================= */
+/* ================= CONTENT ================= */
 
 main{
-    display:flex;
     padding:30px;
 }
 
-/* nội dung chính */
-.content{
-    width:70%;
-    padding-right:20px;
-}
-
-.content iframe{
+iframe{
     width:100%;
     height:600px;
     border:none;
-}
-
-/* sidebar */
-.sidebar{
-    width:30%;
-}
-
-.sidebar h3{
-    margin-bottom:10px;
-    border-bottom:2px solid orange;
-    padding-bottom:5px;
-}
-
-.sidebar ul{
-    list-style:none;
-}
-
-.sidebar li{
-    margin:10px 0;
-}
-
-.sidebar a{
-    text-decoration:none;
-    color:black;
-}
-
-.sidebar a:hover{
-    color:orange;
 }
 
 /* ================= FOOTER ================= */
@@ -157,10 +124,12 @@ footer{
 .footer-container{
     display:flex;
     justify-content:space-between;
+    flex-wrap:wrap;
 }
 
 .footer-col{
-    width:45%;
+    width:30%;
+    min-width:200px;
 }
 
 .footer-col h3{
@@ -186,6 +155,26 @@ footer{
     color:yellow;
 }
 
+/* Social */
+
+.social-btn{
+    display:block;
+    margin:8px 0;
+    padding:8px;
+    color:white;
+    text-decoration:none;
+}
+
+.fb{background:#3b5998;}
+.tw{background:#1da1f2;}
+.ig{background:#833ab4;}
+.li{background:#0077b5;}
+.yt{background:#ff0000;}
+
+.social-btn:hover{
+    opacity:0.8;
+}
+
 </style>
 </head>
 <body>
@@ -193,65 +182,51 @@ footer{
 <div class="container">
 
 <header>
-    <div class="header-title">NGUYỄN BÀNH</div>
+    <div class="header-title" id="waveText"></div>
 </header>
 
 <nav>
 <ul class="menu">
-<li><a href="#">Trang chủ</a></li>
 
 <li>
-    <a href="#">TỰ ĐỘNG ▾</a>
-    <ul class="submenu">
-        <li><a href="scada.html" target="contentFrame">SCADA</a></li>
-        <li><a href="hmi.html" target="contentFrame">HMI UNIFIED</a></li>
-        <li><a href="bms.html" target="contentFrame">BMS</a></li>
-    </ul>
+<a href="#">TỰ ĐỘNG ▾</a>
+<ul class="submenu">
+<li><a href="scada.html" target="contentFrame">SCADA</a></li>
+<li><a href="hmi.html" target="contentFrame">HMI UNIFIED</a></li>
+<li><a href="bms.html" target="contentFrame">BMS</a></li>
+</ul>
 </li>
 
 <li>
-    <a href="#">MẠCH & VI MẠCH ▾</a>
-    <ul class="submenu">
-        <li><a href="chip.html" target="contentFrame">CHIP</a></li>
-        <li><a href="mach.html" target="contentFrame">MẠCH</a></li>
-        <li><a href="plb.html" target="contentFrame">PLB</a></li>
-    </ul>
+<a href="#">MẠCH & VI MẠCH ▾</a>
+<ul class="submenu">
+<li><a href="chip.html" target="contentFrame">CHIP</a></li>
+<li><a href="mach.html" target="contentFrame">MẠCH</a></li>
+<li><a href="plb.html" target="contentFrame">PLB</a></li>
+</ul>
 </li>
 
 <li>
-    <a href="#">THƠ ▾</a>
-    <ul class="submenu">
-        <li><a href="tho-banh.html" target="contentFrame">THƠ CỦA BÀNH</a></li>
-        <li><a href="phan-tich.html" target="contentFrame">Ý NGHĨA THƠ</a></li>
-    </ul>
+<a href="#">THƠ ▾</a>
+<ul class="submenu">
+<li><a href="tho-banh.html" target="contentFrame">THƠ CỦA BÀNH</a></li>
+<li><a href="phan-tich.html" target="contentFrame">Ý NGHĨA THƠ</a></li>
+</ul>
 </li>
 
 <li>
-    <a href="#">ĐÓNG GÓP ▾</a>
-    <ul class="submenu">
-        <li><a href="donggop-auto.html" target="contentFrame">TỰ ĐỘNG</a></li>
-        <li><a href="donggop-mach.html" target="contentFrame">MẠCH & VI MẠCH</a></li>
-        <li><a href="donggop-tho.html" target="contentFrame">THƠ</a></li>
-    </ul>
+<a href="#">HƯỚNG DẪN ▾</a>
+<ul class="submenu">
+<li><a href="huongdan1.html" target="contentFrame">Hướng dẫn 1</a></li>
+<li><a href="huongdan2.html" target="contentFrame">Hướng dẫn 2</a></li>
+</ul>
 </li>
+
 </ul>
 </nav>
 
 <main>
-
-<div class="content">
-    <iframe name="contentFrame"></iframe>
-</div>
-
-<div class="sidebar">
-    <h3>Bài viết mới</h3>
-    <ul>
-        <li><a href="bai1.html" target="contentFrame">Bài viết 1</a></li>
-        <li><a href="bai2.html" target="contentFrame">Bài viết 2</a></li>
-        <li><a href="bai3.html" target="contentFrame">Bài viết 3</a></li>
-    </ul>
-</div>
-
+<iframe name="contentFrame"></iframe>
 </main>
 
 <footer>
@@ -270,10 +245,48 @@ footer{
 <p>Email: vannb@gmail.com</p>
 </div>
 
+<div class="footer-col">
+<h3>Theo dõi</h3>
+<a href="#" class="social-btn fb">Facebook</a>
+<a href="#" class="social-btn tw">Twitter</a>
+<a href="#" class="social-btn ig">Instagram</a>
+<a href="#" class="social-btn li">LinkedIn</a>
+<a href="#" class="social-btn yt">YouTube</a>
+</div>
+
 </div>
 </footer>
 
 </div>
+
+<script>
+const text = "NGUYỄN BÀNH";
+const container = document.getElementById("waveText");
+
+let spans = [];
+
+for(let i=0;i<text.length;i++){
+    let span=document.createElement("span");
+    span.innerText=text[i];
+    span.style.display="inline-block";
+    container.appendChild(span);
+    spans.push(span);
+}
+
+let t=0;
+
+function animate(){
+    t+=0.05;
+    spans.forEach((span,index)=>{
+        let x = Math.sin(t + index*0.5) * 5;
+        let y = Math.cos(t + index*0.5) * 8;
+        span.style.transform=`translate(${x}px,${y}px)`;
+    });
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
 
 </body>
 </html>
