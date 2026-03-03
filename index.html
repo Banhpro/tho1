@@ -17,13 +17,14 @@ body{
     background:#e6e6e6;
 }
 
+/* ================= CONTAINER ================= */
 .container{
     width:1100px;
     margin:0 auto;
     background:white;
 }
 
-/* HEADER */
+/* ================= HEADER ================= */
 header{
     background:url("header.jpg") center/cover no-repeat;
     height:220px;
@@ -40,7 +41,7 @@ header{
     text-shadow:2px 2px 6px rgba(0,0,0,0.3);
 }
 
-/* MENU */
+/* ================= MENU ================= */
 nav{
     background:black;
 }
@@ -60,6 +61,7 @@ nav{
     padding:15px 30px;
     color:white;
     text-decoration:none;
+    font-weight:500;
     transition:0.3s;
 }
 
@@ -67,6 +69,7 @@ nav{
     background:#0077b6;
 }
 
+/* dropdown */
 .submenu{
     display:none;
     position:absolute;
@@ -74,7 +77,7 @@ nav{
     left:0;
     background:black;
     list-style:none;
-    min-width:250px;
+    min-width:200px;
 }
 
 .submenu li a{
@@ -82,6 +85,7 @@ nav{
     padding:10px 20px;
     color:white;
     text-decoration:none;
+    transition:0.3s;
 }
 
 .submenu li a:hover{
@@ -92,13 +96,18 @@ nav{
     display:block;
 }
 
-/* CONTENT */
+/* ================= CONTENT ================= */
 main{
     padding:30px;
-    min-height:500px;
 }
 
-/* FOOTER */
+iframe{
+    width:100%;
+    height:600px;
+    border:none;
+}
+
+/* ================= FOOTER ================= */
 footer{
     background:#111;
     color:white;
@@ -133,12 +142,14 @@ footer{
 .footer-col a{
     color:#ccc;
     text-decoration:none;
+    transition:0.3s;
 }
 
 .footer-col a:hover{
     color:yellow;
 }
 
+/* Social */
 .social-btn{
     display:block;
     margin:8px 0;
@@ -175,47 +186,42 @@ footer{
 <li>
 <a href="#">TỰ ĐỘNG ▾</a>
 <ul class="submenu">
-<li><a href="#" onclick="loadPage('scada.html'); return false;">SCADA</a></li>
-<li><a href="#" onclick="loadPage('hmi.html'); return false;">HMI UNIFIED</a></li>
-<li><a href="#" onclick="loadPage('bms.html'); return false;">BMS</a></li>
+<li><a href="scada.html" target="contentFrame">SCADA</a></li>
+<li><a href="hmi.html" target="contentFrame">HMI UNIFIED</a></li>
+<li><a href="bms.html" target="contentFrame">BMS</a></li>
 </ul>
 </li>
 
 <li>
 <a href="#">MẠCH & VI MẠCH ▾</a>
 <ul class="submenu">
-<li><a href="#" onclick="loadPage('chip.html'); return false;">CHIP</a></li>
-<li><a href="#" onclick="loadPage('mach.html'); return false;">MẠCH</a></li>
-<li><a href="#" onclick="loadPage('plb.html'); return false;">PLB</a></li>
+<li><a href="chip.html" target="contentFrame">CHIP</a></li>
+<li><a href="mach.html" target="contentFrame">MẠCH</a></li>
+<li><a href="plb.html" target="contentFrame">PLB</a></li>
 </ul>
 </li>
 
 <li>
 <a href="#">THƠ ▾</a>
 <ul class="submenu">
-<li>
-<a href="#" onclick="loadPage('poems/tho-banh-content.html'); return false;">
-THƠ CỦA BÀNH
-</a>
-</li>
-<li><a href="#" onclick="loadPage('chia-se-content.html'); return false;">CHIA SẺ THƠ CỦA BẠN</a></li>
+<li><a href="poems/tho-banh.html" target="contentFrame">THƠ CỦA BÀNH</a></li>
+<li><a href="phan-tich.html" target="contentFrame">Ý NGHĨA THƠ</a></li>
 </ul>
 </li>
 
 <li>
 <a href="#">HƯỚNG DẪN ▾</a>
 <ul class="submenu">
-<li><a href="#" onclick="loadPage('huongdan1.html'); return false;">XEM TÀI LIỆU</a></li>
-<li><a href="#" onclick="loadPage('huongdan2.html'); return false;">ĐỌC & CHIA SẺ THƠ</a></li>
+<li><a href="huongdan1.html" target="contentFrame">Hướng dẫn 1</a></li>
+<li><a href="huongdan2.html" target="contentFrame">Hướng dẫn 2</a></li>
 </ul>
 </li>
 
 </ul>
 </nav>
 
-<main id="main-content">
-<h2>Chào mừng bạn đến với website của Nguyễn Bành</h2>
-<p>Chọn một mục từ menu để xem nội dung.</p>
+<main>
+<iframe name="contentFrame"></iframe>
 </main>
 
 <footer>
@@ -224,8 +230,8 @@ THƠ CỦA BÀNH
 <div class="footer-col">
 <h3>Về chúng tôi</h3>
 <ul>
-<li><a href="#" onclick="loadPage('gioithieu.html'); return false;">Giới thiệu</a></li>
-<li><a href="#" onclick="loadPage('tacgia.html'); return false;">Tác giả</a></li>
+<li><a href="gioithieu.html" target="contentFrame">Giới thiệu</a></li>
+<li><a href="tacgia.html" target="contentFrame">Tác giả</a></li>
 </ul>
 </div>
 
@@ -236,29 +242,17 @@ THƠ CỦA BÀNH
 
 <div class="footer-col">
 <h3>Theo dõi</h3>
-<a href="https://www.facebook.com/banh.nguyen.35110418" class="social-btn fb">Facebook</a>
-<a href="https://www.youtube.com/@thanhkietnguyen7333" class="social-btn yt">YouTube</a>
+<a href="#" class="social-btn fb">Facebook</a>
+<a href="#" class="social-btn tw">Twitter</a>
+<a href="#" class="social-btn ig">Instagram</a>
+<a href="#" class="social-btn li">LinkedIn</a>
+<a href="#" class="social-btn yt">YouTube</a>
 </div>
 
 </div>
 </footer>
 
 </div>
-
-<script>
-function loadPage(page){
-    fetch(page)
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById("main-content").innerHTML = data;
-            window.scrollTo(0,0);
-        })
-        .catch(error => {
-            document.getElementById("main-content").innerHTML =
-                "<h2>Lỗi tải nội dung</h2><p>Không tìm thấy file hoặc sai đường dẫn.</p>";
-        });
-}
-</script>
 
 </body>
 </html>
