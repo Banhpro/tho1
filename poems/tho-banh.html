@@ -4,10 +4,13 @@
 <meta charset="UTF-8">
 <title>Thơ Bành</title>
 
+<!-- gọi đúng đường dẫn vì file đang nằm trong thư mục poems -->
 <script src="poems-data.js"></script>
 
 <style>
-body { font-family: Arial; }
+body { 
+    font-family: Arial; 
+}
 
 select, input {
     padding: 8px;
@@ -30,11 +33,11 @@ select, input {
     background: #eee;
 }
 </style>
-
 </head>
+
 <body>
 
-<h2>📚 Thư viện Thơ</h2>
+<h2>📚 Thư Viện Thơ Của Bành</h2>
 
 <!-- Bộ lọc -->
 <select id="filterTheLoai">
@@ -72,26 +75,40 @@ const list = document.getElementById("poemList");
 const searchBox = document.getElementById("searchBox");
 const suggestions = document.getElementById("suggestions");
 
+
+// ===== RENDER =====
 function renderList(data) {
     list.innerHTML = "";
     data.forEach(poem => {
         const li = document.createElement("li");
-        li.innerHTML = `<a href="${poem.file}">${poem.title}</a>
-        (${poem.theloai} - ${poem.thetho})`;
+
+        // Vì đang ở trong thư mục poems
+        // nên nếu file nằm cùng thư mục thì chỉ cần poem.file
+        li.innerHTML = `
+            <a href="${poem.file}">
+                ${poem.title}
+            </a>
+            (${poem.theloai} - ${poem.thetho})
+        `;
+
         list.appendChild(li);
     });
 }
 
+// load ban đầu
 renderList(poems);
 
 
 // ===== FILTER =====
-document.getElementById("filterTheLoai").addEventListener("change", filterPoems);
-document.getElementById("filterTheTho").addEventListener("change", filterPoems);
+document.getElementById("filterTheLoai")
+    .addEventListener("change", filterPoems);
+
+document.getElementById("filterTheTho")
+    .addEventListener("change", filterPoems);
 
 function filterPoems() {
-    const tl = filterTheLoai.value;
-    const tt = filterTheTho.value;
+    const tl = document.getElementById("filterTheLoai").value;
+    const tt = document.getElementById("filterTheTho").value;
 
     const filtered = poems.filter(p =>
         (tl === "" || p.theloai === tl) &&
@@ -104,10 +121,11 @@ function filterPoems() {
 
 // ===== SEARCH GỢI Ý =====
 searchBox.addEventListener("input", function() {
+
     const value = this.value.toLowerCase();
     suggestions.innerHTML = "";
 
-    if(value === "") return;
+    if (value === "") return;
 
     const matched = poems.filter(p =>
         p.title.toLowerCase().includes(value)
@@ -117,9 +135,11 @@ searchBox.addEventListener("input", function() {
         const div = document.createElement("div");
         div.className = "suggest-item";
         div.textContent = p.title;
+
         div.onclick = () => {
             window.location.href = p.file;
         };
+
         suggestions.appendChild(div);
     });
 });
