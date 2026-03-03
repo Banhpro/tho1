@@ -17,14 +17,12 @@ body{
     background:#e6e6e6;
 }
 
-/* ================= CONTAINER ================= */
 .container{
     width:1100px;
     margin:0 auto;
     background:white;
 }
 
-/* ================= HEADER ================= */
 header{
     background:url("header.jpg") center/cover no-repeat;
     height:220px;
@@ -41,7 +39,6 @@ header{
     text-shadow:2px 2px 6px rgba(0,0,0,0.3);
 }
 
-/* ================= MENU ================= */
 nav{
     background:black;
 }
@@ -61,7 +58,6 @@ nav{
     padding:15px 30px;
     color:white;
     text-decoration:none;
-    font-weight:500;
     transition:0.3s;
 }
 
@@ -69,7 +65,6 @@ nav{
     background:#0077b6;
 }
 
-/* dropdown */
 .submenu{
     display:none;
     position:absolute;
@@ -82,11 +77,9 @@ nav{
 
 .submenu li a{
     display:block;
-    left:0;
     padding:10px 20px;
     color:white;
     text-decoration:none;
-    transition:0.3s;
 }
 
 .submenu li a:hover{
@@ -97,18 +90,13 @@ nav{
     display:block;
 }
 
-/* ================= CONTENT ================= */
+/* CONTENT */
 main{
     padding:30px;
+    min-height:500px;
 }
 
-iframe{
-    width:100%;
-    height:600px;
-    border:none;
-}
-
-/* ================= FOOTER ================= */
+/* FOOTER */
 footer{
     background:#111;
     color:white;
@@ -143,14 +131,12 @@ footer{
 .footer-col a{
     color:#ccc;
     text-decoration:none;
-    transition:0.3s;
 }
 
 .footer-col a:hover{
     color:yellow;
 }
 
-/* Social */
 .social-btn{
     display:block;
     margin:8px 0;
@@ -170,7 +156,19 @@ footer{
 }
 </style>
 </head>
-
+<script>
+function loadPage(page){
+    fetch(page)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("main-content").innerHTML = data;
+        })
+        .catch(error => {
+            document.getElementById("main-content").innerHTML = 
+                "<h2>Lỗi tải trang</h2>";
+        });
+}
+</script>
 <body>
 
 <div class="container">
@@ -187,42 +185,43 @@ footer{
 <li>
 <a href="#">TỰ ĐỘNG ▾</a>
 <ul class="submenu">
-<li><a href="scada.html" target="contentFrame">&nbsp;&nbsp;SCADA</a></li>
-<li><a href="hmi.html" target="contentFrame">&nbsp;&nbsp;HMI UNIFIED</a></li>
-<li><a href="bms.html" target="contentFrame">&nbsp;&nbsp;BMS</a></li>
+<li><a href="scada.html">SCADA</a></li>
+<li><a href="hmi.html">HMI UNIFIED</a></li>
+<li><a href="bms.html">BMS</a></li>
 </ul>
 </li>
 
 <li>
 <a href="#">MẠCH & VI MẠCH ▾</a>
 <ul class="submenu">
-<li><a href="chip.html" target="contentFrame">&nbsp;&nbsp;CHIP</a></li>
-<li><a href="mach.html" target="contentFrame">&nbsp;&nbsp;MẠCH</a></li>
-<li><a href="plb.html" target="contentFrame">&nbsp;&nbsp;PLB</a></li>
+<li><a href="chip.html">CHIP</a></li>
+<li><a href="mach.html">MẠCH</a></li>
+<li><a href="plb.html">PLB</a></li>
 </ul>
 </li>
 
 <li>
 <a href="#">THƠ ▾</a>
 <ul class="submenu">
-<li><a href="poems/tho-banh.html" target="contentFrame">&nbsp;&nbsp;THƠ CỦA BÀNH</a></li>
-<li><a href="chia-se.html" target="contentFrame">&nbsp;&nbsp;CHIA SẺ THƠ CỦA BẠN</a></li>
+<a href="#" onclick="loadPage('poems/tho-banh-content.html'); return false;">THƠ CỦA BÀNH</a>
+<li><a href="chia-se.html">CHIA SẺ THƠ CỦA BẠN</a></li>
 </ul>
 </li>
 
 <li>
 <a href="#">HƯỚNG DẪN ▾</a>
 <ul class="submenu">
-<li><a href="huongdan1.html" target="contentFrame">&nbsp;&nbsp;XEM TÀI LIỆU</a></li>
-<li><a href="huongdan2.html" target="contentFrame">&nbsp;&nbsp;ĐỌC & CHIA SẺ THƠ</a></li>
+<li><a href="huongdan1.html">XEM TÀI LIỆU</a></li>
+<li><a href="huongdan2.html">ĐỌC & CHIA SẺ THƠ</a></li>
 </ul>
 </li>
 
 </ul>
 </nav>
 
-<main>
-<iframe name="contentFrame"></iframe>
+<main id="main-content">
+<h2>Chào mừng bạn đến với website của Nguyễn Bành</h2>
+<p>Chọn một mục từ menu để xem nội dung.</p>
 </main>
 
 <footer>
@@ -231,8 +230,8 @@ footer{
 <div class="footer-col">
 <h3>Về chúng tôi</h3>
 <ul>
-<li><a href="gioithieu.html" target="contentFrame">Giới thiệu</a></li>
-<li><a href="tacgia.html" target="contentFrame">Tác giả</a></li>
+<li><a href="gioithieu.html">Giới thiệu</a></li>
+<li><a href="tacgia.html">Tác giả</a></li>
 </ul>
 </div>
 
