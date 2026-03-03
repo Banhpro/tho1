@@ -31,7 +31,6 @@ header{
     display:flex;
     align-items:center;
     justify-content:center;
-    overflow:hidden;
 }
 
 .header-title{
@@ -39,7 +38,7 @@ header{
     font-weight:bold;
     color:black;
     letter-spacing:4px;
-    display:flex;
+    text-shadow:2px 2px 6px rgba(0,0,0,0.3);
 }
 
 /* ================= MENU ================= */
@@ -176,7 +175,9 @@ footer{
 <div class="container">
 
 <header>
-    <div class="header-title" id="waveText"></div>
+    <div class="header-title">
+        NGUYỄN BÀNH
+    </div>
 </header>
 
 <nav>
@@ -252,42 +253,6 @@ footer{
 </footer>
 
 </div>
-
-<script>
-const text = "NGUYỄN BÀNH";
-const container = document.getElementById("waveText");
-
-let spans = [];
-
-for (let i = 0; i < text.length; i++) {
-    let span = document.createElement("span");
-    span.innerText = text[i];
-    span.style.display = "inline-block";
-    container.appendChild(span);
-    spans.push(span);
-}
-
-let time = 0;
-
-function animate() {
-    time += 0.04;
-
-    spans.forEach((span, index) => {
-
-        // Sóng ngang mạnh hơn
-        let offsetX = Math.sin(time + index * 0.6) * 20;
-
-        // Sóng dọc
-        let offsetY = Math.cos(time + index * 0.6) * 10;
-
-        span.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-    });
-
-    requestAnimationFrame(animate);
-}
-
-animate();
-</script>
 
 </body>
 </html>
