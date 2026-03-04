@@ -19,7 +19,17 @@ const poems = [
         type: "TỰ DO",
         audio: false,
         content: "",  // Nội dung sẽ được lấy từ HTML
-    }
+    }, 
+    {
+        title: "Đời Người",
+        name: "doi_nguoi",
+        date: "01/08/2023",
+        author: "Bành",
+        category: ["ĐỜI NGƯỜI", "TÌNH YÊU"],
+        type: "LỤC BÁT",
+        audio: true,
+        content: "",  // Nội dung sẽ được lấy từ HTML
+    }, 
 ];
 
 // Đảm bảo đường dẫn chính xác
