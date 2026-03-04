@@ -278,10 +278,9 @@ select:hover{
 <div class="poem-container" id="poemContainer"></div>
 
 <script>
+document.addEventListener("DOMContentLoaded", function() {
 
-document.addEventListener("DOMContentLoaded", function(){
-
-    if(typeof poems === "undefined"){
+    if (typeof poems === "undefined") {
         alert("Không tìm thấy poems-data.js");
         return;
     }
@@ -294,7 +293,7 @@ document.addEventListener("DOMContentLoaded", function(){
     const filterAudio = document.getElementById("filterAudio");
 
     /* ================= REMOVE VIETNAMESE TONES ================= */
-    function removeVietnameseTones(str){
+    function removeVietnameseTones(str) {
         return str.normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "")
             .replace(/đ/g, "d")
@@ -303,70 +302,74 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     /* ================= HIGHLIGHT ================= */
-    function highlight(text, keyword){
-        if(!keyword) return text;
+    function highlight(text, keyword) {
+        if (!keyword) return text;
 
         const normalizedText = removeVietnameseTones(text);
         const normalizedKeyword = removeVietnameseTones(keyword);
 
         const index = normalizedText.indexOf(normalizedKeyword);
-        if(index === -1) return text;
+        if (index === -1) return text;
 
-        return text.substring(0,index)
+        return text.substring(0, index)
             + "<span class='highlight'>"
-            + text.substring(index,index+keyword.length)
+            + text.substring(index, index + keyword.length)
             + "</span>"
-            + text.substring(index+keyword.length);
+            + text.substring(index + keyword.length);
     }
 
     /* ================= EXTRACT SNIPPET ================= */
-    function extractSnippet(content, keyword){
-        if(!content) return "";
+    function extractSnippet(content, keyword) {
+        if (!content) return "";
 
         const normalizedContent = removeVietnameseTones(content);
         const normalizedKeyword = removeVietnameseTones(keyword);
 
         const index = normalizedContent.indexOf(normalizedKeyword);
-        if(index === -1) return "";
+        if (index === -1) return "";
 
         const start = Math.max(0, index - 25);
         const end = Math.min(content.length, index + keyword.length + 25);
 
         let snippet = content.substring(start, end);
 
-        if(start > 0) snippet = "..." + snippet;
-        if(end < content.length) snippet += "...";
+        if (start > 0) snippet = "..." + snippet;
+        if (end < content.length) snippet += "...";
 
         return snippet;
     }
 
     /* ================= AUTO LOAD CONTENT ================= */
-    async function loadAllPoemContents(){
-
-        for (let poem of poems){
-
-            try{
+    // Hàm tải nội dung bài thơ từ file HTML
+    async function loadPoemContents() {
+        for (let poem of poems) {
+            try {
+                // Fetch file HTML của bài thơ
                 const response = await fetch(poem.file);
-                const html = await response.text();
+                if (!response.ok) throw new Error(`Không thể tải bài thơ từ ${poem.file}`);
 
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, "text/html");
+                const html = await response.text(); // Lấy nội dung HTML dưới dạng text
+                const parser = new DOMParser(); // Tạo đối tượng parser
+                const doc = parser.parseFromString(html, "text/html"); // Phân tích cú pháp HTML
 
+                // Truy xuất nội dung bài thơ từ phần tử có id="poem-content" (hoặc bạn có thể sử dụng một selector khác tùy theo cấu trúc HTML)
                 const contentDiv = doc.querySelector("#poem-content");
 
-                poem.content = contentDiv
-                    ? contentDiv.innerText
-                    : "";
+                if (contentDiv) {
+                    poem.content = contentDiv.innerText || contentDiv.textContent; // Lưu nội dung bài thơ
+                } else {
+                    poem.content = ""; // Nếu không tìm thấy phần tử nội dung, để trống
+                }
 
-            }catch(error){
-                poem.content = "";
+            } catch (error) {
+                console.error(`Lỗi khi tải nội dung bài thơ ${poem.title}: `, error);
+                poem.content = ""; // Nếu gặp lỗi, nội dung bài thơ để trống
             }
         }
     }
 
     /* ================= FILTER LOGIC ================= */
-    function applyFilters(){
-
+    function applyFilters() {
         const keywordRaw = searchInput.value.trim();
         const keyword = removeVietnameseTones(keywordRaw);
 
@@ -375,7 +378,6 @@ document.addEventListener("DOMContentLoaded", function(){
         const audio = filterAudio.value;
 
         const filtered = poems.filter(p => {
-
             const title = removeVietnameseTones(p.title);
             const content = removeVietnameseTones(p.content || "");
 
@@ -404,11 +406,10 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     /* ================= RENDER POEMS ================= */
-    function renderPoems(data){
-
+    function renderPoems(data) {
         container.innerHTML = "";
 
-        if(data.length === 0){
+        if (data.length === 0) {
             container.innerHTML = `
                 <div class="no-poem-wrapper">
                     <div class="no-poem">Không có bài thơ phù hợp</div>
@@ -420,8 +421,7 @@ document.addEventListener("DOMContentLoaded", function(){
         const keywordRaw = searchInput.value.trim();
         const keyword = removeVietnameseTones(keywordRaw);
 
-        data.forEach((poem,index) => {
-
+        data.forEach((poem, index) => {
             const card = document.createElement("div");
             card.className = "poem-card";
             card.style.animationDelay = (index * 0.05) + "s";
@@ -452,33 +452,31 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     /* ================= RENDER SUGGESTIONS ================= */
-    function renderSuggestions(data){
-
+    function renderSuggestions(data) {
         const keywordRaw = searchInput.value.trim();
 
-        if(keywordRaw.length < 2){
+        if (keywordRaw.length < 2) {
             suggestionBox.style.display = "none";
             return;
         }
 
         suggestionBox.innerHTML = "";
 
-        const top5 = data.slice(0,5);
+        const top5 = data.slice(0, 5);
 
         top5.forEach(p => {
-
             const normalizedTitle = removeVietnameseTones(p.title);
             const normalizedKeyword = removeVietnameseTones(keywordRaw);
 
-            const matchInTitle = normalizedTitle.includes(normalizedKeyword);
-
             let displayText = "";
 
-            if(matchInTitle){
+            // Kiểm tra trong tiêu đề
+            if (normalizedTitle.includes(normalizedKeyword)) {
                 displayText = highlight(p.title, keywordRaw);
-            }else{
-                const snippet = extractSnippet(p.content || "", keywordRaw);
-                displayText = highlight(snippet, keywordRaw);
+            } else {
+                // Nếu không tìm thấy trong tiêu đề, kiểm tra trong nội dung
+                const highlightedContent = extractSnippet(p.content, keywordRaw);
+                displayText = highlight(highlightedContent, keywordRaw);
             }
 
             const div = document.createElement("div");
@@ -505,15 +503,15 @@ document.addEventListener("DOMContentLoaded", function(){
     filterType.addEventListener("change", applyFilters);
     filterAudio.addEventListener("change", applyFilters);
 
-    document.addEventListener("click", function(e){
-        if(!e.target.closest(".search-box")){
+    document.addEventListener("click", function(e) {
+        if (!e.target.closest(".search-box")) {
             suggestionBox.style.display = "none";
         }
     });
 
     /* ================= INIT ================= */
-    (async function init(){
-        await loadAllPoemContents();
+    (async function init() {
+        await loadPoemContents();
         renderPoems(poems);
     })();
 
