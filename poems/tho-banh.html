@@ -8,37 +8,40 @@
 <script src="js/poems-data.js"></script>
 
 <style>
+
+/* ================= BODY ================= */
 body{
     font-family:'Segoe UI', Arial, sans-serif;
     margin:0;
     padding:0;
     background:linear-gradient(to right,#f8f9fa,#eef2f7);
-  /*  overflow:hidden;*/
+    overflow: hidden;
 }
 
-/* ===== TITLE ===== */
+/* ================= TITLE ================= */
 h1{
     text-align:center;
-    margin:40px 0 30px 0;
+    margin:40px 0 20px;
     font-size:38px;
     letter-spacing:2px;
+    overflow: hidden;
 }
 
-/* ===== FILTER WRAPPER ===== */
+/* ================= FILTER WRAPPER ================= */
 .filter-wrapper{
     width:90%;
     margin:auto;
     background:white;
-    padding:30px 30px 50px 30px;
+    padding:30px 30px 50px;
     border-radius:20px;
     box-shadow:0 10px 30px rgba(0,0,0,0.08);
     margin-bottom:60px;
 }
 
-/* ===== SEARCH ===== */
+/* ================= SEARCH ================= */
 .search-box{
     text-align:center;
-    margin-bottom:50px; /* tạo khoảng cách thật */
+    margin-bottom:50px;
 }
 
 .search-box input{
@@ -56,15 +59,13 @@ h1{
     box-shadow:0 0 15px rgba(108,99,255,0.35);
 }
 
-/* ===== SUGGESTIONS (KHÔNG CÒN ABSOLUTE) ===== */
 .suggestions{
     width:60%;
     max-width:420px;
-    margin:12px auto 0 auto; /* nằm dưới input thật */
+    margin:12px auto 0;
     background:white;
     border-radius:18px;
     box-shadow:0 15px 40px rgba(0,0,0,0.15);
-    text-align:left;
     overflow:hidden;
     display:none;
 }
@@ -74,10 +75,8 @@ h1{
     cursor:pointer;
     display:flex;
     justify-content:space-between;
-    align-items:center;
     border-bottom:1px solid #eee;
     font-size:14px;
-    transition:0.2s;
 }
 
 .suggestion-item:last-child{
@@ -93,7 +92,7 @@ h1{
     font-weight:bold;
 }
 
-/* ===== FILTER BAR ===== */
+/* ================= FILTER BAR ================= */
 .filter-bar{
     display:flex;
     justify-content:center;
@@ -111,72 +110,39 @@ h1{
     font-weight:600;
     margin-bottom:8px;
     font-size:14px;
-    letter-spacing:1px;
 }
 
-/* ===== COMBOBOX ĐẸP HƠN ===== */
+/* ================= SELECT ================= */
 select{
-    appearance:none;
-    -webkit-appearance:none;
-    -moz-appearance:none;
-
-    padding:12px 45px 12px 20px;
+    padding:12px 20px;
     border-radius:50px;
     border:2px solid #6c63ff;
-    background:#fff;
     font-size:14px;
     cursor:pointer;
     min-width:190px;
-    outline:none;
-    transition:0.3s;
-
-    /* Mũi tên custom */
-    background-image:url("data:image/svg+xml;utf8,<svg fill='%236c63ff' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-    background-repeat:no-repeat;
-    background-position:right 15px center;
 }
 
-select:hover{
-    box-shadow:0 0 15px rgba(108,99,255,0.25);
-}
-
-select:focus{
-    box-shadow:0 0 18px rgba(108,99,255,0.35);
-}
-
-/* ===== POEM GRID ===== */
+/* ================= GRID ================= */
 .poem-container{
     width:90%;
     margin:auto;
     display:grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns:repeat(3,1fr);
     gap:35px;
     min-height:300px;
 }
-.no-poem-wrapper{
-    grid-column: 1 / -1;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:300px; /* giữ chiều cao như trước */
-}
 
-.no-poem{
-    font-style:italic;
-    font-size:28px;   /* giữ nguyên kích cỡ */
-    color:#888;       /* xám nhẹ giống hình */
-}
 .poem-card{
     background:white;
     padding:12px;
     text-align:center;
     border-radius:18px;
     box-shadow:0 8px 25px rgba(0,0,0,0.06);
-    transition:0.3s ease;
     cursor:pointer;
     opacity:0;
     transform:translateY(20px);
     animation:fadeUp 0.5s forwards;
+    transition:0.3s;
 }
 
 @keyframes fadeUp{
@@ -198,23 +164,30 @@ select:focus{
     border-radius:14px;
 }
 
-/* ===== RESPONSIVE ===== */
+.no-poem-wrapper{
+    grid-column:1 / -1;
+    text-align:center;
+    font-size:26px;
+    color:#888;
+}
+
+/* ================= RESPONSIVE ================= */
 @media(max-width:1024px){
     .poem-container{
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns:repeat(2,1fr);
     }
 }
 
 @media(max-width:600px){
     .poem-container{
-        grid-template-columns: 1fr;
+        grid-template-columns:1fr;
     }
-
     .search-box input,
     .suggestions{
         width:90%;
     }
 }
+
 </style>
 </head>
 
@@ -248,13 +221,8 @@ select:focus{
             <select id="filterType">
                 <option value="">TẤT CẢ</option>
                 <option value="LỤC BÁT">LỤC BÁT</option>
-                <option value="SONG THẤT LỤC BÁT">SONG THẤT LỤC BÁT</option>
-                <option value="THẤT NGÔN">THẤT NGÔN</option>
-                <option value="NGŨ NGÔN">NGŨ NGÔN</option>
-                <option value="BÁT NGÔN">BÁT NGÔN</option>
                 <option value="TỰ DO">TỰ DO</option>
-                <option value="HAIKU">HAIKU</option>
-                <option value="BIẾN THỂ">BIẾN THỂ</option>
+                <option value="THẤT NGÔN">THẤT NGÔN</option>
             </select>
         </div>
 
@@ -271,47 +239,56 @@ select:focus{
 </div>
 
 <div class="poem-container" id="poemContainer"></div>
+<pre> 
+				Giữa đời người ta là kẻ khờ.
 
+
+</pre>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
 
-    if (typeof poems === "undefined") {
-        alert("Không tìm thấy poems-data.js");
-        return;
-    }
+/* ================= HELPER ================= */
 
-    const container = document.getElementById("poemContainer");
-    const searchInput = document.getElementById("searchInput");
-    const suggestionBox = document.getElementById("suggestions");
-    const filterCategory = document.getElementById("filterCategory");
-    const filterType = document.getElementById("filterType");
-    const filterAudio = document.getElementById("filterAudio");
+function removeVietnameseTones(str){
+    return str.normalize("NFD")
+        .replace(/[\u0300-\u036f]/g,"")
+        .replace(/đ/g,"d")
+        .replace(/Đ/g,"D")
+        .toLowerCase();
+}
 
-    /* ================= REMOVE VIETNAMESE TONES ================= */
-    function removeVietnameseTones(str) {
-        return str.normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/đ/g, "d")
-            .replace(/Đ/g, "D")
-            .toLowerCase();
-    }
+/* ================= MAIN ================= */
 
-    /* ================= HIGHLIGHT ================= */
-    function highlight(text, keyword) {
-        if (!keyword) return text;
+document.addEventListener("DOMContentLoaded", async function(){
 
-        const normalizedText = removeVietnameseTones(text);
-        const normalizedKeyword = removeVietnameseTones(keyword);
+if(typeof poems === "undefined"){
+    alert("Không tìm thấy poems-data.js");
+    return;
+}
 
-        const index = normalizedText.indexOf(normalizedKeyword);
-        if (index === -1) return text;
+const container = document.getElementById("poemContainer");
+const searchInput = document.getElementById("searchInput");
+const suggestionBox = document.getElementById("suggestions");
+const filterCategory = document.getElementById("filterCategory");
+const filterType = document.getElementById("filterType");
+const filterAudio = document.getElementById("filterAudio");
 
-        return text.substring(0, index)
-            + "<span class='highlight'>"
-            + text.substring(index, index + keyword.length)
-            + "</span>"
-            + text.substring(index + keyword.length);
-    }
+/* ================= HIGHLIGHT ================= */
+function highlight(text, keywordRaw){
+    if(!keywordRaw) return text;
+
+    const normalizedText = removeVietnameseTones(text);
+    const normalizedKeyword = removeVietnameseTones(keywordRaw);
+
+    const index = normalizedText.indexOf(normalizedKeyword);
+    if(index === -1) return text;
+
+    return text.substring(0,index)
+        + "<span class='highlight'>"
+        + text.substring(index,index + keywordRaw.length)
+        + "</span>"
+        + text.substring(index + keywordRaw.length);
+}
+
 
     /* ================= EXTRACT SNIPPET ================= */
     function extractSnippet(content, keyword) {
@@ -503,33 +480,25 @@ document.addEventListener("DOMContentLoaded", function() {
             suggestionBox.style.display = "none";
         }
     });
+/* ================= AUTO RESIZE IFRAME ================= */
 
-    /* ================= INIT ================= */
-    (async function init() {
-        await loadPoemContents();
-        renderPoems(poems);
-    })();
-
-});
-function sendHeight(){
-    const height = document.documentElement.scrollHeight;
+function sendHeight() {
+    const height = document.body.scrollHeight;
     window.parent.postMessage(height, "*");
 }
 
-// Gửi khi load
-window.addEventListener("load", sendHeight);
+window.addEventListener("load",()=>setTimeout(sendHeight,100));
+window.addEventListener("resize",sendHeight);
 
-// Gửi khi resize
-window.addEventListener("resize", sendHeight);
+const observer=new MutationObserver(()=>{
+    setTimeout(sendHeight,50);
+});
+observer.observe(document.body,{childList:true,subtree:true});
+/* ================= INIT LOAD ================= */
 
-// Gửi khi DOM thay đổi (QUAN TRỌNG)
-const observer = new MutationObserver(sendHeight);
-observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-    attributes: true
+await loadPoemContents();   // tải nội dung bài thơ
+renderPoems(poems);        // hiển thị tất cả bài thơ ban đầu
 });
 </script>
-
 </body>
 </html>
