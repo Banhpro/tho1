@@ -27,6 +27,15 @@ const poems = [
         type: "LỤC BÁT",
         content: "",  // Nội dung sẽ được lấy từ HTML
     }, 
+    {
+        title: "Con Bò",
+        name: "con_bo",
+        date: "01/08/2023",
+        author: "Bành",
+        category: ["ĐỜI NGƯỜI", "TÌNH YÊU"],
+        type: "LỤC BÁT",
+        content: "",  // Nội dung sẽ được lấy từ HTML
+    }
 ];
 
 // Đảm bảo đường dẫn chính xác

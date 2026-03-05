@@ -13,6 +13,7 @@ body{
     margin:0;
     padding:0;
     background:linear-gradient(to right,#f8f9fa,#eef2f7);
+  /*  overflow:hidden;*/
 }
 
 /* ===== TITLE ===== */
@@ -509,6 +510,24 @@ document.addEventListener("DOMContentLoaded", function() {
         renderPoems(poems);
     })();
 
+});
+function sendHeight(){
+    const height = document.documentElement.scrollHeight;
+    window.parent.postMessage(height, "*");
+}
+
+// Gửi khi load
+window.addEventListener("load", sendHeight);
+
+// Gửi khi resize
+window.addEventListener("resize", sendHeight);
+
+// Gửi khi DOM thay đổi (QUAN TRỌNG)
+const observer = new MutationObserver(sendHeight);
+observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true
 });
 </script>
 

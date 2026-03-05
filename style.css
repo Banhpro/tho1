@@ -102,8 +102,8 @@ iframe{
     width:100%;
     border:none;
     display:block;
-    height: 6000px;
- /* cho nó có chiều cao ban đầu */
+  /*   height: 6000px;*/
+
 }
 
 /* ================= FOOTER ================= */

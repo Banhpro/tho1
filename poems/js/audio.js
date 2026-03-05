@@ -78,3 +78,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
+window.onload = function(){
+    window.parent.postMessage(
+        document.body.scrollHeight, "*"
+    );
+};
