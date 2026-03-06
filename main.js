@@ -50,23 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
         updateDarkIcon();
     };
 
-
-    /* ================= USER LOGIN ================= */
-
-    const username = "Bành pro"; // sau này Firebase thay
-
-    const helloBox = document.querySelector(".hello");
-    const userSpan = document.getElementById("username");
-
-    if (username) {
-
-        if (userSpan) userSpan.textContent = username;
-
-        if (helloBox) helloBox.style.display = "block";
-
-    }
-
 });
+
 
 
 /* ================= LOGIN WINDOW ================= */
