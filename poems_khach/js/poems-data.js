@@ -7,7 +7,7 @@ const poems = [
         author: "Bành",
         category: ["GIA ĐÌNH", "QUÊ HƯƠNG"],
         type: "LỤC BÁT",
-        content: ""  // Nội dung sẽ được lấy từ HTML
+        content: "",  // Nội dung sẽ được lấy từ HTML
     },
     {
         title: "Nơi ấy trò có thầy",
@@ -16,7 +16,7 @@ const poems = [
         author: "Bành",
         category: ["QUÊ HƯƠNG","HỌC TRÒ", "ĐỜI NGƯỜI"],
         type: "LỤC BÁT",
-        content: ""  // Nội dung sẽ được lấy từ HTML
+        content: "",  // Nội dung sẽ được lấy từ HTML
     }
 ];
 
