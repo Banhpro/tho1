@@ -328,7 +328,7 @@ function highlight(text, keywordRaw){
             const doc = parser.parseFromString(html, "text/html");
 
             // đổi từ # sang .
-		const contentDivs = doc.querySelectorAll(".poem-content");
+		const contentDivs = doc.querySelector(".poem-content");
             if (contentDiv) {
                 poem.content = contentDiv.innerText || contentDiv.textContent;
             } else {
