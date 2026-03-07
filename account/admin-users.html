@@ -14,16 +14,18 @@ padding:40px;
 
 h2{
 margin-bottom:20px;
+color:#2e7d32;
 }
 
 table{
 width:900px;
 border-collapse:collapse;
 background:white;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
 th,td{
-padding:10px;
+padding:12px;
 border:1px solid #ddd;
 text-align:center;
 }
@@ -33,8 +35,27 @@ background:#2e7d32;
 color:white;
 }
 
+.me{
+background:#e8f5e9;
+font-weight:bold;
+}
+
+.disabled{
+opacity:0.5;
+}
+
+.username{
+color:#2e7d32;
+font-weight:bold;
+text-decoration:none;
+}
+
+.username:hover{
+text-decoration:underline;
+}
+
 button{
-padding:6px 10px;
+padding:6px 12px;
 border:none;
 background:#2e7d32;
 color:white;
@@ -50,18 +71,13 @@ opacity:0.9;
 background:#d32f2f;
 }
 
-.reset{
-background:#1976d2;
-}
-
-.disabled{
-opacity:0.35;
-pointer-events:none;
-}
-
-.adminOnly{
-color:#999;
-font-style:italic;
+.role{
+padding:4px 8px;
+border-radius:5px;
+font-size:12px;
+font-weight:bold;
+background:#e3f2fd;
+color:#1565c0;
 }
 
 </style>
@@ -75,12 +91,13 @@ font-style:italic;
 
 <thead>
 <tr>
+
 <th>Họ tên</th>
 <th>Username</th>
-<th>Email</th>
 <th>Role</th>
-<th>Đổi mật khẩu</th>
+<th>Số tác phẩm</th>
 <th>Action</th>
+
 </tr>
 </thead>
 
@@ -98,36 +115,31 @@ getFirestore,
 collection,
 getDocs,
 deleteDoc,
-doc
+doc,
+getDoc
 } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
 import {
 getAuth,
-onAuthStateChanged,
-updatePassword,
-sendPasswordResetEmail
+onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
-const firebaseConfig = {
 
+const firebaseConfig = {
 apiKey:"AIzaSyD5VotnEcZ6hQduMoF5AjL0024x1VTkEu4",
 authDomain:"banhkietgithunbpoem.firebaseapp.com",
 projectId:"banhkietgithunbpoem",
 storageBucket:"banhkietgithunbpoem.firebasestorage.app",
 messagingSenderId:"429631951698",
 appId:"1:429631951698:web:8c5f6854de3ad22113a08b"
-
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getFirestore(app);
-
 const auth = getAuth(app);
 
 let currentUID=null;
 let currentRole="user";
-
 
 
 async function loadUsers(){
@@ -135,27 +147,72 @@ async function loadUsers(){
 const snapshot = await getDocs(collection(db,"users"));
 
 const table=document.getElementById("userTable");
-
 table.innerHTML="";
 
-snapshot.forEach((docSnap)=>{
+let users=[];
 
-const data=docSnap.data();
-const uid=docSnap.id;
+snapshot.forEach(docSnap=>{
+users.push({
+uid:docSnap.id,
+...docSnap.data()
+});
+});
+
+
+/* đưa user hiện tại lên đầu */
+
+users.sort((a,b)=>{
+if(a.uid===currentUID) return -1;
+if(b.uid===currentUID) return 1;
+return 0;
+});
+
+
+users.forEach(user=>{
 
 let rowClass="";
+let actionHTML="";
 
-if(currentRole!=="admin" && uid!==currentUID){
+let roleText=user.role || "user";
+
+const roleHTML=`<span class="role">${roleText}</span>`;
+
+
+/* user hiện tại */
+
+if(user.uid===currentUID){
+
+rowClass="me";
+
+actionHTML=`
+<button onclick="changePassword()">
+Đổi mật khẩu
+</button>
+`;
+
+}
+
+/* user khác */
+
+else{
+
+if(currentRole!=="admin"){
 rowClass="disabled";
 }
 
-let emailDisplay="";
-
 if(currentRole==="admin"){
-emailDisplay=data.email || "";
-}else{
-emailDisplay='<span class="adminOnly">🔒 Admin only</span>';
+
+actionHTML=`
+<button class="delete"
+onclick="deleteUser('${user.uid}')">
+Xóa
+</button>
+`;
+
 }
+
+}
+
 
 const tr=document.createElement("tr");
 
@@ -163,30 +220,19 @@ tr.className=rowClass;
 
 tr.innerHTML=`
 
-<td>${data.fullname || ""}</td>
-
-<td>${data.username || ""}</td>
-
-<td>${emailDisplay}</td>
-
-<td>${data.role || "user"}</td>
+<td>${user.fullname || ""}</td>
 
 <td>
-<button onclick="changePassword('${uid}','${data.email}')">
-Đổi
-</button>
+<a class="username" href="profile.html?uid=${user.uid}">
+${user.username || ""}
+</a>
 </td>
 
-<td>
+<td>${roleHTML}</td>
 
-${currentRole==="admin" ? `
-<button class="delete"
-onclick="deleteUser('${uid}')">
-Xóa
-</button>
-` : ""}
+<td>--</td>
 
-</td>
+<td>${actionHTML}</td>
 
 `;
 
@@ -197,88 +243,75 @@ table.appendChild(tr);
 }
 
 
+/* đổi mật khẩu */
 
-window.changePassword = async function(uid,email){
-
-if(currentRole==="admin"){
-
-await sendPasswordResetEmail(auth,email);
-
-alert("Đã gửi email đổi mật khẩu");
-
-return;
-
-}
-
-if(uid!==currentUID){
-alert("Bạn chỉ có thể đổi mật khẩu của mình");
-return;
-}
-
-const newPass=prompt("Nhập mật khẩu mới");
-
-if(!newPass) return;
-
-await updatePassword(auth.currentUser,newPass);
-
-alert("Đổi mật khẩu thành công");
-
+window.changePassword=function(){
+location.href="change-password.html";
 }
 
 
+
+/* XÓA USER */
 
 window.deleteUser = async function(uid){
 
 if(currentRole!=="admin"){
-alert("Bạn không có quyền");
+alert("❌ Bạn không có quyền xóa user");
 return;
 }
 
-if(!confirm("Xóa user này?")) return;
+if(!confirm("Bạn chắc chắn muốn xóa user này?")) return;
+
+try{
+
+console.log("Đang xóa user:",uid);
 
 await deleteDoc(doc(db,"users",uid));
 
-alert("Đã xóa user");
+alert("✅ Đã xóa user thành công!");
 
 loadUsers();
+
+}catch(error){
+
+console.error("Lỗi xóa:",error);
+
+alert("❌ Không thể xóa user\n\n"+error.message);
+
+}
 
 }
 
 
+
+/* kiểm tra đăng nhập */
 
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user){
 
 alert("Bạn chưa đăng nhập");
-
 location.href="index.html";
-
 return;
 
 }
 
 currentUID=user.uid;
 
-const snapshot=await getDocs(collection(db,"users"));
 
-snapshot.forEach((docSnap)=>{
+/* đọc role */
 
-if(docSnap.id===currentUID){
+const userRef=doc(db,"users",currentUID);
+const userSnap=await getDoc(userRef);
 
-const data=docSnap.data();
-
-currentRole=data.role || "user";
-
+if(userSnap.exists()){
+currentRole=userSnap.data().role || "user";
 }
-
-});
 
 loadUsers();
 
 });
 
 </script>
-
 </body>
 </html>

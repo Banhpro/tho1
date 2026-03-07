@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Upload to Cloudinary & Firestore</title>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+
+/* FIREBASE CONFIG */
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyD5VotnEcZ6hQduMoF5AjL0024x1VTkEu4",
+authDomain: "banhkietgithunbpoem.firebaseapp.com",
+projectId: "banhkietgithunbpoem",
+storageBucket: "banhkietgithunbpoem.firebasestorage.app",
+messagingSenderId: "429631951698",
+appId: "1:429631951698:web:8c5f6854de3ad22113a08b"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+
+/* UPLOAD FUNCTION */
+
+window.uploadFile = async function(){
+
+const file = document.getElementById("fileInput").files[0];
+const status = document.getElementById("status");
+
+if(!file){
+
+status.innerText="Please choose a file!";
+return;
+
+}
+
+status.innerText="Uploading...";
+
+
+/* CLOUDINARY API */
+
+const url = "https://api.cloudinary.com/v1_1/dp6rc7ghq/auto/upload";
+
+const formData = new FormData();
+
+formData.append("file",file);
+formData.append("upload_preset","web_upload");
+
+
+try{
+
+const response = await fetch(url,{
+
+method:"POST",
+body:formData
+
+});
+
+const data = await response.json();
+
+console.log("Cloudinary response:",data);
+
+if(!data.secure_url){
+
+status.innerText="Upload failed!";
+return;
+
+}
+
+const fileUrl = data.secure_url;
+
+
+/* SAVE TO FIRESTORE */
+
+await addDoc(collection(db,"images"),{
+
+url:fileUrl,
+createdAt:new Date()
+
+});
+
+
+status.innerText="Upload Successful!";
+console.log("Cloud URL:",fileUrl);
+
+
+}catch(error){
+
+status.innerText="Upload failed!";
+console.error("Error uploading file:",error);
+
+}
+
+};
+
+</script>
+
+</head>
+
+
+<body>
+
+<h1>Upload Image / MP3 to Cloudinary</h1>
+
+<input type="file" id="fileInput">
+
+<button onclick="uploadFile()">Upload</button>
+
+<p id="status"></p>
+
+</body>
+</html>

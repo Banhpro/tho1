@@ -1,29 +1,32 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 
 import {
-getAuth,
-onAuthStateChanged
+  getAuth,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
 import {
-getFirestore,
-doc,
-getDoc
+  getFirestore,
+  doc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
 
-/* ================= FIREBASE CONFIG ================= */
+
+/* FIREBASE CONFIG */
 
 const firebaseConfig = {
-
-apiKey:"AIzaSyD5VotnEcZ6hQduMoF5AjL0024x1VTkEu4",
-authDomain:"banhkietgithunbpoem.firebaseapp.com",
-projectId:"banhkietgithunbpoem",
-storageBucket:"banhkietgithunbpoem.firebasestorage.app",
-messagingSenderId:"429631951698",
-appId:"1:429631951698:web:8c5f6854de3ad22113a08b"
-
+  apiKey: "AIzaSyD5VotnEcZ6hQduMoF5AjL0024x1VTkEu4",
+  authDomain: "banhkietgithunbpoem.firebaseapp.com",
+  projectId: "banhkietgithunbpoem",
+  storageBucket: "banhkietgithunbpoem.firebasestorage.app",
+  messagingSenderId: "429631951698",
+  appId: "1:429631951698:web:8c5f6854de3ad22113a08b"
 };
+
+
+
+/* INIT FIREBASE */
 
 const app = initializeApp(firebaseConfig);
 
@@ -31,55 +34,58 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 
-/* ================= AUTH STATE ================= */
 
-onAuthStateChanged(auth, async (user)=>{
+/* CHỜ TRANG LOAD */
 
-const userSpan = document.getElementById("username");
-const helloBox = document.querySelector(".hello");
+window.addEventListener("DOMContentLoaded", () => {
 
-if(!user){
+  const userSpan = document.getElementById("usernameshow");
 
-if(helloBox){
-helloBox.style.display="none";
-}
-
-return;
-
-}
+  if (!userSpan) {
+    console.log("Không tìm thấy usernameshow");
+    return;
+  }
 
 
-/* ================= GET USER DATA ================= */
+  onAuthStateChanged(auth, async (user) => {
 
-try{
+    if (!user) {
+      console.log("Chưa đăng nhập");
+      userSpan.innerText = "bạn";
+      return;
+    }
 
-const ref = doc(db,"users",user.uid);
+    console.log("User UID:", user.uid);
 
-const snap = await getDoc(ref);
 
-if(snap.exists()){
+    try {
 
-const data = snap.data();
+      const ref = doc(db, "users", user.uid);
 
-if(userSpan){
-userSpan.innerText = data.username;
-}
+      const snap = await getDoc(ref);
 
-if(helloBox){
-helloBox.style.display="block";
-}
+      if (snap.exists()) {
 
-/* lưu cache */
+        const data = snap.data();
 
-localStorage.setItem("username",data.username);
-localStorage.setItem("role",data.role);
+        console.log("Firestore data:", data);
 
-}
+        userSpan.innerText = data.username || "user";
 
-}catch(err){
+      } else {
 
-console.log("Firestore error:",err);
+        console.log("Không tìm thấy document");
 
-}
+        userSpan.innerText = "user";
+
+      }
+
+    } catch (err) {
+
+      console.log("Lỗi Firestore:", err);
+
+    }
+
+  });
 
 });
