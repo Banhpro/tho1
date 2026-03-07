@@ -29,15 +29,11 @@ text-align:center;
 margin-bottom:30px;
 }
 
-/* input */
-
 input[type="text"]{
 width:100%;
 padding:10px;
 margin:10px 0;
 }
-
-/* row */
 
 .row{
 display:flex;
@@ -47,16 +43,12 @@ gap:20px;
 .left{flex:2;}
 .right{flex:1;}
 
-/* textarea */
-
 textarea{
 width:100%;
 height:220px;
 padding:10px;
 resize:vertical;
 }
-
-/* checkbox group */
 
 .checkbox-group{
 display:flex;
@@ -65,23 +57,17 @@ gap:8px;
 margin-top:10px;
 }
 
-/* mỗi dòng checkbox */
-
 .checkbox-row{
 display:flex;
 align-items:center;
 gap:10px;
 }
 
-/* ô nhập khác */
-
 .other-input{
 display:none;
 padding:6px;
 width:200px;
 }
-
-/* preview */
 
 .preview-img{
 max-width:200px;
@@ -94,8 +80,6 @@ audio{
 margin-top:10px;
 display:none;
 }
-
-/* button */
 
 button{
 padding:12px 20px;
@@ -122,8 +106,6 @@ pointer-events:none;
 
 <h2>Đăng bài thơ</h2>
 
-<!-- tên + font -->
-
 <div class="row">
 
 <div class="left">
@@ -140,63 +122,82 @@ pointer-events:none;
 
 <input type="text" id="fontContent" placeholder="Font nội dung bài thơ">
 
-<!-- THỂ THƠ -->
-
 <h3>Thể thơ</h3>
-
 <div id="theThoBox" class="checkbox-group"></div>
 
-<!-- THỂ LOẠI -->
-
 <h3>Thể loại</h3>
-
 <div id="theLoaiBox" class="checkbox-group"></div>
 
-<!-- AUDIO -->
-
 <h3>Âm thanh giọng đọc (mp3 < 20MB)</h3>
-
 <input type="file" id="audioFile" accept=".mp3">
-
 <br>
-
 <audio id="audioPreview" controls></audio>
 
-<!-- BACKGROUND -->
-
 <h3>Background (jpg)</h3>
-
 <input type="file" id="backgroundFile" accept=".jpg,.jpeg">
-
 <br>
-
 <img id="bgPreview" class="preview-img">
 
-<!-- IMAGE -->
-
 <h3>Ảnh đại diện (jpg)</h3>
-
 <input type="file" id="imageFile" accept=".jpg,.jpeg">
-
 <br>
-
 <img id="imgPreview" class="preview-img">
 
 <br><br>
 
 <button id="submitBtn">Gửi bài thơ</button>
-
 <button onclick="previewPoem()">Xem trước bài thơ</button>
 
 <p id="msg"></p>
 
 </div>
 
-<script>
+<script type="module">
 
-/* ================= LOAD CHECKBOX ================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getFirestore, collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
-function createCheckbox(container,data,type){
+const firebaseConfig={
+apiKey:"AIzaSyD5VotnEcZ6hQduMoF5AjL0024x1VTkEu4",
+authDomain:"banhkietgithunbpoem.firebaseapp.com",
+projectId:"banhkietgithunbpoem",
+storageBucket:"banhkietgithunbpoem.firebasestorage.app",
+messagingSenderId:"429631951698",
+appId:"1:429631951698:web:8c5f6854de3ad22113a08b"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const auth=getAuth(app);
+
+/* ================= CLOUDINARY UPLOAD ================= */
+
+async function uploadFile(file){
+
+if(!file) return "";
+
+const url="https://api.cloudinary.com/v1_1/dp6rc7ghq/upload";
+
+const formData=new FormData();
+formData.append("file",file);
+formData.append("upload_preset","uploadfilepoem");
+formData.append("resource_type","auto");
+
+const res=await fetch(url,{
+method:"POST",
+body:formData
+});
+
+const data=await res.json();
+
+return data.secure_url;
+
+}
+
+/* ================= CHECKBOX ================= */
+
+function createCheckbox(container,data){
 
 data.forEach(item=>{
 
@@ -213,198 +214,99 @@ label.innerText=item;
 row.appendChild(check);
 row.appendChild(label);
 
-/* nếu là Khác */
-
-if(item.toLowerCase()=="khác"){
-
-const input=document.createElement("input");
-input.type="text";
-input.placeholder="Nhập nội dung";
-input.className="other-input";
-
-row.appendChild(input);
-
-check.addEventListener("change",function(){
-
-const all=container.querySelectorAll("input[type=checkbox]");
-
-if(this.checked){
-
-all.forEach(c=>{
-if(c!==check) c.disabled=true;
-});
-
-input.style.display="block";
-
-}else{
-
-all.forEach(c=>c.disabled=false);
-
-input.style.display="none";
-
-}
-
-});
-
-}
-
 container.appendChild(row);
 
 });
 
 }
 
-createCheckbox(
-document.getElementById("theThoBox"),
-config.theTho
-);
-
-createCheckbox(
-document.getElementById("theLoaiBox"),
-config.theLoai
-);
-
-/* ================= AUDIO PREVIEW ================= */
-
-audioFile.onchange=function(){
-
-const file=this.files[0];
-
-if(!file) return;
-
-if(file.size>20*1024*1024){
-
-alert("Audio phải < 20MB");
-this.value="";
-return;
-
-}
-
-const url=URL.createObjectURL(file);
-
-audioPreview.src=url;
-audioPreview.style.display="block";
-
-};
-
-/* ================= IMAGE PREVIEW ================= */
-
-backgroundFile.onchange=function(){
-
-const file=this.files[0];
-
-if(!file) return;
-
-const url=URL.createObjectURL(file);
-
-bgPreview.src=url;
-bgPreview.style.display="block";
-
-};
-
-imageFile.onchange=function(){
-
-const file=this.files[0];
-
-if(!file) return;
-
-const url=URL.createObjectURL(file);
-
-imgPreview.src=url;
-imgPreview.style.display="block";
-
-};
+createCheckbox(document.getElementById("theThoBox"),config.theTho);
+createCheckbox(document.getElementById("theLoaiBox"),config.theLoai);
 
 /* ================= SUBMIT ================= */
 
-submitBtn.onclick=function(){
+submitBtn.onclick=async function(){
 
 this.classList.add("disabled");
 
-msg.innerText="Đã gửi bài thơ. Chờ admin duyệt.";
+msg.innerText="Đang upload file...";
 
-};
+try{
 
-/* ================= PREVIEW ================= */
+const user=auth.currentUser;
 
-function previewPoem(){
+if(!user){
+msg.innerText="Bạn chưa đăng nhập";
+return;
+}
+
+/* lấy email + role */
+
+const userDoc=await getDoc(doc(db,"users",user.uid));
+const userData=userDoc.data();
+
+const email=userData.email;
+const role=userData.role;
+
+/* upload file */
+
+const back_img=await uploadFile(backgroundFile.files[0]);
+const image=await uploadFile(imageFile.files[0]);
+const audio=await uploadFile(audioFile.files[0]);
+
+/* lấy dữ liệu input */
 
 const title=document.getElementById("title").value;
 const content=document.getElementById("content").value;
+const fontTitle=document.getElementById("fontTitle").value;
+const fontContent=document.getElementById("fontContent").value;
 
-const fontTitle=document.getElementById("fontTitle").value||"serif";
-const fontContent=document.getElementById("fontContent").value||"serif";
+/* thể loại */
 
-const bgFile=backgroundFile.files[0];
-const imgFile=imageFile.files[0];
-const audioFile2=audioFile.files[0];
+let theLoai="";
+document.querySelectorAll("#theLoaiBox input:checked")
+.forEach(el=> theLoai=el.value);
 
-let bgURL="";
-let imgURL="";
-let audioURL="";
+/* thể thơ */
 
-if(bgFile) bgURL=URL.createObjectURL(bgFile);
-if(imgFile) imgURL=URL.createObjectURL(imgFile);
-if(audioFile2) audioURL=URL.createObjectURL(audioFile2);
+let theTho="";
+document.querySelectorAll("#theThoBox input:checked")
+.forEach(el=> theTho=el.value);
 
-const win=window.open();
+/* lưu firebase */
 
-win.document.write(`
+await addDoc(collection(db,"uploads"),{
 
-<html>
+email:email,
+role:role,
 
-<head>
+title:title,
+content:content,
 
-<link rel="stylesheet" href="../../css/unit.css">
+fontTitle:fontTitle,
+fontContent:fontContent,
 
-<style>
+theLoai:theLoai,
+theTho:theTho,
 
-body{
-background:url('${bgURL}') center/cover no-repeat;
-}
+back_img:back_img,
+image:image,
+audio:audio,
 
-#poem-title{
-font-family:${fontTitle};
-}
+created:Date.now()
 
-#poem-content{
-font-family:${fontContent};
-white-space:pre-wrap;
-}
+});
 
-.poem-image{
-background-image:url('${imgURL}');
-}
+msg.innerText="Đã gửi bài thơ. Chờ admin duyệt.";
 
-</style>
+}catch(e){
 
-</head>
-
-<body>
-
-<div class="container">
-
-<div class="poem-box">
-
-<div id="poem-title">${title}</div>
-
-<pre id="poem-content">${content}</pre>
-
-${audioURL ? `<audio controls src="${audioURL}"></audio>`:""}
-
-</div>
-
-<div class="poem-image"></div>
-
-</div>
-
-</body>
-
-</html>
-
-`);
+console.error(e);
+msg.innerText="Upload lỗi";
 
 }
+
+};
 
 </script>
 
