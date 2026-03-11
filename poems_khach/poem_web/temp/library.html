@@ -184,7 +184,8 @@
             background: #ffe66d;
             border-radius: 50%;
             opacity: 0.8;
-            animation: fly 6s linear infinite;
+            box-shadow: 0 0 10px #ffe66d;
+            animation: fly 10s linear infinite;
         }
 
         @keyframes fly {
@@ -506,6 +507,26 @@
             color: #4c5cff;
 
         }
+
+        .reply {
+            margin-left: 30px;
+            margin-top: 8px;
+            padding: 8px 10px;
+            background: #f5f1ff;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .reply-head {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .reply-actions {
+            margin-top: 4px;
+        }
     </style>
 
 </head>
@@ -617,11 +638,71 @@
         </div>
 
     </div>
-    <script>
-        let typeTimers = [];
-        /* ================= USER ================= */
-        const username = "NguyenBanh";
 
+    <script type="module">
+
+        import { initializeApp }
+            from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+
+        import {
+            getFirestore,
+            doc,
+            getDoc
+        }
+            from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+        import { getAuth, onAuthStateChanged }
+            from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD5VotnEcZ6hQduMoF5AjL0024x1VTkEu4",
+            authDomain: "banhkietgithunbpoem.firebaseapp.com",
+            projectId: "banhkietgithunbpoem",
+            storageBucket: "banhkietgithunbpoem.firebasestorage.app",
+            messagingSenderId: "429631951698",
+            appId: "1:429631951698:web:8c5f6854de3ad22113a08b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let username = "Khách";
+        let currentUser = null;
+
+        onAuthStateChanged(auth, async (user) => {
+
+            if (user) {
+
+                currentUser = user;
+
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+
+                    const data = userSnap.data();
+
+                    username = data.username || "Khách";
+
+                }
+
+                console.log("Đăng nhập:", username);
+
+            }
+
+            else {
+
+                currentUser = null;
+                username = "Khách";
+
+                console.log("Chưa đăng nhập");
+
+            }
+
+        });
+        let typeTimers = [];
         /* ================= COMMENT MODE ================= */
         let commentMode = false;
         let lines = document.querySelectorAll(".line");
@@ -740,6 +821,7 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
             localStorage.setItem("lineComments", JSON.stringify(data));
 
         }
+
         function attachEvents(list, index) {
 
             list.querySelectorAll(".deleteBtn").forEach(btn => {
@@ -827,6 +909,7 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
         const superBtn = document.getElementById("superMode");
         const audio = document.getElementById("poemAudio");
         const musicBox = document.getElementById("musicControl");
+        musicBox.style.display = "none";
         let fireflies = [];
 
         superBtn.onclick = () => {
@@ -842,6 +925,10 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
             toggleBtn.classList.toggle("disabled", active);
 
             commentMode = false;
+
+            lines.forEach(line => {
+                line.classList.remove("hover");
+            });
 
             toggleBtn.innerText = "💬 Bật comment theo dòng";
 
@@ -1067,25 +1154,36 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
 
         function sendEchoComment() {
 
-            if (!echoInput.value.trim()) return;
+            if (username === "Khách") {
+                alert("Bạn cần đăng nhập để bình luận");
+                return;
+            }
 
-            createComment(username, echoInput.value);
+            const text = echoInput.value.trim();
 
-            echoInput.value = "";
+            if (!text) return;
 
-            saveEcho();
+            createComment(username, text);
+
+            echoInput.value = "";   // xóa textarea
 
         }
 
         function createComment(user, text, save = true) {
-
+            if (username === "Khách") {
+                alert("Bạn cần đăng nhập để bình luận");
+                return;
+            }
             const div = document.createElement("div");
             div.className = "echo-comment";
+            div.dataset.user = username;   // thêm dòng này
             const now = new Date();
             const time = now.toLocaleString();
             div.innerHTML = `
-<a class="username" href="profile.html?user=${user}">${user}</a>
+            <div class="echo-comment">
+<a href="profile_cmt.html?username=${username}" class="username"> ${username} </a>
 <small>${time}</small>
+</div>
 <div class="echo-text"></div>
 
 <div class="echo-actions">
@@ -1126,6 +1224,13 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
             /* delete comment */
 
             div.querySelector(".deleteBtn").onclick = () => {
+
+                const owner = div.dataset.user;
+
+                if (username !== owner) {
+                    alert("Bạn không thể xóa bình luận của người khác");
+                    return;
+                }
 
                 if (confirm("Xóa bình luận này?")) {
 
@@ -1195,19 +1300,26 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
 
         }
         function createLineComment(list, text, lineIndex) {
-
+            if (username === "Khách") {
+                alert("Bạn cần đăng nhập để bình luận");
+                return;
+            }
             const div = document.createElement("div");
             div.className = "echo-comment";
             const now = new Date();
             const time = now.toLocaleString();
             div.innerHTML = `
-<a class="username" href="profile.html?user=${username}">${username}</a>
+            <div class="echo-comment">
+<a href="profile_cmt.html?username=${username}" class="username"> ${username} </a>
 <small>${time}</small>
+</div>
 <div class="echo-text"></div>
 
 <div class="echo-actions">
 <button class="replyBtn">Phản hồi</button>
+
 <button class="deleteBtn">Xóa</button>
+
 <button class="likeBtn">❤️ 0</button>
 </div>
 
@@ -1297,32 +1409,56 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
 
             const r = document.createElement("div");
             r.className = "reply";
+
             const now = new Date();
             const time = now.toLocaleString();
+
             r.innerHTML = `
-<a class="username" href="profile.html?user=${username}">${username}</a>
+
+<div class="reply-head">
+
+<a href="profile_cmt.html?username=${username}" class="username">
+${username}
+</a>
+
 <small>${time}</small>
-<div class="echo-text"></div>
+
+</div>
+
+<div class="echo-text">${text}</div>
+
+<div class="reply-actions">
 
 <button class="replyBtn">Phản hồi</button>
 <button class="deleteBtn">Xóa</button>
 
+</div>
+
 <div class="replyBox"></div>
+
 `;
-            r.querySelector(".echo-text").innerText = text;
+
             parent.appendChild(r);
 
             const replyBox = r.querySelector(".replyBox");
 
+            /* reply tiếp */
+
             r.querySelector(".replyBtn").onclick = () => {
+
+                if (replyBox.querySelector(".replyInput")) return;
 
                 const wrap = document.createElement("div");
 
                 wrap.innerHTML = `
-<textarea class="inputBox replyInput" rows="2"></textarea><button class="sendBtn">Gửi</button>
+<textarea class="inputBox replyInput" rows="2"
+placeholder="Viết phản hồi... (Ctrl+Enter để gửi)"></textarea>
+
+<button class="sendBtn">Gửi</button>
 `;
 
                 replyBox.appendChild(wrap);
+
                 const input = wrap.querySelector("textarea");
 
                 input.addEventListener("keydown", e => {
@@ -1331,8 +1467,9 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
 
                         e.preventDefault();
 
-                        const val = input.value;
-                        if (!val.trim()) return;
+                        const val = input.value.trim();
+
+                        if (!val) return;
 
                         createReply(replyBox, val);
 
@@ -1343,10 +1480,12 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
                     }
 
                 });
+
                 wrap.querySelector(".sendBtn").onclick = () => {
 
-                    const val = wrap.querySelector("textarea").value;
-                    if (!val.trim()) return;
+                    const val = input.value.trim();
+
+                    if (!val) return;
 
                     createReply(replyBox, val);
 
@@ -1357,6 +1496,8 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
                 };
 
             };
+
+            /* delete */
 
             r.querySelector(".deleteBtn").onclick = () => {
 
@@ -1382,18 +1523,8 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
 
             localStorage.setItem("soTho", JSON.stringify(saved));
 
-            alert("Đã lưu vào sổ thơ cá nhân");
-
+            alert("Đã lưu vào sổ thơ cá nhân 📔");
         };
-        function saveEcho() {
-
-            localStorage.setItem(
-                "echoComments",
-                echoList.innerHTML
-            );
-
-        }
-
         function loadEcho() {
 
             const data = localStorage.getItem("echoComments");
@@ -1408,9 +1539,17 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
 
                     btn.onclick = () => {
 
+                        const comment = btn.closest(".echo-comment");
+                        const owner = comment.dataset.user;
+
+                        if (username !== owner) {
+                            alert("Bạn không thể xóa bình luận của người khác");
+                            return;
+                        }
+
                         if (confirm("Xóa bình luận này?")) {
 
-                            btn.closest(".echo-comment,.reply").remove();
+                            comment.remove();
                             saveEcho();
 
                         }
@@ -1483,9 +1622,6 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
             }
 
         }
-
-
-
         function loadLineComments() {
 
             let saved = {};
@@ -1546,8 +1682,18 @@ placeholder="Viết bình luận cho dòng này..."></textarea>
 
         toggleBtn.classList.remove("active");
         toggleBtn.innerText = "💬 Bật comment theo dòng";
+        console.log("Username từ URL:", username);
+        function saveEcho() {
+
+            localStorage.setItem(
+                "echoComments",
+                echoList.innerHTML
+            );
+
+        }
+
     </script>
-    <script src="../../../main_js/iframe.js"></script>
+    <script src="iframe.js"></script>
 
 </body>
 
