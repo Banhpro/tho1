@@ -623,11 +623,7 @@
         import { initializeApp }
             from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 
-        import {
-            getFirestore,
-            doc,
-            getDoc
-        }
+        import { getFirestore }
             from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
         import { getAuth, onAuthStateChanged }
@@ -650,28 +646,19 @@
         let username = "Khách";
         let currentUser = null;
 
-        onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(auth, (user) => {
 
             if (user) {
 
                 currentUser = user;
 
-                const userRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userRef);
-
-                if (userSnap.exists()) {
-
-                    const data = userSnap.data();
-
-                    username = data.username || "Khách";
-
-                }
+                username =
+                    user.displayName ||
+                    user.email.split("@")[0];
 
                 console.log("Đăng nhập:", username);
 
-            }
-
-            else {
+            } else {
 
                 currentUser = null;
                 username = "Khách";
@@ -800,7 +787,6 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
             localStorage.setItem("lineComments", JSON.stringify(data));
 
         }
-
         function attachEvents(list, index) {
 
             list.querySelectorAll(".deleteBtn").forEach(btn => {
@@ -888,7 +874,6 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
         const superBtn = document.getElementById("superMode");
         const audio = document.getElementById("poemAudio");
         const musicBox = document.getElementById("musicControl");
-        musicBox.style.display = "none";
         let fireflies = [];
 
         superBtn.onclick = () => {
@@ -1128,19 +1113,17 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
         });
 
         function sendEchoComment() {
-
             if (username === "Khách") {
                 alert("Bạn cần đăng nhập để bình luận");
                 return;
             }
+            if (!echoInput.value.trim()) return;
 
-            const text = echoInput.value.trim();
+            createComment(username, echoInput.value);
 
-            if (!text) return;
+            echoInput.value = "";
 
-            createComment(username, text);
-
-            echoInput.value = "";   // xóa textarea
+            saveEcho();
 
         }
 
@@ -1151,14 +1134,11 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
             }
             const div = document.createElement("div");
             div.className = "echo-comment";
-            div.dataset.user = username;   // thêm dòng này
             const now = new Date();
             const time = now.toLocaleString();
             div.innerHTML = `
-            <div class="echo-comment">
-<a href="profile_cmt.html?username=${username}" class="username"> ${username} </a>
+<a class="username" href="profile.html?username=${username}">${user}</a>
 <small>${time}</small>
-</div>
 <div class="echo-text"></div>
 
 <div class="echo-actions">
@@ -1199,13 +1179,6 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
             /* delete comment */
 
             div.querySelector(".deleteBtn").onclick = () => {
-
-                const owner = div.dataset.user;
-
-                if (username !== owner) {
-                    alert("Bạn không thể xóa bình luận của người khác");
-                    return;
-                }
 
                 if (confirm("Xóa bình luận này?")) {
 
@@ -1284,17 +1257,13 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
             const now = new Date();
             const time = now.toLocaleString();
             div.innerHTML = `
-            <div class="echo-comment">
-<a href="profile_cmt.html?username=${username}" class="username"> ${username} </a>
+<a class="username" href="profile.html?username=${username}">${user}</a>
 <small>${time}</small>
-</div>
 <div class="echo-text"></div>
 
 <div class="echo-actions">
 <button class="replyBtn">Phản hồi</button>
-
 <button class="deleteBtn">Xóa</button>
-
 <button class="likeBtn">❤️ 0</button>
 </div>
 
@@ -1387,9 +1356,7 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
             const now = new Date();
             const time = now.toLocaleString();
             r.innerHTML = `
-
-<a href="profile_cmt.html?username=${username}"> ${username} </a>
-
+<a class="username" href="profile.html?username=${username}">${username}</a>
 <small>${time}</small>
 <div class="echo-text"></div>
 
@@ -1473,6 +1440,7 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
 
             alert("Đã lưu vào sổ thơ cá nhân 📔");
         };
+
         function loadEcho() {
 
             const data = localStorage.getItem("echoComments");
@@ -1487,17 +1455,9 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
 
                     btn.onclick = () => {
 
-                        const comment = btn.closest(".echo-comment");
-                        const owner = comment.dataset.user;
-
-                        if (username !== owner) {
-                            alert("Bạn không thể xóa bình luận của người khác");
-                            return;
-                        }
-
                         if (confirm("Xóa bình luận này?")) {
 
-                            comment.remove();
+                            btn.closest(".echo-comment,.reply").remove();
                             saveEcho();
 
                         }
@@ -1570,6 +1530,9 @@ placeholder="Viết bình luận cho dòng này... (Ctrl + Enter để gửi)"><
             }
 
         }
+
+
+
         function loadLineComments() {
 
             let saved = {};
@@ -1631,15 +1594,7 @@ placeholder="Viết bình luận cho dòng này..."></textarea>
         toggleBtn.classList.remove("active");
         toggleBtn.innerText = "💬 Bật comment theo dòng";
         console.log("Username từ URL:", username);
-        function saveEcho() {
-
-            localStorage.setItem(
-                "echoComments",
-                echoList.innerHTML
-            );
-
-        }
-
+        
     </script>
     <script src="iframe.js"></script>
 
