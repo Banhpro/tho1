@@ -99,7 +99,7 @@
 
         /* ================= BUTTONS ================= */
 
-        
+
         #toggleComment {
             background: #e6eaff;
         }
@@ -277,6 +277,7 @@
         }
 
         /* ================= POEM ================= */
+
         /* Thêm hover cho các ký tự trong dòng khi bật comment */
         .line span {
             transition: color 0.3s ease;
@@ -715,24 +716,24 @@
 
         async function deleteCommentTree(commentId) {
 
-    const q = query(
-        collection(db, "super_poem", poemID, "comment"),
-        where("parent", "==", commentId)
-    );
+            const q = query(
+                collection(db, "super_poem", poemID, "comment"),
+                where("parent", "==", commentId)
+            );
 
-    const snap = await getDocs(q);
+            const snap = await getDocs(q);
 
-    for (const d of snap.docs) {
+            for (const d of snap.docs) {
 
-        await deleteCommentTree(d.id);
+                await deleteCommentTree(d.id);
 
-    }
+            }
 
-    await deleteDoc(
-        doc(db, "super_poem", poemID, "comment", commentId)
-    );
+            await deleteDoc(
+                doc(db, "super_poem", poemID, "comment", commentId)
+            );
 
-}
+        }
         reactBtns.forEach(btn => {
 
             btn.onclick = async () => {
@@ -816,7 +817,7 @@
 
 
         /* Hiển thị dư âm */
- 
+
         /*Hiển thị cmt theo dòng */
         /* Reply cmt */
         async function createReply(text, parent, lineIndex = null) {
@@ -1111,8 +1112,7 @@ ${data.username}
 
 <button class="likeBtn">❤️ ${data.hearts || 0}</button>
 <button class="replyBtn">Phản hồi</button>
-<button class="deleteBtn">Xóa</button>
-
+<button class="deleteBtn" title="Chỉ tác giả hoặc admin mới được xóa">Xóa</button>
 <div class="replyList"></div>
 `;
         }
@@ -1284,6 +1284,7 @@ ${data.username}
 
         }
         console.log("poemID:", poemID);
+        loadComments();
         const reactionRef = collection(db, "super_poem", poemID, "reactions");
 
         onSnapshot(reactionRef, (snap) => {
@@ -1395,14 +1396,27 @@ ${data.username}
 
             if (deleteBtn) {
 
-                deleteBtn.onclick = async () => {
-                    if (username !== comment.username && username !== "admin") return;
+                /* nếu không phải chủ comment và không phải admin */
 
-                    if (!confirm("Bạn chắc chắn muốn xóa?")) return;
+                if (username !== comment.username && username !== "admin") {
 
-                    await deleteCommentTree(comment.id);
+                    deleteBtn.style.opacity = "0.4";
+                    deleteBtn.style.cursor = "not-allowed";
+                    deleteBtn.disabled = true;
+
+                } else {
+
+                    deleteBtn.onclick = async () => {
+
+                        if (!confirm("Bạn chắc chắn muốn xóa?")) return;
+
+                        await deleteCommentTree(comment.id);
+
+                    };
+
                 }
-            };
+
+            }
 
             /* like */
 
@@ -1501,14 +1515,27 @@ ${data.username}
 
             if (deleteBtn) {
 
-                deleteBtn.onclick = async () => {
-                    if (username !== comment.username && username !== "admin") return;
+                /* nếu không phải chủ comment và không phải admin */
 
-                    if (!confirm("Bạn chắc chắn muốn xóa?")) return;
+                if (username !== comment.username && username !== "admin") {
 
-                    await deleteCommentTree(comment.id);
+                    deleteBtn.style.opacity = "0.4";
+                    deleteBtn.style.cursor = "not-allowed";
+                    deleteBtn.disabled = true;
+
+                } else {
+
+                    deleteBtn.onclick = async () => {
+
+                        if (!confirm("Bạn chắc chắn muốn xóa?")) return;
+
+                        await deleteCommentTree(comment.id);
+
+                    };
+
                 }
-            };
+
+            }
 
             /* like */
 
@@ -1549,7 +1576,6 @@ ${data.username}
         }
 
         function loadComments() {
-            if (!commentMode) return;
             if (unsubscribeComments) unsubscribeComments();
             if (commentMode) {
                 document.querySelector(".container").appendChild(loadingBox);
