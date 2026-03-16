@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Bức tường cảm xúc</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f2f2f2;
+text-align:center;
+padding:40px;
+}
+
+.card{
+background:white;
+padding:20px;
+margin:20px auto;
+border-radius:10px;
+width:500px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.reply{
+margin-top:10px;
+font-size:14px;
+color:#555;
+}
+
+input{
+width:80%;
+padding:8px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+button{
+padding:6px 12px;
+border:none;
+border-radius:5px;
+background:#66a6ff;
+color:white;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>Bức tường cảm xúc 💙</h2>
+
+<div id="wall"></div>
+
+<script>
+
+let list=JSON.parse(localStorage.getItem("feelings")||"[]")
+
+let wall=document.getElementById("wall")
+
+list.forEach((item,index)=>{
+
+let div=document.createElement("div")
+
+div.className="card"
+
+let repliesHTML=""
+
+item.replies.forEach(r=>{
+repliesHTML+="<div class='reply'>💬 "+r+"</div>"
+})
+
+div.innerHTML=`
+
+<h3>${item.text}</h3>
+<p>${item.time}</p>
+
+<input id="r${index}" placeholder="Gửi lời động viên...">
+
+<button onclick="reply(${index})">Gửi</button>
+
+<div>${repliesHTML}</div>
+
+`
+
+wall.appendChild(div)
+
+})
+
+function reply(i){
+
+let input=document.getElementById("r"+i)
+
+let msg=input.value
+
+if(msg=="") return
+
+let list=JSON.parse(localStorage.getItem("feelings"))
+
+list[i].replies.push(msg)
+
+localStorage.setItem("feelings",JSON.stringify(list))
+
+location.reload()
+
+}
+
+</script>
+
+</body>
+</html>
