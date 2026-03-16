@@ -23,6 +23,39 @@
             text-shadow: 0 0 8px #ffd54f;
         }
 
+        .fill.me {
+
+            background: linear-gradient(90deg,
+                    red,
+                    orange,
+                    yellow,
+                    green,
+                    cyan,
+                    blue,
+                    violet);
+
+            background-size: 300% 300%;
+
+            animation: rainbowBar 4s linear infinite;
+
+        }
+
+        @keyframes rainbowBar {
+
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+
+        }
+
         /* ================= CONTAINER ================= */
 
         .container {
@@ -50,10 +83,13 @@
             text-align: center;
             margin-bottom: 25px;
             white-space: pre-wrap;
-            text-shadow:
-                0 2px 4px rgba(0, 0, 0, 0.8),
-                0 0 10px rgba(0, 0, 0, 0.6);
 
+            color: #ffeaa7;
+
+            text-shadow:
+                0 3px 10px rgba(0, 0, 0, 0.9),
+                0 0 12px rgba(255, 234, 167, 0.7),
+                0 0 20px rgba(255, 234, 167, 0.4);
         }
 
         /* ================= POEM ================= */
@@ -1005,7 +1041,7 @@
                 titleEl.innerText = data.title || "";
 
                 /* font tiêu đề */
-                
+
 
                 /* load poem */
 
@@ -1555,11 +1591,19 @@ ${data.username}
             lines.forEach(line => {
 
                 if (line.dataset.original) {
-                    line.innerText = line.dataset.original;
+
+                    line.innerHTML = `
+                <span class="line-text">${line.dataset.original}</span>
+                <span class="line-heart">❤️ 0</span>
+            `;
+
                 }
 
             });
 
+            /* gắn lại listener + load lại heart */
+            bindLineHearts();
+            initLineHearts();
         }
 
         /* dom dom*/
@@ -1615,7 +1659,13 @@ ${data.username}
                 const bar = document.getElementById("bar-" + type);
                 const avatarBox = document.getElementById("avatar-" + type);
 
+                bar.classList.remove("me");
+
                 const list = stats[type];
+
+                if (list.includes(username)) {
+                    bar.classList.add("me");
+                }
 
                 const percent = total ? (list.length / total) * 100 : 0;
 

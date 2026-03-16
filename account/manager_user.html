@@ -80,70 +80,79 @@
             background: #e3f2fd;
             color: #1565c0;
         }
+
         #loading {
 
-position: fixed;
+            position: fixed;
 
-top: 0;
-left: 0;
+            top: 0;
+            left: 0;
 
-width: 100%;
-height: 100%;
+            width: 100%;
+            height: 100%;
 
-display: flex;
-flex-direction: column;
+            display: flex;
+            flex-direction: column;
 
-align-items: center;
-justify-content: center;
+            align-items: center;
+            justify-content: center;
 
-text-align: center;
+            text-align: center;
 
-background: #f4f4f4;
+            background: #f4f4f4;
 
-color: #1c6dd0;
+            color: #1c6dd0;
 
-z-index: 9999;
+            z-index: 9999;
 
-}
+        }
 
-.loading-title {
+        .loading-title {
 
-font-size: 28px;
-font-weight: bold;
+            font-size: 28px;
+            font-weight: bold;
 
-}
+        }
 
-.loading-dots span {
-animation: blink 1.4s infinite;
-}
+        .loading-dots span {
+            animation: blink 1.4s infinite;
+        }
 
-@keyframes blink {
+        @keyframes blink {
 
-0% {opacity:0.2}
-50% {opacity:1}
-100% {opacity:0.2}
+            0% {
+                opacity: 0.2
+            }
 
-}
+            50% {
+                opacity: 1
+            }
 
-.loading-sub {
+            100% {
+                opacity: 0.2
+            }
 
-margin-top:10px;
-font-size:14px;
+        }
 
-}
+        .loading-sub {
+
+            margin-top: 10px;
+            font-size: 14px;
+
+        }
     </style>
 </head>
 
 <body>
-<div id="loading" class="loading-title">
-    <span class="loading-dots">
-        📜 Đang tải dữ liệu <span>.</span><span>.</span><span>.</span>
-    </span>
+    <div id="loading" class="loading-title">
+        <span class="loading-dots">
+            📜 Đang tải dữ liệu <span>.</span><span>.</span><span>.</span>
+        </span>
 
-    <div class="loading-sub">
-        Bành pro đang lục lại danh sách thành viên. Web lỏ đợi tí nha ...
+        <div class="loading-sub">
+            Bành pro đang lục lại danh sách thành viên. Web lỏ đợi tí nha ...
+        </div>
     </div>
-</div>
     <h2>Quản lý thành viên</h2>
 
     <table>
@@ -166,7 +175,7 @@ font-size:14px;
 
     </table>
 
-
+    <script src="../poems/js/poems-data.js"></script>
     <script type="module">
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
@@ -206,6 +215,10 @@ font-size:14px;
 
         async function getPoemCount(username) {
 
+            let count = 0;
+
+            /* ===== thơ user ===== */
+
             const q = query(
                 collection(db, "uploads"),
                 where("username", "==", username)
@@ -213,11 +226,49 @@ font-size:14px;
 
             const snap = await getDocs(q);
 
-            return snap.size;
+            count += snap.size;
+
+            /* ===== thơ hệ thống (admin) ===== */
+
+            if (username === "Bành") {
+
+                const list = window.poems || [];
+
+                count += list.length;
+
+            }
+
+            return count;
+
+        }
+        async function getAllPoemCounts() {
+
+            const snapshot = await getDocs(collection(db, "uploads"));
+
+            const counts = {};
+
+            snapshot.forEach(doc => {
+
+                const data = doc.data();
+                const username = (data.username || "").toLowerCase();
+
+                if (!counts[username]) {
+                    counts[username] = 0;
+                }
+
+                counts[username]++;
+
+            });
+
+            /* cộng thêm thơ hệ thống */
+
+
+
+            return counts;
 
         }
         async function loadUsers() {
-
+            const poemCounts = await getAllPoemCounts();
             const snapshot = await getDocs(collection(db, "users"));
 
             const table = document.getElementById("userTable");
@@ -250,11 +301,17 @@ font-size:14px;
                 let roleText = user.role;
 
                 const roleHTML = `<span class="role">${roleText}</span>`;
+                let poemCount;
 
-                const poemCount = await getPoemCount(user.username);
+                if (user.role === "admin") {
 
-                /* user hiện tại */
+                    poemCount = (window.poems || []).length;
 
+                } else {
+
+                    poemCount = poemCounts[(user.username || "").toLowerCase()] || 0;
+
+                }
                 if (user.uid === currentUID) {
 
                     rowClass = "me";
@@ -315,7 +372,7 @@ ${user.username}
             }
 
 
-document.getElementById("loading").style.display = "none";
+            document.getElementById("loading").style.display = "none";
         }
 
 

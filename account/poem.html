@@ -46,6 +46,7 @@
             position: absolute;
             top: -25px;
             left: -10px;
+            z-index: 999;
         }
 
         .back-btn img {
@@ -127,6 +128,7 @@
             overflow: hidden;
             opacity: 0;
             transition: all 0.35s ease;
+            pointer-events: none;
         }
 
         .audio-player.show {
@@ -134,6 +136,7 @@
             opacity: 1;
             display: flex;
             align-items: center;
+            pointer-events: auto;
         }
 
         .audio-icon {
@@ -189,17 +192,88 @@
             color: #555;
             min-width: 60px;
         }
+
+        #loading {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+
+            background: #f4f4f4;
+
+            color: #1c6dd0;
+
+            z-index: 9999;
+
+        }
+
+        .loading-title {
+
+            font-size: 28px;
+            font-weight: bold;
+
+        }
+
+        .loading-sub {
+
+            margin-top: 10px;
+            font-size: 15px;
+            color: #666;
+
+        }
+
+        .loading-dots span {
+
+            animation: blink 1.4s infinite;
+
+        }
+
+        @keyframes blink {
+
+            0%,
+            80%,
+            100% {
+                opacity: 0;
+            }
+
+            40% {
+                opacity: 1;
+            }
+
+        }
     </style>
 </head>
 
 <body>
+    <div id="loading" class="loading-title">
 
+        <span class="loading-dots">
+            📜 Đang tải dữ liệu <span>.</span><span>.</span><span>.</span>
+        </span>
+
+        <div class="loading-sub">
+            Bành đang đắp nội dung thơ của bài này. Web lỏ đợi tí nha ...
+        </div>
+
+    </div>
     <div class="container">
 
         <div class="poem-box">
 
             <a id="backBtn" class="back-btn">
-                <img src="icon.jpg">
+                <img src="../poems/icon.jpg">
             </a>
 
             <div id="poem-title"></div>
@@ -232,14 +306,20 @@
         <div class="poem-image" id="poemImage"></div>
 
     </div>
-
+    <script src="../poems/js/poems-data.js"></script>
     <script type="module">
-        import { getAuth, onAuthStateChanged }
-            from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
-        /* firebase */
+        /* ================= FIREBASE ================= */
+
+        import { initializeApp }
+            from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+
+        import { getAuth }
+            from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+
+        import { getFirestore, doc, getDoc }
+            from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
 
         const firebaseConfig = {
             apiKey: "AIzaSyD5VotnEcZ6hQduMoF5AjL0024x1VTkEu4",
@@ -250,183 +330,271 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        /* lấy id */
+
+
+        /* ================= PARAMS ================= */
 
         const params = new URLSearchParams(window.location.search);
-        const poemId = params.get("id");
 
-        /* load poem */
+        const poemId = params.get("id");     // firebase
+        const poemName = params.get("name"); // folder
 
-        async function loadPoem() {
+        const POEM_BASE = "../poems/";
 
-            if (!poemId) return;
 
-            const ref = doc(db, "uploads", poemId);
-            const snap = await getDoc(ref);
+        /* ================= ELEMENT ================= */
 
-            if (!snap.exists()) return;
+        const title = document.getElementById("poem-title");
+        const content = document.getElementById("poem-content");
+        const image = document.getElementById("poemImage");
 
-            const data = snap.data();
+        const audio = document.getElementById("audio");
+        const audioIcon = document.getElementById("audioIcon");
+        const player = document.getElementById("player");
+        const playBtn = document.getElementById("playBtn");
 
-            /* set link back */
+        const progressContainer = document.getElementById("progressContainer");
+        const progress = document.getElementById("progress");
 
-            onAuthStateChanged(auth, async (user) => {
+        const time = document.getElementById("time");
 
-                if (!user) {
 
-                    /* chưa đăng nhập → giữ logic cũ */
+        /* ================= FORMAT TIME ================= */
 
-                    document.getElementById("backBtn").href =
-                        "profile.html?username=" + data.username;
+        function formatTime(sec) {
 
-                    return;
-                }
+            if (!sec) return "00:00";
 
-                const refUser = doc(db, "users", user.uid);
-                const snapUser = await getDoc(refUser);
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
 
-                if (!snapUser.exists()) return;
-
-                const currentUsername = snapUser.data().username;
-
-                /* nếu là chính mình */
-
-                if (currentUsername === data.username) {
-
-                    document.getElementById("backBtn").href =
-                        "personal_profile.html";
-
-                }
-
-                else {
-
-                    document.getElementById("backBtn").href =
-                        "profile.html?username=" + data.username;
-
-                }
-
-            });
-            /* title */
-
-            const title = document.getElementById("poem-title");
-            title.innerText = data.title || "";
-
-            /* content */
-
-            const content = document.getElementById("poem-content");
-            content.textContent = data.content || "";
-
-            /* font */
-
-            if (data.fontTitle) title.style.fontFamily = data.fontTitle;
-            if (data.fontContent) content.style.fontFamily = data.fontContent;
-
-            /* background */
-
-            if (data.back_img) {
-                document.body.style.backgroundImage = `url(${data.back_img})`;
-            }
-
-            /* image */
-
-            if (data.image) {
-                document.getElementById("poemImage").style.backgroundImage = `url(${data.image})`;
-            }
-
-            /* audio */
-
-            if (data.audio) {
-                document.getElementById("audio").src = data.audio;
-            }
+            return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 
         }
 
-        loadPoem();
+
+        /* ================= LOAD POEM ================= */
+
+        async function loadPoem() {
+
+            console.log("LOAD POEM");
+
+            /* ===== ADMIN MODE ===== */
+
+            if (poemName) {
+
+                console.log("ADMIN MODE:", poemName);
+
+                const list = window.poems || [];
+                const data = list.find(p => p.name === poemName);
+
+                if (!data) {
+                    console.error("KHÔNG TÌM THẤY POEM");
+                    return;
+                }
+
+                title.innerText = data.title || "";
+
+                /* ===== LOAD FILE HTML ===== */
+
+                const filePath = POEM_BASE + data.file;
+
+                const res = await fetch(filePath);
+                const html = await res.text();
+
+                const parser = new DOMParser();
+                const parsedHTML = parser.parseFromString(html, "text/html");
+
+                const poemText = parsedHTML.querySelector("#poem-content");
+
+                if (poemText) {
+                    content.textContent = poemText.textContent;
+                }
+
+                /* ===== IMAGE ===== */
+
+                if (data.image) {
+
+                    const imgPath = POEM_BASE + data.image;
+                    image.style.backgroundImage = `url(${imgPath})`;
+
+                }
+
+                /* ===== BACKGROUND ===== */
+
+                const bgPath = POEM_BASE + "list_poem/" + poemName + "/background.jpg";
+
+                document.body.style.backgroundImage = `url(${bgPath})`;
+
+                /* ===== AUDIO ===== */
+
+                const audioPath =
+                    POEM_BASE + "list_poem/" + poemName + "/audio.mp3";
+
+                audio.src = audioPath;
+                audio.load();
+
+                //   audioIcon.style.display = "inline-block";
+
+                return;
+
+            }
+
+
+            /* ===== FIREBASE MODE ===== */
+
+            if (poemId) {
+
+                console.log("FIREBASE MODE:", poemId);
+
+                const ref = doc(db, "uploads", poemId);
+                const snap = await getDoc(ref);
+
+                if (!snap.exists()) {
+                    console.error("KHÔNG TÌM THẤY POEM FIREBASE");
+                    return;
+                }
+
+                const data = snap.data();
+
+                title.innerText = data.title || "";
+                content.textContent = data.content || "";
+
+                if (data.image) {
+                    image.style.backgroundImage = `url(${data.image})`;
+                }
+
+                if (data.back_img) {
+                    document.body.style.backgroundImage =
+                        `url(${data.back_img})`;
+                }
+
+                if (data.audio) {
+
+                    audio.src = data.audio;
+                    audio.load();
+
+                    audioIcon.style.display = "inline-block";
+
+                }
+
+            }
+        }
+
 
         /* ================= AUDIO PLAYER ================= */
 
-        document.addEventListener("DOMContentLoaded", () => {
+        /* mở player */
 
-            const audio = document.getElementById("audio");
-            const audioIcon = document.getElementById("audioIcon");
-            const player = document.getElementById("player");
-            const playBtn = document.getElementById("playBtn");
-            const progress = document.getElementById("progress");
-            const progressContainer = document.getElementById("progressContainer");
-            const timeDisplay = document.getElementById("time");
+        audioIcon.onclick = () => {
 
-            let isOpen = false;
+            if (audio.paused) {
 
-            audioIcon.style.display = "none";
+                /* bật nhạc */
+                audio.play();
 
-            audio.addEventListener("loadedmetadata", () => {
-                audioIcon.style.display = "inline-block";
-            });
+                player.classList.add("show");
 
-            audioIcon.addEventListener("click", () => {
+                audioIcon.classList.remove("fa-volume-xmark");
+                audioIcon.classList.add("fa-volume-high");
 
-                if (!isOpen) {
+                playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
 
-                    player.classList.add("show");
-                    audio.play();
-                    playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-                    isOpen = true;
+            } else {
 
-                } else {
+                /* tắt nhạc */
+                audio.pause();
+                audio.currentTime = 0;
 
-                    audio.pause();
-                    player.classList.remove("show");
-                    playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-                    isOpen = false;
+                player.classList.remove("show");
 
-                }
+                audioIcon.classList.remove("fa-volume-high");
+                audioIcon.classList.add("fa-volume-xmark");
 
-            });
+                playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
 
-            playBtn.addEventListener("click", () => {
+            }
 
-                if (audio.paused) {
+        };
 
-                    audio.play();
-                    playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+        /* play pause */
 
-                } else {
+        playBtn.onclick = () => {
 
-                    audio.pause();
-                    playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            if (audio.paused) {
 
-                }
+                audio.play();
+                playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
 
-            });
+            } else {
 
-            audio.addEventListener("timeupdate", () => {
+                audio.pause();
+                playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
 
-                if (!audio.duration) return;
+            }
 
-                const percent = (audio.currentTime / audio.duration) * 100;
-                progress.style.width = percent + "%";
+        };
 
-                let minutes = Math.floor(audio.currentTime / 60);
-                let seconds = Math.floor(audio.currentTime % 60);
 
-                if (seconds < 10) seconds = "0" + seconds;
+        /* update progress */
 
-                timeDisplay.textContent = minutes + ":" + seconds;
+        audio.addEventListener("timeupdate", () => {
 
-            });
+            const percent =
+                (audio.currentTime / audio.duration) * 100;
 
-            progressContainer.addEventListener("click", (e) => {
+            progress.style.width = percent + "%";
 
-                const width = progressContainer.clientWidth;
-                const clickX = e.offsetX;
-
-                audio.currentTime = (clickX / width) * audio.duration;
-
-            });
+            time.innerText = formatTime(audio.currentTime);
 
         });
 
+
+        /* click tua nhạc */
+
+        progressContainer.onclick = (e) => {
+
+            const width = progressContainer.clientWidth;
+            const clickX = e.offsetX;
+
+            audio.currentTime =
+                (clickX / width) * audio.duration;
+
+        };
+
+
+        /* audio end */
+
+        audio.onended = () => {
+
+            playBtn.innerHTML =
+                '<i class="fa-solid fa-play"></i>';
+
+        };
+
+
+        /* debug */
+
+        audio.onerror = () => {
+
+            console.error("AUDIO LOAD ERROR:", audio.src);
+
+        };
+
+        document.getElementById("backBtn").onclick = () => {
+            history.back();
+        };
+       window.addEventListener("DOMContentLoaded", async () => {
+
+    await loadPoem(); // đợi load xong
+
+    document.getElementById("loading").style.display = "none";
+
+});
+        
+
     </script>
+
     <script src="../main_js/iframe.js"></script>
 </body>
 

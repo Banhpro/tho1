@@ -7,6 +7,8 @@ const poems = [
         author: "Bành",
         category: ["GIA ĐÌNH", "QUÊ HƯƠNG"],
         type: "LỤC BÁT",
+        fontTitle: "Bahnschrift",
+        fontContent: "Viner Hand ITC",
         content: ""  // Nội dung sẽ được lấy từ HTML
     },
     {
@@ -14,8 +16,10 @@ const poems = [
         name: "nguyen_van_cu",
         date: "01/08/2023",
         author: "Bành",
-        category: ["QUÊ HƯƠNG","HỌC TRÒ", "ĐỜI NGƯỜI"],
+        category: ["QUÊ HƯƠNG", "HỌC TRÒ", "ĐỜI NGƯỜI"],
         type: "LỤC BÁT",
+        fontTitle: "Bahnschrift",
+        fontContent: "Viner Hand ITC",
         content: ""  // Nội dung sẽ được lấy từ HTML
     }
 ];
@@ -26,3 +30,4 @@ poems.forEach(p => {
     p.image = `${basePath}${p.name}/image.jpg`; // Đảm bảo đường dẫn file hình ảnh
     p.audioFile = `${basePath}${p.name}/audio.mp3`; // Đảm bảo đường dẫn file âm thanh
 });
+window.poems = poems;

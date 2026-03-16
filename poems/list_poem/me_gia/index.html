@@ -1,95 +1,110 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mẹ Già</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mẹ Già</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="../../css/unit.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/unit.css">
 
-<style>
-/* ===== RIÊNG CHO BÀI NÀY ===== */
+    <style>
+        /* ===== RIÊNG CHO BÀI NÀY ===== */
 
-body{
-    background:url("background.jpg") center/cover no-repeat;
-}
+        body {
+            background: url("background.jpg") center/cover no-repeat;
+        }
 
-#poem-title{
-    font-size:34px;
-    font-weight:bold;
-    text-align:center;
-    margin-bottom:18px;
-    color:#3a2e2e;
-    font-family:'Bahnschrift', cursive;
-}
+        #poem-title {
+            font-size: 34px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 18px;
+            color: #3a2e2e;
+            font-family: 'Bahnschrift', cursive;
+        }
 
-#poem-content{
-    line-height:1.8;
-    font-size:20px;
-    text-align:center;
-    font-style:italic;
-    font-family:'Viner Hand ITC', cursive;
-    white-space:pre-wrap;
-    color:#2b1d1d;
-}
-.poem-image{
-    background-image:url("image.jpg");
+        #poem-content {
+            line-height: 1.8;
+            font-size: 20px;
+            text-align: center;
+            font-style: italic;
+            white-space: pre-wrap;
+            color: #2b1d1d;
+            font-family: 'Viner Hand ITC', cursive;
+        }
 
-}
-</style>
+        .poem-image {
+            background-image: url("image.jpg");
+
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-<div class="poem-box">
+        <div class="poem-box">
 
-<a href="../../tho-banh.html" class="back-btn">
+           <a href="#" class="back-btn" id="backBtn">
     <img src="../../icon.jpg">
 </a>
+            <div id="poemData">
+                <div id="poem-title">Mẹ Già</div>
 
-<div id="poem-title">Mẹ Già</div>
-
-<pre id="poem-content">
+                <pre id="poem-content">
    Mẹ già ngồi vá áo nâu
 Mồ hôi nước mắt nhuộm nâu bốn mùa
    Mẹ cười như gió đêm trăng
 Như bờ môi ấm lăn tăn giấc nồng. 
-			---NTK---
-</pre>
+			---NTK---</pre>
+            </div>
+            <div class="audio-wrapper">
 
-<div class="audio-wrapper">
+                <i class="fa-solid fa-volume-high audio-icon" id="audioIcon"></i>
 
-<i class="fa-solid fa-volume-high audio-icon" id="audioIcon"></i>
+                <div class="audio-player" id="player">
 
-<div class="audio-player" id="player">
+                    <div class="play-btn" id="playBtn">
+                        <i class="fa-solid fa-play"></i>
+                    </div>
 
-<div class="play-btn" id="playBtn">
-<i class="fa-solid fa-play"></i>
-</div>
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress" id="progress"></div>
+                    </div>
 
-<div class="progress-container" id="progressContainer">
-<div class="progress" id="progress"></div>
-</div>
+                    <div class="time" id="time">00:00</div>
 
-<div class="time" id="time">00:00</div>
+                </div>
+            </div>
 
-</div>
-</div>
+            <audio id="audio">
+                <source src="audio.mp3" type="audio/mpeg">
+            </audio>
 
-<audio id="audio">
-<source src="audio.mp3" type="audio/mpeg">
-</audio>
+        </div>
 
-</div>
+        <div class="poem-image"></div>
 
-<div class="poem-image"></div>
+    </div>
 
-</div>
+    <script src="../../js/unit.js"></script>
+    <script>
+        document.getElementById("backBtn").onclick = function (e) {
 
-<script src="../../js/unit.js"></script>
+            e.preventDefault();
+
+            if (history.length > 1) {
+                history.back();
+            } else {
+                window.location = "../../tho-banh.html";
+            }
+
+        };
+    </script>
 
 </body>
+
 </html>

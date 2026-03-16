@@ -140,63 +140,103 @@
 
         /* load nhật ký thơ */
 
-        async function loadDiary(uid) {
+       async function loadDiary(uid) {
 
-            const q = query(
-                collection(db, "saved_poems"),
-                where("uid", "==", uid)
-            );
+    console.log("===== LOAD DIARY =====");
+    console.log("UID:", uid);
 
-            const snap = await getDocs(q);
+    const poemsDiv = document.getElementById("poems");
 
-            const poemsDiv = document.getElementById("poems");
+    const ref = collection(db, "users", uid, "saved_poems");
 
-            if (snap.empty) {
+    const snap = await getDocs(ref);
 
-                document.getElementById("empty").style.display = "block";
-                return;
+    console.log("Snapshot size:", snap.size);
 
-            }
+    if (snap.empty) {
 
-            snap.forEach(async (d) => {
+        console.log("❌ Không có bài thơ nào");
 
-                const data = d.data();
+        document.getElementById("empty").style.display = "block";
+        return;
 
-                const poemRef = doc(db, "uploads", data.poemId);
+    }
 
-                const poemSnap = await getDoc(poemRef);
+    for (const d of snap.docs) {
 
-                if (!poemSnap.exists()) return;
+        console.log("----- DOC -----");
+
+        console.log("Doc ID:", d.id);
+
+        const data = d.data();
+
+        console.log("Data:", data);
+
+        const poemID = data.poemID || data.poemId || d.id;
+
+        console.log("PoemID:", poemID);
+
+        const div = document.createElement("div");
+
+        div.className = "poem";
+
+        try {
+
+            const poemRef = doc(db, "uploads", poemID);
+
+            const poemSnap = await getDoc(poemRef);
+
+            console.log("Firebase poem exists:", poemSnap.exists());
+
+            if (poemSnap.exists()) {
 
                 const poem = poemSnap.data();
 
-                const div = document.createElement("div");
+                console.log("📜 Firebase poem:", poem.title);
 
-                div.className = "poem";
-
-                div.onclick = function () {
-
-                    window.location = "poem.html?id=" + data.poemId;
-
+                div.onclick = () => {
+                    window.location = "poem.html?id=" + poemID;
                 };
 
                 div.innerHTML = `
-
 <h4>${poem.title}</h4>
-
-<p>${poem.content.substring(0, 180)}...</p>
-
+<p>${poem.content.substring(0,180)}...</p>
 <div class="date">
 📅 ${new Date(poem.created).toLocaleDateString("vi-VN")}
 </div>
-
 `;
 
-                poemsDiv.appendChild(div);
+            }
 
-            });
+            else {
+
+                console.log("📁 Folder poem:", poemID);
+
+                div.onclick = () => {
+                    window.location = "content_super.html?poem=" + poemID;
+                };
+
+                div.innerHTML = `
+<h4>${poemID}</h4>
+<p>Bài thơ trong thư viện</p>
+<div class="date">📔 Thơ đã lưu</div>
+`;
+
+            }
+
+            poemsDiv.appendChild(div);
 
         }
+
+        catch (err) {
+
+            console.error("❌ Lỗi đọc poem:", err);
+
+        }
+
+    }
+
+}
 
     </script>
 

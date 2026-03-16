@@ -20,89 +20,106 @@ const config = {
 
 };
 
-document.addEventListener("DOMContentLoaded", async function(){
+document.addEventListener("DOMContentLoaded", async () => {
 
-const theThoSelect = document.getElementById("theTho");
-const theLoaiSelect = document.getElementById("theLoai");
-const amThanhSelect = document.getElementById("amThanh");
+    const theThoSelect = document.getElementById("theTho");
+    const theLoaiSelect = document.getElementById("theLoai");
+    const amThanhSelect = document.getElementById("amThanh");
 
-/* ===== OPTION TẤT CẢ ===== */
+    /* ===== function tạo option ===== */
 
-const optionAll1 = document.createElement("option");
-optionAll1.value = "";
-optionAll1.textContent = "TẤT CẢ";
-theThoSelect.appendChild(optionAll1);
+    function addOption(select,value,text){
 
-const optionAll2 = document.createElement("option");
-optionAll2.value = "";
-optionAll2.textContent = "TẤT CẢ";
-theLoaiSelect.appendChild(optionAll2);
+        if(!select) return;
 
-/* ===== ÂM THANH ===== */
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = text;
 
-const audioOptions = [
-{value:"",text:"TẤT CẢ"},
-{value:"co",text:"CÓ ÂM THANH"},
-{value:"khong",text:"KHÔNG CÓ ÂM THANH"}
-];
+        select.appendChild(option);
 
-audioOptions.forEach(item=>{
-const option=document.createElement("option");
-option.value=item.value;
-option.textContent=item.text;
-amThanhSelect.appendChild(option);
-});
+    }
 
-/* ===== THỂ THƠ ===== */
+    /* ===== THỂ THƠ ===== */
 
-config.theTho.forEach(item=>{
-const option=document.createElement("option");
-option.value=item;
-option.textContent=item;
-theThoSelect.appendChild(option);
-});
+    if(theThoSelect){
 
-/* ===== THỂ LOẠI ===== */
+        addOption(theThoSelect,"","TẤT CẢ");
 
-config.theLoai.forEach(item=>{
-const option=document.createElement("option");
-option.value=item;
-option.textContent=item;
-theLoaiSelect.appendChild(option);
-});
+        config.theTho.forEach(item=>{
+            addOption(theThoSelect,item,item);
+        });
 
-/* ===== KIỂM TRA AUDIO ===== */
+    }
 
-async function checkAudio(poem){
+    /* ===== THỂ LOẠI ===== */
 
-try{
+    if(theLoaiSelect){
 
-const res=await fetch(poem.audioFile,{method:"HEAD"});
+        addOption(theLoaiSelect,"","TẤT CẢ");
 
-poem.audio = res.ok ? "co" : "khong";
+        config.theLoai.forEach(item=>{
+            addOption(theLoaiSelect,item,item);
+        });
 
-}catch(e){
+    }
 
-poem.audio="khong";
+    /* ===== ÂM THANH ===== */
 
-}
+    if(amThanhSelect){
 
-}
+        const audioOptions = [
 
-/* ===== LOAD AUDIO STATUS ===== */
+            {value:"",text:"TẤT CẢ"},
+            {value:"co",text:"CÓ ÂM THANH"},
+            {value:"khong",text:"KHÔNG CÓ ÂM THANH"}
 
-async function loadAudioStatus(){
+        ];
 
-if(typeof poems==="undefined") return;
+        audioOptions.forEach(item=>{
+            addOption(amThanhSelect,item.value,item.text);
+        });
 
-const tasks = poems.map(p=>checkAudio(p));
+    }
 
-await Promise.all(tasks);
+    /* ===== KIỂM TRA AUDIO ===== */
 
-}
+    async function checkAudio(poem){
 
-/* ===== INIT ===== */
+        if(!poem.audioFile){
 
-await loadAudioStatus();
+            poem.audio = "khong";
+            return;
+
+        }
+
+        try{
+
+            const res = await fetch(poem.audioFile,{method:"HEAD"});
+
+            poem.audio = res.ok ? "co" : "khong";
+
+        }
+        catch{
+
+            poem.audio = "khong";
+
+        }
+
+    }
+
+    /* ===== LOAD AUDIO ===== */
+
+    async function loadAudioStatus(){
+
+        if(typeof poems === "undefined") return;
+
+        const tasks = poems.map(p=>checkAudio(p));
+
+        await Promise.all(tasks);
+
+    }
+
+    await loadAudioStatus();
 
 });

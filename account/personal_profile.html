@@ -97,7 +97,7 @@
             animation: blink 1.4s infinite;
         }
 
-        
+
 
         @keyframes blink {
             0% {
@@ -134,7 +134,7 @@
             /* nền xanh biển */
 
 
-            color:  #1c6dd0;
+            color: #1c6dd0;
 
             z-index: 9999;
 
@@ -159,7 +159,7 @@
 
             margin-top: 10px;
 
-            color:  #1c6dd0;
+            color: #1c6dd0;
 
         }
 
@@ -270,7 +270,7 @@
 
     </div>
 
-
+    <script src="../poems/js/poems-data.js"></script>
     <script type="module">
 
         import { initializeApp }
@@ -333,7 +333,10 @@
             const data = snap.data();
 
             const username = data.username;
+            const role = data.role || "user";
 
+
+            loadPoems(username, role);
             /* hiển thị */
 
             document.getElementById("name").innerText = username;
@@ -353,14 +356,58 @@
 
             /* load thơ */
 
-            loadPoems(username);
 
         });
 
 
         /* load poems */
 
-        async function loadPoems(username) {
+        async function loadPoems(username, role) {
+
+            const poemsDiv = document.getElementById("poems");
+            poemsDiv.innerHTML = "";
+
+            /* ===== ADMIN ===== */
+
+            if (role === "admin") {
+
+                const list = window.poems || [];
+
+                document.getElementById("count").innerText = list.length;
+
+                list.forEach(p => {
+
+                    const div = document.createElement("div");
+                    div.className = "poem";
+                    div.style.cursor = "pointer";
+
+                    div.onclick = function () {
+                        window.location = "../../poems/" + p.file;
+                    };
+
+                    div.innerHTML = `
+
+<h4>${p.title}</h4>
+<p> ... </p>
+<p>${p.author} • ${p.type}</p>
+
+<div class="date">
+📅 ${p.date}
+</div>
+
+`;
+
+                    poemsDiv.appendChild(div);
+
+                });
+
+                document.getElementById("loading").style.display = "none";
+                document.querySelector(".container").style.display = "block";
+
+                return;
+            }
+
+            /* ===== USER ===== */
 
             const q = query(
                 collection(db, "uploads"),
@@ -371,10 +418,6 @@
 
             document.getElementById("count").innerText = snap.size;
 
-            const poemsDiv = document.getElementById("poems");
-
-            poemsDiv.innerHTML = "";
-
             snap.forEach(doc => {
 
                 const data = doc.data();
@@ -382,7 +425,6 @@
                 const div = document.createElement("div");
 
                 div.className = "poem";
-
                 div.style.cursor = "pointer";
 
                 div.onclick = function () {
@@ -404,12 +446,13 @@
                 poemsDiv.appendChild(div);
 
             });
+
             document.getElementById("loading").style.display = "none";
             document.querySelector(".container").style.display = "block";
         }
         document.getElementById("openDiary").onclick = function () {
 
-            window.location = "../smart_mode/KHACH/diary.html";
+            window.location = "../smart_mode/diary.html";
 
         };
     </script>
