@@ -1,113 +1,380 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-<meta charset="UTF-8">
-<title>Bức tường cảm xúc</title>
+  <meta charset="UTF-8">
+  <title>Emotion</title>
 
-<style>
+  <style>
+    body {
+      margin: 0;
+      font-family: Segoe UI;
+      display: flex;
+      justify-content: center;
+      padding: 60px;
+      background: #eef2ff;
+      position: relative;
+      overflow: hidden;
 
-body{
-font-family:Arial;
-background:#f2f2f2;
-text-align:center;
-padding:40px;
-}
+    }
 
-.card{
-background:white;
-padding:20px;
-margin:20px auto;
-border-radius:10px;
-width:500px;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
+    /* ⭐ background buồn */
+    .bgRain {
+      position: fixed;
+      inset: 0;
+      background: url("rain.jpg");
+      background-size: cover;
+      background-position: center;
+      opacity: .75;
+      z-index: -1;
+    }
 
-.reply{
-margin-top:10px;
-font-size:14px;
-color:#555;
-}
+    /* ⭐ nút quay lại */
+    .backBtn {
+      position: fixed;
+      top: 25px;
+      left: 25px;
+      width: 70px;
+      height: 50px;
+      cursor: pointer;
+      transition: .4s;
+      z-index: 50;
+    }
 
-input{
-width:80%;
-padding:8px;
-border-radius:5px;
-border:1px solid #ccc;
-}
+    .backBtn img {
+      width: 100%;
+    }
 
-button{
-padding:6px 12px;
-border:none;
-border-radius:5px;
-background:#66a6ff;
-color:white;
-cursor:pointer;
-}
+    .backBtn:hover {
+      transform: translateY(-6px) scale(1.08);
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, .4));
+    }
 
-</style>
+    /* ⭐ card */
+    .card {
+      width: 820px;
+      background: rgba(255, 255, 255, .85);
+      backdrop-filter: blur(10px);
+      border-radius: 26px;
+      box-shadow: 0 40px 90px rgba(0, 0, 0, .25);
+      padding: 35px;
+      animation: fadeIn .8s;
+    }
 
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px)
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    /* ⭐ layout content */
+    .contentRow {
+      display: flex;
+      gap: 30px;
+    }
+
+    .textBox {
+      flex: 1;
+      font-size: 20px;
+      line-height: 1.7;
+      color: #0f172a;
+    }
+
+    .sideImg {
+      width: 240px;
+      border-radius: 18px;
+      object-fit: cover;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, .25);
+    }
+
+    /* ⭐ user */
+    .user {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .time {
+      color: #64748b;
+      margin-bottom: 20px;
+    }
+
+    /* ⭐ reaction fb style */
+    .reactBar {
+      margin-top: 30px;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 20px;
+      display: flex;
+      gap: 20px;
+      font-size: 22px;
+    }
+
+    .reactBtn {
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .reactBtn:hover {
+      transform: scale(1.25);
+    }
+
+    /* ⭐ comment */
+    .commentToggle {
+      margin-top: 30px;
+      cursor: pointer;
+      color: #6366f1;
+      font-weight: 600;
+    }
+
+    .commentBox {
+      margin-top: 15px;
+      display: none;
+    }
+
+    textarea {
+      width: 100%;
+      height: 90px;
+      border-radius: 14px;
+      border: 1px solid #cbd5e1;
+      padding: 10px;
+      font-family: Segoe UI;
+    }
+
+    .sendBtn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      border: none;
+      background: #6366f1;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .cmt {
+      background: #f1f5ff;
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 12px;
+    }
+
+    .cUser {
+      font-weight: 600;
+    }
+
+    .cTime {
+      font-size: 12px;
+      color: #64748b;
+    }
+  </style>
 </head>
 
 <body>
 
-<h2>Bức tường cảm xúc 💙</h2>
+  <div class="bgRain" id="bgRain" style="display:none"></div>
 
-<div id="wall"></div>
+  <div class="backBtn" onclick="goBack()">
+    <img src="deckicon.jpg">
+  </div>
 
-<script>
+  <div class="card">
 
-let list=JSON.parse(localStorage.getItem("feelings")||"[]")
+    <div class="user" id="user"></div>
+    <div class="time" id="time"></div>
 
-let wall=document.getElementById("wall")
+    <div class="contentRow">
+      <div class="textBox" id="text"></div>
+      <img id="img" class="sideImg" style="display:none">
+    </div>
 
-list.forEach((item,index)=>{
+    <div class="reactBar">
+      <div class="reactBtn" onclick="react('heart')">❤️ <span id="heart"></span></div>
+      <div class="reactBtn" onclick="react('like')">👍 <span id="like"></span></div>
+      <div class="reactBtn" onclick="react('sad')">😢 <span id="sad"></span></div>
+      <div class="reactBtn" onclick="react('wow')">😮 <span id="wow"></span></div>
+    </div>
 
-let div=document.createElement("div")
+    <div class="commentToggle" onclick="toggleCmt()">💬 Bình luận</div>
 
-div.className="card"
+    <div class="commentBox" id="cmtBox">
+      <textarea id="cText"></textarea>
+      <br>
+      <button class="sendBtn" onclick="sendCmt()">Gửi</button>
 
-let repliesHTML=""
+      <div id="cList"></div>
+    </div>
 
-item.replies.forEach(r=>{
-repliesHTML+="<div class='reply'>💬 "+r+"</div>"
-})
+  </div>
 
-div.innerHTML=`
+  <script type="module">
 
-<h3>${item.text}</h3>
-<p>${item.time}</p>
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 
-<input id="r${index}" placeholder="Gửi lời động viên...">
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      updateDoc,
+      arrayUnion
+    }
+      from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
-<button onclick="reply(${index})">Gửi</button>
+    import {
+      getAuth,
+      onAuthStateChanged
+    }
+      from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
-<div>${repliesHTML}</div>
+    const firebaseConfig = {
+      apiKey: "AIzaSy...",
+      projectId: "banhkietgithunbpoem",
+      authDomain: "banhkietgithunbpoem.firebaseapp.com"
+    };
 
-`
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
 
-wall.appendChild(div)
+    const id = new URLSearchParams(location.search).get("id");
+    const ref = doc(db, "emotions", id);
 
-})
+    let data;
+    let currentUsername = "Khách";
+    /* kiểm tra người dùng hiện tạ  */
+    /* ⭐ CHỜ LOGIN XONG mới load emotion */
+    onAuthStateChanged(auth, async (user) => {
 
-function reply(i){
+      if (user) {
 
-let input=document.getElementById("r"+i)
+        const userDoc = await getDoc(doc(db, "users", user.uid));
 
-let msg=input.value
+        if (userDoc.exists()) {
+          const uData = userDoc.data();
+          currentUsername = uData.username || "Khách";
+        }
 
-if(msg=="") return
+      } else {
+        currentUsername = "Khách";
+      }
 
-let list=JSON.parse(localStorage.getItem("feelings"))
+      load();   // ⭐ load emotion sau khi biết user
+    });
 
-list[i].replies.push(msg)
 
-localStorage.setItem("feelings",JSON.stringify(list))
+    async function load() {
 
-location.reload()
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        alert("Emotion không tồn tại");
+        return;
+      }
 
-}
+      data = snap.data();
 
-</script>
+      user.innerText = data.username || "ai đó";
+      text.innerText = data.text || "";
+
+      const t = new Date(data.createdAt.seconds * 1000);
+      time.innerText = t.toLocaleString();
+
+      if (data.imgUrl) {
+        img.src = data.imgUrl;
+        img.style.display = "block";
+      }
+
+      heart.innerText = data.heart || 0;
+      like.innerText = data.like || 0;
+      sad.innerText = data.sad || 0;
+      wow.innerText = data.wow || 0;
+
+      renderCmt();
+    }
+
+
+    /* ⭐ reaction */
+    window.react = async function (type) {
+
+      data[type] = (data[type] || 0) + 1;
+      document.getElementById(type).innerText = data[type];
+
+      await updateDoc(ref, { [type]: data[type] });
+    }
+
+
+    /* ⭐ gửi comment AUTO USERNAME */
+    window.sendCmt = async function () {
+
+      if (!auth.currentUser) {
+        alert("⚠️ chưa đăng nhập");
+        return;
+      }
+
+      const msg = cText.value.trim();
+      if (!msg) return;
+
+      const obj = {
+        user: currentUsername,
+        msg: msg,
+        time: new Date().toLocaleString()
+      };
+
+      await updateDoc(ref, {
+        comments: arrayUnion(obj)
+      });
+
+      data.comments = data.comments || [];
+      data.comments.push(obj);
+
+      renderCmt();
+      cText.value = "";
+    }
+
+
+    /* ⭐ render comment */
+    function renderCmt() {
+
+      cList.innerHTML = "";
+
+      (data.comments || []).forEach(c => {
+
+        const d = document.createElement("div");
+        d.className = "cmt";
+
+        d.innerHTML = `
+      <div class="cUser">🧑 ${c.user}</div>
+      <div>${c.msg}</div>
+      <div class="cTime">${c.time}</div>
+    `;
+
+        cList.appendChild(d);
+      });
+    }
+
+
+    /* ⭐ toggle box */
+    window.toggleCmt = function () {
+      cmtBox.style.display =
+        cmtBox.style.display == "block" ? "none" : "block";
+    }
+
+
+    /* ⭐ back effect */
+    window.goBack = () => {
+      document.body.style.transition = ".6s";
+      document.body.style.transform = "scale(.6)";
+      document.body.style.opacity = "0";
+      setTimeout(() => history.back(), 600);
+    }
+
+  </script>
+
+  <script src="../main_js/iframe.js"></script>
 
 </body>
+
 </html>

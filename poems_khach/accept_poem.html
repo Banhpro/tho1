@@ -349,7 +349,6 @@ ${data.audio ? `<audio controls src="${data.audio}"></audio>` : ""}
                                 created: data.created || Date.now(),
                                 status: "approved"
                             };
-
                             await addDoc(collection(db, "uploads"), poemData);
                             await deleteDoc(doc(db, "temp", id));
 
@@ -371,34 +370,38 @@ ${data.audio ? `<audio controls src="${data.audio}"></audio>` : ""}
 
                     /* DELETE */
 
-                    deleteBtn.onclick = async () => {
+                   deleteBtn.onclick = async () => {
 
-                        if (!confirm("Bạn có chắc chắn muốn XÓA bài thơ này?")) return;
+    if (!confirm("Bạn có chắc chắn muốn XÓA bài thơ này?")) return;
 
-                        try {
+    try {
 
-                            if (data.folder) {
+        if (data.folder) {
 
-                                const link = `https://console.cloudinary.com/console/media_library/folders/${data.folder}`;
+            const folderToRemove = data.folder;
 
-                                window.open(link, "_blank");
+            const link = `https://console.cloudinary.com/console/media_library/folders/${folderToRemove}`;
 
-                            }
+            if (confirm("Bạn có muốn kiểm tra thư mục xóa trên Cloudinary không?")) {
+                window.open(link, "_blank");
+            }
 
-                            await deleteDoc(doc(db, "temp", id));
+            await deleteDoc(doc(db, "temp", id));
 
-                            card.remove();
+            card.remove();
 
-                            alert("Đã xóa bài thơ");
+            alert("Đã xóa bài thơ");
 
-                        } catch (err) {
+        }
 
-                            console.error(err);
-                            alert("Lỗi khi xóa");
+    } catch (err) {
 
-                        }
+        console.error(err);
+        alert("Lỗi khi xóa");
 
-                    };
+    }
+
+};
 
                 } else {
 

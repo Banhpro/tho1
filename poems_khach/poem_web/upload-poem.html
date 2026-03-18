@@ -287,18 +287,37 @@
         const theLoaiBox = document.getElementById("theLoaiBox");
 
         /* tạo folder định danh cloudary */
-        function createFolder(username, title, email) {
+        /* tạo folder định danh cloudinary */
+        /* tạo folder định danh cloudinary */
+        /* tạo folder định danh cloudinary */
+        function createFolder(username, role, title) {
+            const date = new Date();
 
-            const date = new Date().toISOString().split("T")[0];
+            // Lấy múi giờ Việt Nam (GMT+7) đã chỉnh sửa nên bây giờ là 0 
+            const offset = 0 * 60;  // 7 giờ = 420 phút
+
+            // Chuyển đổi giờ UTC sang giờ Việt Nam
+            date.setMinutes(date.getMinutes() + offset);
+
+            // Định dạng ngày (ngày-tháng-năm)
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');  // Tháng tính từ 0, nên phải cộng thêm 1
+            const year = date.getFullYear();
+
+            // Định dạng giờ (giờ:phút)
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+
+            // Tạo chuỗi định dạng "ngày-tháng-năm_ giờ:phút"
+            const dateString = `${day}-${month}-${year}`;
+            const timeString = `${hours}:${minutes}`;
 
             const u = cleanText(username);
-            const t = cleanText(title);
-            const e = cleanText(email);
+            const r = cleanText(role);
+            const t = cleanText(title); // Lấy tên bài thơ đã gửi
 
-            return `${u}_${t}_${date}_${e}`;
-
+            return `poem_temp/${u}_${r}/${t}_${dateString}_${timeString}`;
         }
-
         /* upload cloudinary */
 
         async function uploadFile(file, folder) {
@@ -655,18 +674,14 @@
         submitBtn.onclick = async function () {
 
             /* kiểm tra dữ liệu */
-
             if (!validateForm()) {
                 return;
             }
 
             submitBtn.classList.add("disabled");
             submitBtn.innerText = "Đang gửi...";
-            /* kiểm tra dữ liệu */
-
 
             /* xác nhận gửi */
-
             const ok = confirm("Bạn có chắc muốn gửi bài thơ này không?");
 
             if (!ok) {
@@ -675,9 +690,11 @@
                 submitBtn.innerText = "Gửi bài thơ";
                 return;
             }
+
             progressBar.parentElement.style.display = "block";
             msg.innerText = "Đang upload...";
             progressBar.style.width = "10%";
+
             try {
 
                 const user = auth.currentUser;
@@ -702,14 +719,13 @@
                 const title = document.getElementById("title").value;
 
                 const username = userData.username;
+                const role = userData.role; // Lấy role từ Firestore
                 const email = userData.email;
 
                 /* tạo folder */
+                const folder = createFolder(username, role, title);
 
-                const folder = createFolder(username, title, email);
-
-                /* upload */
-
+                /* upload các file */
                 const back_img = await uploadFile(backgroundFile.files[0], folder);
                 progressBar.style.width = "40%";
 
@@ -724,11 +740,11 @@
 
                 progressBar.style.width = "100%";
 
+                /* lấy nội dung bài thơ */
                 const titleValue = document.getElementById("title").value;
                 const contentValue = document.getElementById("content").value;
 
                 /* font */
-
                 let fontTitle =
                     fontTitleSelect.value === "other"
                         ? fontTitleOther.value
@@ -740,76 +756,56 @@
                         : fontContentSelect.value;
 
                 /* thể loại */
-
                 let theLoai = [];
                 const otherLoai = document.querySelector("#theLoaiBox .other-input");
 
                 if (otherLoai && otherLoai.style.display === "block") {
-
                     theLoai = [otherLoai.value];
-
                 } else {
-
                     document.querySelectorAll("#theLoaiBox input[type=checkbox]:checked")
                         .forEach(el => theLoai.push(el.value));
-
                 }
 
                 /* thể thơ */
-
                 let theTho = "";
                 const tho = document.querySelector("#theThoBox input[type=radio]:checked");
 
                 if (tho) {
-
                     if (tho.value.toLowerCase() === "khác") {
-
                         theTho = document.querySelector("#theThoBox .other-input").value;
-
                     } else {
-
                         theTho = tho.value;
-
                     }
-
                 }
 
                 await addDoc(collection(db, "temp"), {
-
                     email: userData.email,
                     role: userData.role,
-
                     folder: folder,
-
                     title: titleValue,
                     content: contentValue,
                     username: userData.username,
-
                     fontTitle,
                     fontContent,
-
                     theLoai,
                     theTho,
-
                     back_img,
                     image,
                     audio,
-
                     created: Date.now()
-
                 });
-                msg.style.color = "green";
 
+                msg.style.color = "green";
                 msg.innerText = "Đã gửi bài thơ chờ admin duyệt";
                 setTimeout(() => {
                     progressBar.parentElement.style.display = "none";
                     msg.innerText = "";
                     progressBar.style.width = "0%";
                 }, 2000);
+
                 /* reset form */
                 document.getElementById("title").value = "";
                 document.getElementById("content").value = "";
-
                 backgroundFile.value = "";
                 imageFile.value = "";
                 audioFile.value = "";
@@ -831,14 +827,15 @@
                     el.value = "";
                     el.style.display = "none";
                 });
+
                 submitBtn.classList.remove("disabled");
                 submitBtn.innerText = "Gửi bài thơ";
+
             } catch (e) {
                 submitBtn.classList.remove("disabled");
                 submitBtn.innerText = "Gửi bài thơ";
                 console.error(e);
                 msg.innerText = "Upload lỗi rồi!";
-
             }
 
         };
