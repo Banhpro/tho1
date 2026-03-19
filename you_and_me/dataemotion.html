@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kỷ Niệm Của Tôi 📖</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper: #fdfaf0;
+            --ink: #2c3e50;
+            --accent: #e74c3c;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Patrick Hand', cursive;
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden; perspective: 2000px;
+        }
+
+        #bg-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            opacity: 0.75; z-index: -2; transition: 1s ease;
+        }
+
+        .diary-book {
+            display: flex;
+            width: 92vw; max-width: 1150px; height: 85vh;
+            background: var(--paper);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+            border-radius: 10px 40px 40px 10px;
+            position: relative;
+            border-left: 25px solid #3d2b1f;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+
+        /* Hiệu ứng Đóng Sổ (Toàn bộ trang phải lật đè lên trang trái) */
+        .diary-book.closing-action {
+            transform: rotateY(-10deg) scale(0.9);
+        }
+        .diary-book.closing-action .page-right {
+            transform: rotateY(-180deg);
+            z-index: 100;
+        }
+
+        .diary-book::after {
+            content: ''; position: absolute; left: 50%; top: 5%; bottom: 5%;
+            width: 1px; background: rgba(0, 0, 0, 0.08); z-index: 5;
+        }
+
+        .page { width: 50%; padding: 30px; box-sizing: border-box; display: flex; position: relative; transition: transform 1s; transform-style: preserve-3d; }
+
+        /* TRANG PHẢI - Cần transform-origin ở mép trái để lật như cánh cửa */
+        .page-right { 
+            flex-direction: column; gap: 15px; 
+            transform-origin: left center;
+            background: var(--paper); /* Cần nền để khi lật không bị xuyên thấu */
+            border-radius: 0 40px 40px 0;
+        }
+
+        /* --- NỘI DUNG --- */
+        .content-paper {
+            flex: 1.3; background: #fff; border-radius: 15px;
+            padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            background-image: linear-gradient(#e1e1e1 1px, transparent 1px);
+            background-size: 100% 28px; line-height: 28px;
+            font-size: 1.2em; color: #34495e; overflow-y: auto;
+        }
+
+        .media-aside { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+
+        .photo-frame {
+            width: 100%; background: #fff; padding: 10px 10px 30px 10px;
+            border-radius: 5px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transform: rotate(-2deg);
+        }
+        
+        .photo-placeholder {
+            width: 100%; aspect-ratio: 1/1; background: #f0f0f0;
+            border-radius: 3px; display: flex; justify-content: center; align-items: center;
+            overflow: hidden; border: 1px solid #eee;
+        }
+        .photo-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+
+        .audio-wrapper {
+            width: 100%; background: #fff; border-radius: 20px; padding: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        audio { width: 100%; height: 32px; }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.6); border-radius: 15px;
+            padding: 15px; border: 1px dashed #ccc; line-height: 1.6;
+        }
+        .info-card b { font-family: 'Dancing Script'; font-size: 1.6em; color: #d35400; display: block; }
+        .time-label { font-size: 0.9em; color: #666; font-style: italic; }
+
+        /* --- BOX PHẢI --- */
+        .scrap-box {
+            background: #fff; border-radius: 20px;
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        .scrap-box.reactions { flex: 0.7; }
+        .scrap-box.comments { flex: 2; }
+        .scrap-header { background: #eef2f3; padding: 8px 20px; font-weight: bold; color: #555; }
+        .scrap-content { flex: 1; padding: 15px; overflow-y: auto; }
+
+        /* --- ICON NHẮM MẮT (BACK) --- */
+        .close-eye-btn {
+            position: absolute; top: 15px; right: 25px;
+            width: 45px; height: 45px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s; z-index: 10; opacity: 0.6;
+        }
+        .close-eye-btn:hover { transform: scale(1.2); opacity: 1; }
+        .close-eye-btn svg { width: 100%; height: 100%; fill: #2c3e50; }
+
+        /* Comment & Reaction Items */
+        .reaction-item { display: inline-flex; align-items: center; gap: 8px; background: #f8f9fa; padding: 5px 12px; border-radius: 12px; margin: 3px; font-weight: bold; }
+        .cmt-item { margin-bottom: 12px; padding-bottom: 5px; border-bottom: 1px solid #f1f1f1; }
+        .cmt-user { color: #2980b9; font-weight: bold; }
+        .cmt-msg { color: #444; display: block; }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+    </style>
+</head>
+
+<body>
+    <div id="bg-overlay"></div>
+
+    <div class="diary-book" id="book">
+        <!-- TRANG TRÁI -->
+        <div class="page page-left">
+            <div class="content-paper" id="detail-text">Đang tải kỷ niệm...</div>
+            
+            <div class="media-aside">
+                <div class="photo-frame">
+                    <div class="photo-placeholder">
+                        <img id="detail-img" src="" style="display:none">
+                        <span id="no-img-icon">🖼️ No Photo</span>
+                    </div>
+                </div>
+                <div class="audio-wrapper">
+                    <audio id="detail-audio" controls></audio>
+                </div>
+                <div class="info-card">
+                    <b id="detail-user">Username</b>
+                    <span id="detail-date">📅 --/--/----</span><br>
+                    <span class="time-label" id="detail-time">⏰ --:--</span><br>
+                    <span id="detail-mood">✨ Mood: ...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANG PHẢI -->
+        <div class="page page-right">
+            <!-- Icon Nhắm Mắt (Back) -->
+            <div class="close-eye-btn" onclick="goBack()" title="Đóng kỷ niệm">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12,17.5C14.33,17.5 16.46,16.53 18,15L21,18L22.41,16.58L19.41,13.58C20.41,12.24 21,10.6 21,8.82C21,8.21 20.93,7.62 20.8,7.05L22.25,5.6L20.84,4.19L19.38,5.64C17.61,3.39 14.94,2 12,2C9.06,2 6.39,3.39 4.62,5.64L3.16,4.19L1.75,5.6L3.2,7.05C3.07,7.62 3,8.21 3,8.82C3,10.6 3.59,12.24 4.59,13.58L1.59,16.58L3,18L6,15C7.54,16.53 9.67,17.5 12,17.5M12,4C14.43,4 16.63,5.13 18.06,6.9L16.06,8.9C15.03,7.74 13.6,7 12,7C10.4,7 8.97,7.74 7.94,8.9L5.94,6.9C7.37,5.13 9.57,4 12,4Z"/>
+                </svg>
+            </div>
+
+            <div class="scrap-box reactions">
+                <div class="scrap-header">❤️ Cảm xúc</div>
+                <div class="scrap-content" id="reactions-list"></div>
+            </div>
+            
+            <div class="scrap-box comments">
+                <div class="scrap-header">💬 Bình luận</div>
+                <div class="scrap-content" id="comments-list">Chưa có bình luận.</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD5VotnEcZ6hQduMoF5AjL0024x1VTkEu4",
+            authDomain: "banhkietgithunbpoem.firebaseapp.com",
+            projectId: "banhkietgithunbpoem"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const entryId = urlParams.get('id');
+
+        async function loadData() {
+            if (!entryId) return;
+            try {
+                const docSnap = await getDoc(doc(db, "emotions", entryId));
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    document.getElementById("detail-text").innerText = data.text || "";
+                    document.getElementById("detail-user").innerText = data.username || "Ẩn danh";
+                    document.getElementById("detail-date").innerText = "📅 " + (data.dayKey || "");
+                    document.getElementById("detail-mood").innerText = "✨ Mood: " + (data.mood || "");
+
+                    // Xử lý Thời gian (Giờ:Phút)
+                    if (data.createdAt) {
+                        const dateObj = data.createdAt.toDate();
+                        const hours = String(dateObj.getHours()).padStart(2, '0');
+                        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+                        document.getElementById("detail-time").innerText = `⏰ ${hours}:${minutes}`;
+                    }
+
+                    // Media
+                    const img = document.getElementById("detail-img");
+                    if (data.imgUrl) {
+                        img.src = data.imgUrl;
+                        img.style.display = "block";
+                        document.getElementById("no-img-icon").style.display = "none";
+                    }
+
+                    const audio = document.getElementById("detail-audio");
+                    if (data.audioUrl) audio.src = data.audioUrl;
+
+                    // Reactions
+                    document.getElementById("reactions-list").innerHTML = `
+                        <div class="reaction-item">👍 ${data.like || 0}</div>
+                        <div class="reaction-item">❤️ ${data.heart || 0}</div>
+                        <div class="reaction-item">😢 ${data.sad || 0}</div>
+                    `;
+
+                    // Comments
+                    if(data.comments && data.comments.length > 0) {
+                        document.getElementById("comments-list").innerHTML = data.comments.map(c => 
+                            `<div class="cmt-item">
+                                <span class="cmt-user">${c.user}</span> <small style="color:#999">${c.time || ''}</small>
+                                <span class="cmt-msg">${c.msg}</span>
+                            </div>`).join("");
+                    }
+
+                    // Background
+                    const mood = (data.mood || "").toLowerCase();
+                    const isSad = mood.includes("buồn") || mood.includes("sad") || mood.includes("tệ") || data.sad > 5;
+                    document.getElementById("bg-overlay").style.backgroundImage = isSad ? "url('rain.jpg')" : "url('sun.jpg')";
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        // HIỆU ỨNG ĐÓNG SỔ KHI QUAY LẠI
+        window.goBack = () => {
+            const book = document.getElementById('book');
+            book.classList.add('closing-action'); // Kích hoạt animation CSS
+            setTimeout(() => {
+                window.history.back();
+            }, 900); // Thời gian chờ lật trang xong rồi mới chuyển URL
+        };
+
+        loadData();
+    </script>
+</body>
+
+</html>

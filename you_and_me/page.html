@@ -2,180 +2,281 @@
 <html lang="vi">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Emotion Collector PRO</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Khu Rừng Kỷ Niệm 🌲✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Patrick+Hand&display=swap"
+    rel="stylesheet">
   <style>
-    /* Các kiểu dáng và phần style của trang */
+    :root {
+      --primary: #6c5ce7;
+      --secondary: #00b894;
+      --paper: rgba(255, 255, 255, 0.85);
+      --text: #2d3436;
+    }
+
+    /* TỐI ƯU BODY CHO IFRAME */
     body {
       margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: linear-gradient(120deg, #89f7fe, #66a6ff);
+      padding: 0;
+      font-family: 'Patrick Hand', cursive;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
+      overflow: hidden; 
+      height: auto;
+      min-height: 100%;
+      background: transparent;
+    }
+
+    .bg-fixed {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+      background-size: cover;
+      z-index: -3;
+    }
+
+    .rain {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: url('https://raw.githubusercontent.com/evertheen/simple-rain-effect/master/rain.png');
+      animation: rain 0.3s linear infinite;
+      z-index: -2;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    @keyframes rain {
+      0% { background-position: 0 0; }
+      100% { background-position: 20% 100%; }
+    }
+
+    .sun-rays {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, rgba(255, 255, 224, 0.2) 0%, transparent 50%, rgba(255, 255, 224, 0.1) 100%);
+      z-index: -1;
+      pointer-events: none;
+      animation: sunshine 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes sunshine {
+      from { opacity: 0.3; transform: scale(1); }
+      to { opacity: 0.7; transform: scale(1.1); }
     }
 
     .container {
-      background: white;
-      width: 95%;
-      max-width: 820px;
-      padding: 28px;
-      border-radius: 22px;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
-      animation: fade .6s ease;
-    }
-
-    @keyframes fade {
-      from {
-        opacity: 0;
-        transform: translateY(20px)
-      }
-
-      to {
-        opacity: 1
-      }
+      background: var(--paper);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      width: 90%;
+      max-width: 550px;
+      padding: 30px;
+      border-radius: 40px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 10;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      margin: 40px auto;
     }
 
     h2 {
       text-align: center;
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.5em;
+      color: #1e3799;
       margin-top: 0;
+      margin-bottom: 15px;
+    }
+
+    .section {
+      margin-bottom: 15px;
+      background: rgba(255, 255, 255, 0.5);
+      padding: 12px;
+      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #2c3e50;
+      font-size: 1.1em;
     }
 
     textarea {
       width: 100%;
-      height: 130px;
-      border-radius: 12px;
-      border: 1px solid #ddd;
-      padding: 12px;
-      font-size: 15px;
-    }
-
-    .gridMood {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .moodItem {
-      background: #f1f3f6;
-      padding: 10px;
-      border-radius: 12px;
-      cursor: pointer;
-    }
-
-    button {
+      height: 100px;
       border: none;
-      padding: 11px 16px;
-      border-radius: 12px;
+      border-radius: 20px;
+      padding: 15px;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 1.1em;
+      background: rgba(255, 255, 255, 0.9);
+      resize: none;
+      outline: none;
+    }
+
+    .mic-btn {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      background: #0984e3;
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
       cursor: pointer;
-      margin-top: 8px;
     }
 
-    .mic {
-      background: #ff7675;
-      color: white
-    }
-
-    .rec {
-      background: #6c5ce7;
-      color: white
-    }
-
-    .send {
-      background: #00b894;
+    #holdRec {
+      background: #eb4d4b;
       color: white;
-      width: 100%;
-      font-size: 16px
-    }
-
-    .skip {
-      background: #636e72;
-      color: white;
-      width: 100%
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-family: inherit;
     }
 
     .previewImg {
-      max-width: 100%;
-      margin-top: 10px;
-      border-radius: 12px;
-    }
-
-    audio {
       width: 100%;
-      margin-top: 10px
+      max-height: none;
+      object-fit: contain;
+      border-radius: 15px;
+      display: none;
+      margin-top: 10px;
+      border: 3px solid white;
     }
 
     .rowBtn {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      grid-template-columns: 1fr 2fr;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    button.send {
+      background: linear-gradient(to right, #00b894, #55efc4);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 20px;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+
+    button.skip {
+      background: rgba(0, 0, 0, 0.05);
+      color: #636e72;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .file-label {
+      display: block;
+      background: #fff;
+      padding: 10px;
+      text-align: center;
+      border-radius: 15px;
+      border: 2px dashed #74b9ff;
+      cursor: pointer;
+      color: #0984e3;
+    }
+
+    /* HIỆU ỨNG KHI CLICK VÀO CẢM XÚC */
+    .moodItem {
+      flex:1; 
+      text-align:center; 
+      background:white; 
+      padding:10px; 
+      border-radius:15px; 
+      cursor:pointer;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .moodItem:has(input:checked) {
+      border: 2px solid #f1c40f; /* Viền màu vàng */
+      background: #fff9db; /* Nền vàng nhạt */
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(241, 196, 15, 0.3);
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <h2>🧠 Ghi nhận cảm xúc người dùng</h2>
-    <hr>
-    <label>🔒 Quyền riêng tư</label>
-    <div>
-      <label><input type="radio" name="privacy" value="public" checked> 🌍 Công khai</label>
-      <label><input type="radio" name="privacy" value="private"> 🔐 Chỉ mình tôi</label>
-    </div>
-    <label>Mô tả cảm xúc</label>
-    <textarea id="text"></textarea>
-    <button class="mic" onclick="startSpeech()">🎤 nói để nhập</button>
+  <div class="bg-fixed"></div>
+  <div class="rain"></div>
+  <div class="sun-rays"></div>
 
-    <hr>
+  <div class="container" id="mainContainer">
+    <h2>🍃 Nhật Ký Rừng Xanh</h2>
 
-    <label>🎧 giữ để ghi âm nhanh</label><br>
-    <button class="rec" id="holdRec">Giữ để ghi</button>
-    <audio id="audioPlayback" controls></audio>
+    <div id="diaryForm">
+      <!-- Chế độ hiển thị -->
+      <div class="section" style="display: flex; justify-content: space-between; align-items: center;">
+        <label style="margin-bottom:0">🔒 Chế độ hiển thị:</label>
+        <div style="display: flex; gap: 10px;">
+          <label style="font-weight:normal; cursor:pointer"><input type="radio" name="privacy" value="public" checked> 🌍</label>
+          <label style="font-weight:normal; cursor:pointer"><input type="radio" name="privacy" value="private"> 🔐</label>
+        </div>
+      </div>
 
-    <hr>
+      <!-- Nội dung text -->
+      <div class="section">
+        <label>💭 Tâm sự với lá rừng...</label>
+        <div style="position: relative;">
+          <textarea id="text" placeholder="Hôm nay lòng bạn có mưa hay có nắng?"></textarea>
+          <button class="mic-btn" onclick="startSpeech()">🎤</button>
+        </div>
+      </div>
 
-    <label>📷 tải ảnh cảm xúc</label>
-    <input type="file" id="imgInput" accept="image/*" />
-    <img id="preview" class="previewImg" />
+      <!-- Ghi âm -->
+      <div class="section" style="display: flex; align-items: center; gap: 15px;">
+        <label style="margin-bottom:0">🎙️ Ghi âm:</label>
+        <button id="holdRec">Giữ để nói</button>
+        <audio id="audioPlayback" controls style="display:none; height: 35px;"></audio>
+      </div>
 
-    <hr>
+      <!-- Hình ảnh -->
+      <div class="section">
+        <label>📸 Chụp lại khoảnh khắc</label>
+        <label class="file-label" for="imgInput">Gửi một tấm ảnh vào rừng...</label>
+        <input type="file" id="imgInput" accept="image/*" style="display:none" />
+        <img id="preview" class="previewImg" />
+      </div>
 
-    <label>😶‍🌫️ chọn mood</label>
-    <div class="gridMood">
-      <label class="moodItem">
-        <input type="radio" name="mood" value="happy"> 😊 Vui
-      </label>
-      <label class="moodItem">
-        <input type="radio" name="mood" value="sad"> 😢 Buồn
-      </label>
-    </div>
+      <!-- Cảm xúc -->
+      <div class="section">
+        <label>🎭 Cảm xúc hiện tại</label>
+        <div class="gridMood" style="display: flex; gap: 10px;">
+          <label class="moodItem">
+            <input type="radio" name="mood" value="happy" style="display:none">
+            <span style="font-size:1.5em; display:block">☀️</span> Vui vẻ
+          </label>
+          <label class="moodItem">
+            <input type="radio" name="mood" value="sad" style="display:none">
+            <span style="font-size:1.5em; display:block">🌧️</span> Trầm tư
+          </label>
+        </div>
+      </div>
 
-    <hr>
-    <div id="updateBox"
-      style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); justify-content: center; align-items: center;">
-      <div style="background:white; padding: 20px; border-radius: 16px; text-align: center; width: 300px">
-        <h3>💖 Nhật kí hôm nay</h3>
-        <p>Bạn đã ghi rồi, cập nhật lại không?</p>
-        <button onclick="confirmUpdate(true)">OK luôn</button>
-        <button onclick="confirmUpdate(false)">Thôi</button>
+      <div class="rowBtn">
+        <button class="skip" onclick="skipPage()">Để sau</button>
+        <button class="send" id="submitEmotion" onclick="confirmSend()">Gửi vào mây trời ✨</button>
       </div>
     </div>
-    <div class="rowBtn">
-      <button class="skip" onclick="skipPage()">Bỏ qua</button>
-      <button class="send" id="submitEmotion" onclick="confirmSend()">Gửi</button>
-    </div>
-
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-    import {
-      getFirestore, collection, addDoc,
-      query, where, getDocs, deleteDoc, doc, getDoc, setDoc
-    } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -183,265 +284,140 @@
       authDomain: "banhkietgithunbpoem.firebaseapp.com",
       projectId: "banhkietgithunbpoem",
       storageBucket: "banhkietgithunbpoem.firebasestorage.app",
-      messagingSenderId: "429631951698",
-      appId: "1:429631951698:web:8c5f6854de3ad22113a08b"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    let currentUser = null;
-
-    onAuthStateChanged(auth, user => {
-      currentUser = user || null;
+    // --- LOGIC KIỂM TRA ĐÃ VIẾT NHẬT KÝ CHƯA ---
+    onAuthStateChanged(auth, async user => {
+      if (user) {
+        const t = getTimeKeys();
+        const q = query(collection(db, "emotions"), 
+                        where("uid", "==", user.uid), 
+                        where("dayKey", "==", t.dayKey));
+        
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          // Nếu đã viết rồi
+          document.getElementById("mainContainer").innerHTML = `
+            <h2>🍃 Nhật Ký Rừng Xanh</h2>
+            <div class="section" style="text-align:center; padding: 40px 20px;">
+              <p style="font-size: 1.4em; color: #1e3799; line-height: 1.6;">
+                Bạn đã viết nhật ký hôm nay rồi,<br>không cần phải viết lại đâu, ahaha! ✨
+              </p>
+              <button class="send" onclick="location.href='../index.html'" style="width:auto; padding: 10px 30px; margin-top:20px;">Quay lại khu rừng</button>
+            </div>
+          `;
+          sendHeight();
+        }
+      }
     });
-    const text = document.getElementById("text");
-    const holdRec = document.getElementById("holdRec");
-    const imgInput = document.getElementById("imgInput");
-    const audioPlayback = document.getElementById("audioPlayback");
+
+    function sendHeight() {
+      const height = document.getElementById("mainContainer").offsetHeight + 100; 
+      window.parent.postMessage(height, "*");
+    }
+
     const preview = document.getElementById("preview");
-    // ===== util =====
-    function cleanText(text) {
-      return text.toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/\s+/g, "")
-        .replace(/[^a-z0-9]/g, "");
-    }
+    const audioPlayback = document.getElementById("audioPlayback");
 
-    // 🔥 public_id overwrite
-    function createFolder(username, role) {
-      const now = new Date();
+    preview.onload = () => sendHeight();
+    audioPlayback.onloadedmetadata = () => sendHeight();
 
-      const day = String(now.getDate()).padStart(2, "0");
-      const month = String(now.getMonth() + 1).padStart(2, "0");
-      const year = now.getFullYear();
-
-      const hours = String(now.getHours()).padStart(2, "0");
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-
-      const u = cleanText(username);
-      const r = cleanText(role);
-
-      return `emotion/${u}_${r}/${day}-${month}-${year}_${hours}:${minutes}`;
-    }
-
-    // 🔥 upload (đã FIX 400)
-    async function uploadCloudinary(file, folder) {
-
-      const url = "https://api.cloudinary.com/v1_1/dp6rc7ghq/auto/upload";
-
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("upload_preset", "uploadfilepoem");
-
-      fd.append("folder", folder); // ✅ đúng chuẩn
-      fd.append("resource_type", "auto");
-
-      const res = await fetch(url, {
-        method: "POST",
-        body: fd
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        console.error("Cloudinary:", data);
-        throw new Error(data.error?.message || "Upload fail");
-      }
-
-      return data.secure_url;
-    }
-
-    // ===== speech =====
-    window.startSpeech = function () {
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SR) return alert("trình duyệt không hỗ trợ voice");
-
-      const r = new SR();
-      r.lang = "vi-VN";
-      r.start();
-      r.onresult = e => text.value += e.results[0][0].transcript;
-    };
-
-    // ===== record =====
-    let mediaRecorder;
-    let chunks = [];
-
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(stream => {
-        mediaRecorder = new MediaRecorder(stream);
-
-        mediaRecorder.ondataavailable = e => chunks.push(e.data);
-
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'audio/ogg' });
-          chunks = [];
-          const url = URL.createObjectURL(blob);
-          audioPlayback.src = url;
-          audioPlayback.blob = blob;
-        };
-      })
-      .catch(() => console.log("⚠️ không có mic"));
-
-    holdRec.onmousedown = () => {
-      if (!mediaRecorder) return alert("⚠️ chưa cấp quyền micro");
-      audioPlayback.src = "";
-      mediaRecorder.start();
-    };
-
-    holdRec.onmouseup = () => {
-      if (mediaRecorder && mediaRecorder.state !== "inactive") {
-        mediaRecorder.stop();
-      }
-    };
-
-    // ===== image =====
+    const imgInput = document.getElementById("imgInput");
     imgInput.onchange = e => {
       if (e.target.files[0]) {
         preview.src = URL.createObjectURL(e.target.files[0]);
+        preview.style.display = "block";
       }
     };
 
-    // ===== nav =====
+    const observer = new MutationObserver(() => sendHeight());
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    window.addEventListener("load", () => {
+        setTimeout(sendHeight, 300);
+    });
+
+    const text = document.getElementById("text");
+    const holdRec = document.getElementById("holdRec");
+
+    function cleanText(text) { return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "").replace(/[^a-z0-9]/g, ""); }
+    function getTimeKeys() {
+      const now = new Date();
+      const day = String(now.getDate()).padStart(2, "0"), month = String(now.getMonth() + 1).padStart(2, "0"), year = now.getFullYear();
+      const hours = String(now.getHours()).padStart(2, "0"), minutes = String(now.getMinutes()).padStart(2, "0");
+      return { dayKey: `${day}-${month}-${year}`, monthKey: `${month}-${year}`, yearKey: `${year}`, timeKey: `${hours}-${minutes}` };
+    }
+
+    async function uploadCloudinary(file, folder) {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("upload_preset", "uploadfilepoem");
+      fd.append("folder", folder);
+      const res = await fetch("https://api.cloudinary.com/v1_1/dp6rc7ghq/auto/upload", { method: "POST", body: fd });
+      return (await res.json()).secure_url;
+    }
+
+    window.startSpeech = function () {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) return alert("Trình duyệt không hỗ trợ.");
+      const r = new SR(); r.lang = "vi-VN"; r.start();
+      r.onresult = e => { text.value += e.results[0][0].transcript; sendHeight(); }
+    };
+
+    let mediaRecorder, chunks = [];
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => chunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'audio/ogg' });
+        chunks = [];
+        audioPlayback.src = URL.createObjectURL(blob);
+        audioPlayback.blob = blob;
+        audioPlayback.style.display = "block";
+        sendHeight();
+      };
+    });
+
+    holdRec.onmousedown = () => { if (mediaRecorder) { mediaRecorder.start(); holdRec.innerText = "Ghi âm..."; } };
+    holdRec.onmouseup = () => { if (mediaRecorder && mediaRecorder.state !== "inactive") { mediaRecorder.stop(); holdRec.innerText = "Giữ để nói"; } };
+
     window.skipPage = () => location.href = "../index.html";
 
-    // ===== send =====
     window.confirmSend = async function () {
-
-      if (!auth.currentUser) {
-        alert("⚠️ chưa đăng nhập");
-        return;
-      }
-
-      const user = auth.currentUser;
-
-      let username = "guest";
-      let role = "user";
-
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        username = userData.username || "guest";
-        role = userData.role || "user";
-      }
-
-      const t = getTimeKeys();
-
-      const docId =
-        `${cleanText(username)}_${cleanText(role)}_${t.dayKey}_${t.timeKey}`;
-
-
-
-      // ✅ mood đặt ở đây
+      if (!auth.currentUser) return alert("Hãy đăng nhập trước nhé!");
       const moodEl = document.querySelector("input[name='mood']:checked");
-      const mood = moodEl ? moodEl.value : "";
+      if (!moodEl) return alert("Chọn tâm trạng trước khi gửi!");
 
-      if (!mood) {
-        alert("⚠️ hãy chọn cảm xúc (vui hoặc buồn)");
-        return;
-      }
+      const btn = document.getElementById("submitEmotion");
+      btn.innerText = "Đang gửi..."; btn.disabled = true;
 
-      const privacyEl = document.querySelector("input[name='privacy']:checked");
-      const privacy = privacyEl ? privacyEl.value : "public";
+      try {
+        const user = auth.currentUser;
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        const { username = "guest", role = "user" } = userDoc.exists() ? userDoc.data() : {};
+        const t = getTimeKeys();
+        const folder = `emotion/${cleanText(username)}_${cleanText(role)}/${t.dayKey}_${t.timeKey}`;
 
-      const folder = createFolder(username, role);
+        let imgUrl = imgInput.files[0] ? await uploadCloudinary(imgInput.files[0], folder) : "";
+        let audioUrl = audioPlayback.blob ? await uploadCloudinary(new File([audioPlayback.blob], "rec.ogg"), folder) : "";
 
-      let imgUrl = "";
-      let audioUrl = "";
+        const data = {
+          uid: user.uid, username, role, text: text.value, mood: moodEl.value,
+          imgUrl, audioUrl, privacy: document.querySelector("input[name='privacy']:checked").value,
+          createdAt: new Date(), ...t,
+          like: 0, heart: 0, sad: 0, comments: []
+        };
 
-      if (imgInput.files[0]) {
-        imgUrl = await uploadCloudinary(imgInput.files[0], folder);
-      }
-
-      if (audioPlayback.blob) {
-        const audioFile = new File([audioPlayback.blob], "record.ogg", { type: "audio/ogg" });
-        audioUrl = await uploadCloudinary(audioFile, folder);
-      }
-
-      const data = {
-        uid: user.uid,
-        username,
-        role,
-        text: text.value,
-        mood,
-        imgUrl,
-        audioUrl,
-        privacy,
-
-        createdAt: new Date(),
-
-        dayKey: t.dayKey,
-        weekKey: t.weekKey,
-        monthKey: t.monthKey,
-        yearKey: t.yearKey
-      };
-
-
-      console.log("DATA SAVE:", data);
-
-      await setDoc(
-        doc(db, "emotions", docId),
-        data
-      );
-
-
-      alert("✅ lưu thành công");
-      location.reload();
+        await setDoc(doc(db, "emotions", `${cleanText(username)}_${cleanText(role)}_${t.dayKey}_${t.timeKey}`), data);
+        alert("✨ Tâm sự đã được gửi vào mây trời!");
+        location.reload();
+      } catch (err) { alert("Lỗi: " + err.message); btn.disabled = false; btn.innerText = "Gửi vào mây trời ✨"; }
     };
-    let resolveUpdate;
-    // Hàm để hiển thị hộp thoại xác nhận cập nhật
-    function showUpdateBox() {
-      document.getElementById("updateBox").style.display = "flex";
-
-      return new Promise(res => {
-        resolveUpdate = res;
-      });
-    }
-
-    // Hàm để xử lý lựa chọn cập nhật của người dùng
-    window.confirmUpdate = function (choice) {
-      document.getElementById("updateBox").style.display = "none";
-      resolveUpdate(choice);
-    };
-    function getTimeKeys() {
-
-      const now = new Date();
-
-      const day = String(now.getDate()).padStart(2, "0");
-      const month = String(now.getMonth() + 1).padStart(2, "0");
-      const year = now.getFullYear();
-
-      const hours = String(now.getHours()).padStart(2, "0");
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-
-      // ⭐ tính tuần trong năm
-      const firstDay = new Date(now.getFullYear(), 0, 1);
-      const pastDays = Math.floor((now - firstDay) / 86400000);
-      const week = Math.ceil((pastDays + firstDay.getDay() + 1) / 7);
-
-      return {
-        dayKey: `${day}-${month}-${year}`,
-        monthKey: `${month}-${year}`,
-        yearKey: `${year}`,
-        weekKey: `W${week}-${year}`,
-        timeKey: `${hours}-${minutes}`
-      };
-    }
-
-
-    function getTimeKey() {
-      const now = new Date();
-
-      const hours = String(now.getHours()).padStart(2, "0");
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-
-      return `${hours}-${minutes}`;
-    }
   </script>
-  <script src="../main_js/iframe.js"></script>
-
 </body>
 
 </html>

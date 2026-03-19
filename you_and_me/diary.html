@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Nhật Ký Cảm Xúc 📖</title>
+     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Patrick+Hand&display=swap"
+          rel="stylesheet">
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+     <style>
+          :root {
+               --sad-color: #5D4037;
+               --happy-color: #4CAF50;
+               --paper-bg: #fdfaf0;
+               --success-green: #2ecc71;
+               --fail-red: #e74c3c;
+               --tab-hover-width: 60px;
+          }
+
+          body {
+               margin: 0; padding: 0;
+               font-family: 'Patrick Hand', cursive;
+               display: flex; justify-content: center; align-items: center;
+               min-height: 100vh; overflow: hidden;
+               perspective: 1500px;
+               position: relative;
+               background-color: #000;
+          }
+
+          body::before {
+               content: "";
+               position: fixed;
+               top: 0; left: 0; width: 100%; height: 100%;
+               background: url('sunrain.jpg') no-repeat center center;
+               background-size: cover;
+               opacity: 0.75;
+               z-index: -1;
+          }
+
+          .diary-book {
+               display: flex;
+               width: 90vw; max-width: 1100px; height: 85vh;
+               background: var(--paper-bg);
+               box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+               border-radius: 5px 35px 35px 5px;
+               position: relative;
+               border-left: 20px solid #3d2b1f;
+               transform-style: preserve-3d;
+          }
+
+          .diary-book::after {
+               content: ''; position: absolute; left: 50%; top: 0; bottom: 0;
+               width: 2px; background: rgba(0, 0, 0, 0.1); z-index: 10;
+          }
+
+          .page-left {
+               width: 50%; padding: 20px 30px;
+               display: flex; flex-direction: column; box-sizing: border-box;
+          }
+
+          .page-right {
+               width: 50%; padding: 20px 30px;
+               display: flex; flex-direction: column; box-sizing: border-box;
+               background-image: radial-gradient(#d1d1d1 0.5px, transparent 0.5px);
+               background-size: 20px 20px;
+               overflow-y: auto; overflow-x: hidden;
+               border-radius: 0 35px 35px 0;
+               position: relative;
+               transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+               transform-origin: left center;
+               z-index: 2;
+          }
+
+          .page-right.flipping {
+               transform: rotateY(-110deg);
+               box-shadow: 20px 0 50px rgba(0,0,0,0.2);
+          }
+
+          h1 { font-family: 'Dancing Script', cursive; color: #3d2b1f; text-align: center; margin: 0 0 10px 0; font-size: 1.8em; }
+
+          .filters { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
+          .filters button {
+               padding: 4px 10px; border: 1.5px solid #3d2b1f; background: transparent;
+               cursor: pointer; border-radius: 8px; font-family: inherit; transition: 0.3s;
+          }
+          .filters button.active { background: #3d2b1f; color: white; }
+
+          .checklist-container {
+               background: rgba(255, 255, 255, 0.5); padding: 10px; border-radius: 12px;
+               margin-bottom: 15px; min-height: 80px; display: flex; align-items: center; justify-content: center;
+          }
+
+          .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; width: 100%; }
+          .month-day {
+               font-size: 11px; height: 22px; display: flex; align-items: center;
+               justify-content: center; border-radius: 3px; background: rgba(0,0,0,0.03);
+          }
+          .month-day.wrote { background: var(--success-green); color: white; font-weight: bold; }
+          .month-day.missed { color: var(--fail-red); font-weight: bold; }
+
+          .chart-container { flex: 1; min-height: 0; }
+
+          /* 12 THẺ THÁNG ĐỘC LẬP */
+          .year-tabs {
+               position: absolute; right: -38px; top: 40px;
+               width: 38px; height: 400px; z-index: 1;
+          }
+          .month-tab {
+               position: absolute; /* Cố định vị trí từng thẻ */
+               right: 0;
+               width: 38px; height: 28px; color: white; display: flex;
+               align-items: center; justify-content: center; border-radius: 0 8px 8px 0;
+               font-size: 11px; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+               font-weight: bold; box-shadow: 3px 0 5px rgba(0,0,0,0.1);
+          }
+          .month-tab:hover {
+               width: var(--tab-hover-width);
+               padding-left: 10px;
+               transform: scale(1.1);
+               z-index: 20;
+          }
+
+          .entry-mini {
+               position: relative; padding: 12px 0; border-bottom: 1px dashed #ccc;
+          }
+          .mood-tag { padding: 2px 8px; border-radius: 10px; color: white; font-size: 10px; }
+          .eye-btn {
+               position: absolute; right: 0; bottom: 12px; cursor: pointer;
+               font-size: 18px; transition: 0.3s;
+          }
+          .eye-btn:hover { transform: scale(1.3); }
+
+          .stats-box { text-align: center; font-size: 14px; line-height: 1.6; }
+          .stats-box b { font-size: 16px; }
+
+          .footer-note { text-align: center; font-size: 13px; margin-top: 10px; color: #3d2b1f; }
+          .slogan { font-style: italic; font-size: 11px; color: #666; display: block; margin-top: 2px; }
+     </style>
+</head>
+
+<body>
+
+     <div class="diary-book">
+          <div class="page-left">
+               <h1>Kỷ niệm cá nhân</h1>
+               <div class="filters">
+                    <button onclick="changeMode('day')" id="btn-day">Ngày</button>
+                    <button onclick="changeMode('week')" id="btn-week" class="active">Tuần</button>
+                    <button onclick="changeMode('month')" id="btn-month">Tháng</button>
+                    <button onclick="changeMode('year')" id="btn-year">Năm</button>
+               </div>
+               <div class="checklist-container" id="check-section"></div>
+               <div class="chart-container"><canvas id="emotionChart"></canvas></div>
+               <div class="footer-note">
+                    Nhật ký của: <strong id="display-name">...</strong>
+                    <span class="slogan">"Viết ra để nhẹ lòng, giữ lại để trân trọng"</span>
+               </div>
+          </div>
+
+          <div class="page-right" id="right-page">
+               <div id="entries-list"></div>
+          </div>
+
+          <div id="year-tabs-container" class="year-tabs"></div>
+     </div>
+
+     <script type="module">
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+          import { getFirestore, collection, query, getDocs, where } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+          import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+
+          const firebaseConfig = {
+               apiKey: "AIzaSyD5VotnEcZ6hQduMoF5AjL0024x1VTkEu4",
+               authDomain: "banhkietgithunbpoem.firebaseapp.com",
+               projectId: "banhkietgithunbpoem"
+          };
+
+          const app = initializeApp(firebaseConfig);
+          const db = getFirestore(app);
+          const auth = getAuth(app);
+
+          let allData = [];
+          let currentMode = 'week';
+          let myChart;
+          const tabColors = ['#FF5722', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39'];
+
+          onAuthStateChanged(auth, async user => {
+               if (user) {
+                    const q = query(collection(db, "emotions"), where("uid", "==", user.uid));
+                    const snap = await getDocs(q);
+                    allData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    document.getElementById("display-name").innerText = allData.find(d => d.username)?.username || "User";
+                    renderTabs();
+                    render();
+               }
+          });
+
+          // TÁCH BIỆT 12 THẺ THÁNG (POSITION ABSOLUTE)
+          function renderTabs() {
+               const container = document.getElementById("year-tabs-container");
+               container.innerHTML = "";
+               for (let i = 1; i <= 12; i++) {
+                    const tab = document.createElement("div");
+                    tab.className = "month-tab";
+                    tab.innerText = "T" + i;
+                    tab.style.backgroundColor = tabColors[i - 1];
+                    tab.style.top = `${(i - 1) * 31}px`; // Cách nhau cố định, không đẩy nhau
+                    tab.onclick = (e) => {
+                         e.stopPropagation();
+                         filterByMonth(i);
+                    };
+                    container.appendChild(tab);
+               }
+          }
+
+          function filterByMonth(m) {
+               const year = new Date().getFullYear();
+               const filtered = allData.filter(d => {
+                    const date = d.createdAt.toDate();
+                    return (date.getMonth() + 1) === m && date.getFullYear() === year;
+               });
+               renderRightList(filtered, true);
+          }
+
+          function render() {
+               const tabs = document.getElementById("year-tabs-container");
+               tabs.style.display = (currentMode === 'year') ? "block" : "none";
+               if (currentMode === 'week') renderWeek();
+               else if (currentMode === 'month') renderMonth();
+               else if (currentMode === 'year') renderYear();
+               else renderDay();
+          }
+
+          function renderDay() {
+               const todayStr = formatDate(new Date());
+               const entries = allData.filter(d => d.dayKey === todayStr);
+               document.getElementById("check-section").innerHTML = entries.length > 0 ? 
+                    '<b style="color:var(--success-green)">✔ Đã viết nhật ký hôm nay.</b>' : 
+                    '<b style="color:var(--fail-red)">✘ Hôm nay bạn chưa viết gì...</b>';
+               updateChart(['Hôm nay'], [entries.filter(d => !isSad(d.mood)).length], [entries.filter(d => isSad(d.mood)).length], 50);
+               renderRightList(entries);
+          }
+
+          function renderWeek() {
+               const labels = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+               const hD = Array(7).fill(0), sD = Array(7).fill(0);
+               let now = new Date();
+               let monday = new Date(now);
+               monday.setDate(now.getDate() - (now.getDay() === 0 ? 6 : now.getDay() - 1));
+               let html = '<div class="day-row" style="display:flex; justify-content:space-around; width:100%">';
+               let weekEntries = [];
+               for (let i = 0; i < 7; i++) {
+                    let d = new Date(monday); d.setDate(monday.getDate() + i);
+                    let dStr = formatDate(d);
+                    let dayEntries = allData.filter(x => x.dayKey === dStr);
+                    weekEntries.push(...dayEntries);
+                    let icon = dayEntries.length > 0 ? `<span style="color:var(--success-green)">✔</span>` : (d <= now ? `<span style="color:var(--fail-red)">✘</span>` : "");
+                    html += `<div style="text-align:center">${icon}<br><small>${labels[i]}</small></div>`;
+                    dayEntries.forEach(x => isSad(x.mood) ? sD[i]++ : hD[i]++);
+               }
+               document.getElementById("check-section").innerHTML = html + '</div>';
+               updateChart(labels, hD, sD);
+               renderRightList(weekEntries);
+          }
+
+          // CHẾ ĐỘ THÁNG: BIỂU ĐỒ 7 CỘT (T2 -> CN)
+          function renderMonth() {
+               const now = new Date();
+               const currentMonth = now.getMonth();
+               const currentYear = now.getFullYear();
+               const labels = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+               const hD = Array(7).fill(0), sD = Array(7).fill(0);
+
+               // Lọc dữ liệu trong tháng này
+               const monthEntries = allData.filter(x => {
+                    const d = x.createdAt.toDate();
+                    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+               });
+
+               monthEntries.forEach(entry => {
+                    const d = entry.createdAt.toDate();
+                    let dayIdx = d.getDay() - 1; // 0 (Mon) to 6 (Sun)
+                    if (dayIdx === -1) dayIdx = 6; // Sunday
+                    isSad(entry.mood) ? sD[dayIdx]++ : hD[dayIdx]++;
+               });
+
+               // Vẽ grid ngày tháng
+               const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
+               let html = '<div class="month-grid">';
+               for (let i = 1; i <= lastDay; i++) {
+                    let d = new Date(currentYear, currentMonth, i);
+                    let dStr = formatDate(d);
+                    let dayEntries = allData.filter(x => x.dayKey === dStr);
+                    let statusClass = ""; let content = i;
+                    if (dayEntries.length > 0) statusClass = "wrote";
+                    else if (d <= now) { statusClass = "missed"; content = "X"; }
+                    html += `<div class="month-day ${statusClass}">${content}</div>`;
+               }
+               document.getElementById("check-section").innerHTML = html + '</div>';
+               
+               updateChart(labels, hD, sD);
+               renderRightList(monthEntries);
+          }
+
+          function renderYear() {
+               const now = new Date();
+               const year = now.getFullYear();
+               const startOfYear = new Date(year, 0, 1);
+               const diffTime = Math.abs(now - startOfYear);
+               const daysPassed = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+               
+               const curYearData = allData.filter(d => d.createdAt.toDate().getFullYear() === year);
+               const uniqueDays = new Set(curYearData.map(d => d.dayKey)).size;
+               const missedDays = Math.max(0, daysPassed - uniqueDays);
+
+               document.getElementById("check-section").innerHTML = `
+                    <div class="stats-box">
+                         <span style="color:var(--success-green)"><b>✔ ${uniqueDays}</b> ngày đã viết nhật ký</span><br>
+                         <span style="color:var(--fail-red)"><b>✘ ${missedDays}</b> ngày đã bỏ lỡ (từ 01/01)</span>
+                    </div>`;
+               
+               const hD = Array(12).fill(0), sD = Array(12).fill(0);
+               curYearData.forEach(d => {
+                    const m = d.createdAt.toDate().getMonth(); isSad(d.mood) ? sD[m]++ : hD[m]++;
+               });
+               updateChart(['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'], hD, sD);
+               renderRightList(curYearData.slice(0, 10));
+          }
+
+          function renderRightList(entries, clear = true) {
+               const container = document.getElementById("entries-list");
+               if (clear) container.innerHTML = "";
+               if (entries.length === 0) {
+                    container.innerHTML = `<p style="text-align:center; color:#999; margin-top:20px;">Không có kỷ niệm nào...</p>`;
+                    return;
+               }
+               entries.sort((a,b) => b.createdAt.toDate() - a.createdAt.toDate()).forEach(e => {
+                    const time = e.createdAt.toDate().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+                    container.innerHTML += `
+                         <div class="entry-mini">
+                              <div style="display:flex; justify-content:space-between; margin-bottom:5px">
+                                   <small>📅 ${e.dayKey} - ${time}</small>
+                                   <div class="mood-tag" style="background:${isSad(e.mood) ? 'var(--sad-color)' : 'var(--happy-color)'}">${e.mood}</div>
+                              </div>
+                              <div style="font-size:14px; color:#444">${(e.text || "").substring(0, 60)}...</div>
+                              <span class="eye-btn" onclick="flipAndGo('${e.id}')">👁️</span>
+                         </div>`;
+               });
+          }
+
+          window.flipAndGo = (id) => {
+               const page = document.getElementById('right-page');
+               page.classList.add('flipping');
+               setTimeout(() => {
+                    window.location.href = `dataemotion.html?id=${id}`;
+               }, 700);
+          };
+
+          function updateChart(labels, h, s, bW = null) {
+               const ctx = document.getElementById('emotionChart').getContext('2d');
+               if (myChart) myChart.destroy();
+               myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                         labels: labels,
+                         datasets: [
+                              { 
+                                   label: 'Vui', 
+                                   data: h.map((v, i) => (v+s[i]===0 ? 0 : v/(v+s[i])*100)), 
+                                   backgroundColor: '#4CAF50', 
+                                   rawCount: h,
+                                   barThickness: bW 
+                              },
+                              { 
+                                   label: 'Buồn', 
+                                   data: s.map((v, i) => (v+h[i]===0 ? 0 : v/(v+h[i])*100)), 
+                                   backgroundColor: '#5D4037', 
+                                   rawCount: s,
+                                   barThickness: bW 
+                              }
+                         ]
+                    },
+                    options: {
+                         responsive: true, maintainAspectRatio: false,
+                         plugins: { 
+                              legend: { display: false },
+                              tooltip: {
+                                   callbacks: {
+                                        label: function(context) {
+                                             const count = context.dataset.rawCount[context.dataIndex];
+                                             return ` ${context.dataset.label}: ${count} lần`;
+                                        }
+                                   }
+                              }
+                         },
+                         scales: { 
+                              x: { stacked: true, grid: { display: false } }, 
+                              y: { stacked: true, beginAtZero: true, max: 100, ticks: { display: false }, grid: { display: false } } 
+                         }
+                    }
+               });
+          }
+
+          function isSad(m) { const s = (m || "").toLowerCase(); return s.includes("buồn") || s.includes("sad") || s.includes("tệ") || s.includes("khóc"); }
+          function formatDate(d) { return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`; }
+          
+          window.changeMode = (m) => {
+               currentMode = m;
+               document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+               document.getElementById('btn-' + m).classList.add('active');
+               render();
+          }
+     </script>
+</body>
+
+</html>

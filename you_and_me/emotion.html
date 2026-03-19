@@ -3,378 +3,336 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Emotion</title>
-
+  <title>Chi Tiết Cảm Xúc 🌿</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Segoe UI;
-      display: flex;
-      justify-content: center;
-      padding: 60px;
-      background: #eef2ff;
-      position: relative;
-      overflow: hidden;
-
+    :root {
+      --glass: rgba(255, 255, 255, 0.88);
+      --forest-dark: #064e3b;
+      --forest-light: #10b981;
+      --sun-glow: rgba(255, 223, 186, 0.4);
     }
 
-    /* ⭐ background buồn */
-    .bgRain {
+    /* 1. THIẾT LẬP NỀN - CHO PHÉP GIÃN CHIỀU CAO */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%; /* Không khóa 100vh */
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      overflow-x: hidden;
+      overflow-y: visible; /* Để trang cha tính toán được chiều cao */
+      display: flex;
+      flex-direction: column; /* Thay đổi để card nằm theo luồng tự nhiên */
+      align-items: center;
+      position: relative;
+      background: transparent;
+    }
+
+    #dynamicBg {
       position: fixed;
       inset: 0;
-      background: url("rain.jpg");
       background-size: cover;
       background-position: center;
-      opacity: .75;
+      z-index: -2;
+      transition: background-image 1.2s ease;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.05);
       z-index: -1;
     }
 
-    /* ⭐ nút quay lại */
+    /* ⭐ ICON QUAY LẠI */
     .backBtn {
       position: fixed;
-      top: 25px;
-      left: 25px;
-      width: 70px;
-      height: 50px;
+      top: 30px;
+      left: 30px;
+      width: 45px;
+      height: 45px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      transition: .4s;
-      z-index: 50;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      z-index: 100;
+      transition: 0.3s;
+      border: 1px solid rgba(0,0,0,0.05);
     }
+    .backBtn:hover { transform: translateX(-5px); }
+    .backBtn svg { width: 20px; fill: var(--forest-dark); }
 
-    .backBtn img {
-      width: 100%;
-    }
-
-    .backBtn:hover {
-      transform: translateY(-6px) scale(1.08);
-      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, .4));
-    }
-
-    /* ⭐ card */
+    /* ⭐ THẺ CARD - TỰ GIÃN THEO NỘI DUNG */
     .card {
-      width: 820px;
-      background: rgba(255, 255, 255, .85);
-      backdrop-filter: blur(10px);
-      border-radius: 26px;
-      box-shadow: 0 40px 90px rgba(0, 0, 0, .25);
-      padding: 35px;
-      animation: fadeIn .8s;
+      width: 90%;
+      max-width: 850px;
+      height: auto; /* Để card tự dài ra */
+      background: var(--glass);
+      backdrop-filter: blur(25px);
+      border-radius: 35px;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.12);
+      padding: 40px;
+      box-sizing: border-box;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      margin: 40px 0; /* Tạo khoảng trống trên dưới để iframe không bị sát mép */
+      position: relative;
+      z-index: 10;
+      animation: zoomIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(40px)
-      }
-
-      to {
-        opacity: 1
-      }
+    @keyframes zoomIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
     }
 
-    /* ⭐ layout content */
-    .contentRow {
-      display: flex;
-      gap: 30px;
+    .user { font-size: 28px; font-weight: 800; color: var(--forest-dark); margin-bottom: 5px; }
+    .time { color: #64748b; font-size: 13px; margin-bottom: 30px; font-style: italic; }
+
+    .contentRow { display: flex; gap: 30px; flex-wrap: wrap; }
+    .textBox { 
+      flex: 1; min-width: 300px; font-size: 19px; line-height: 1.7; color: #334155; 
+      background: rgba(255,255,255,0.4); padding: 25px; border-radius: 20px;
+    }
+    .sideImg { width: 300px; border-radius: 20px; object-fit: cover; border: 4px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+
+    /* ⭐ HIỆU ỨNG THỜI TIẾT */
+    .rain-drop {
+      position: fixed;
+      width: 2px; height: 15px;
+      background: rgba(255, 255, 255, 0.4);
+      top: -20px;
+      z-index: 0;
+      pointer-events: none;
+      animation: fall linear infinite;
+    }
+    @keyframes fall { to { transform: translateY(110vh) translateX(50px); } }
+
+    .sun-ray {
+      position: fixed;
+      top: -10%; left: -10%;
+      width: 50vw; height: 50vw;
+      background: radial-gradient(circle, rgba(255, 182, 193, 0.3) 0%, transparent 70%);
+      filter: blur(50px);
+      z-index: 0;
+      pointer-events: none;
+      animation: pulseSun 8s ease-in-out infinite;
+    }
+    @keyframes pulseSun { 0%, 100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.2); } }
+
+    .reactBar { margin-top: 30px; display: flex; gap: 12px; }
+    .reactBtn { background: white; padding: 10px 18px; border-radius: 50px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
+    .commentToggle { margin-top: 30px; font-weight: 700; color: var(--forest-light); cursor: pointer; display: inline-block; }
+    
+    textarea { 
+      width: 100%; height: 100px; border-radius: 15px; border: 2px solid #f1f5f9; 
+      padding: 15px; margin-top: 15px; box-sizing: border-box; resize: none; font-family: inherit;
+    }
+    .sendBtn { 
+      margin-top: 10px; padding: 12px 30px; background: var(--forest-light); 
+      color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: 700;
     }
 
-    .textBox {
-      flex: 1;
-      font-size: 20px;
-      line-height: 1.7;
-      color: #0f172a;
-    }
-
-    .sideImg {
-      width: 240px;
-      border-radius: 18px;
-      object-fit: cover;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, .25);
-    }
-
-    /* ⭐ user */
-    .user {
-      font-size: 24px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .time {
-      color: #64748b;
-      margin-bottom: 20px;
-    }
-
-    /* ⭐ reaction fb style */
-    .reactBar {
-      margin-top: 30px;
-      border-top: 1px solid #e2e8f0;
-      padding-top: 20px;
-      display: flex;
-      gap: 20px;
-      font-size: 22px;
-    }
-
-    .reactBtn {
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    .reactBtn:hover {
-      transform: scale(1.25);
-    }
-
-    /* ⭐ comment */
-    .commentToggle {
-      margin-top: 30px;
-      cursor: pointer;
-      color: #6366f1;
-      font-weight: 600;
-    }
-
-    .commentBox {
-      margin-top: 15px;
-      display: none;
-    }
-
-    textarea {
-      width: 100%;
-      height: 90px;
-      border-radius: 14px;
-      border: 1px solid #cbd5e1;
-      padding: 10px;
-      font-family: Segoe UI;
-    }
-
-    .sendBtn {
-      margin-top: 10px;
-      padding: 10px 20px;
-      border: none;
-      background: #6366f1;
-      color: white;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    .cmt {
-      background: #f1f5ff;
-      padding: 12px;
-      border-radius: 12px;
-      margin-top: 12px;
-    }
-
-    .cUser {
-      font-weight: 600;
-    }
-
-    .cTime {
-      font-size: 12px;
-      color: #64748b;
-    }
+    .cmt { background: white; padding: 15px 20px; border-radius: 15px; margin-top: 12px; position: relative; border: 1px solid #f1f5f9; }
+    .cUser { font-weight: 700; color: var(--forest-dark); font-size: 14px; }
+    .delBtn { position: absolute; top: 15px; right: 15px; color: #f87171; font-size: 11px; cursor: pointer; }
   </style>
 </head>
 
 <body>
 
-  <div class="bgRain" id="bgRain" style="display:none"></div>
+  <div id="dynamicBg"></div>
+  <div class="overlay"></div>
+  <div id="weatherLayer"></div>
 
   <div class="backBtn" onclick="goBack()">
-    <img src="deckicon.jpg">
+    <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
   </div>
 
-  <div class="card">
-
-    <div class="user" id="user"></div>
-    <div class="time" id="time"></div>
+  <div class="card" id="mainCard">
+    <div class="user" id="displayUser">Đang tải...</div>
+    <div class="time" id="displayTime">...</div>
 
     <div class="contentRow">
-      <div class="textBox" id="text"></div>
-      <img id="img" class="sideImg" style="display:none">
+      <div class="textBox" id="displayText"></div>
+      <img id="displayImg" class="sideImg" style="display:none">
     </div>
 
     <div class="reactBar">
-      <div class="reactBtn" onclick="react('heart')">❤️ <span id="heart"></span></div>
-      <div class="reactBtn" onclick="react('like')">👍 <span id="like"></span></div>
-      <div class="reactBtn" onclick="react('sad')">😢 <span id="sad"></span></div>
-      <div class="reactBtn" onclick="react('wow')">😮 <span id="wow"></span></div>
+      <div class="reactBtn" onclick="react('heart')">❤️ <span id="heart">0</span></div>
+      <div class="reactBtn" onclick="react('like')">👍 <span id="like">0</span></div>
+      <div class="reactBtn" onclick="react('sad')">😢 <span id="sad">0</span></div>
+      <div class="reactBtn" onclick="react('wow')">😮 <span id="wow">0</span></div>
     </div>
 
-    <div class="commentToggle" onclick="toggleCmt()">💬 Bình luận</div>
+    <div class="commentToggle" id="cmtLabel" onclick="toggleCmt()">💬 Xem bình luận</div>
 
-    <div class="commentBox" id="cmtBox">
-      <textarea id="cText"></textarea>
-      <br>
-      <button class="sendBtn" onclick="sendCmt()">Gửi</button>
-
+    <div class="commentBox" id="cmtBox" style="display:none">
+      <textarea id="cInput" placeholder="Để lại lời nhắn cho khu rừng..."></textarea>
+      <button class="sendBtn" onclick="sendCmt()">Gửi bình luận</button>
       <div id="cList"></div>
     </div>
-
   </div>
 
   <script type="module">
-
-    import { initializeApp }
-      from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-
-    import {
-      getFirestore,
-      doc,
-      getDoc,
-      updateDoc,
-      arrayUnion
-    }
-      from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
-
-    import {
-      getAuth,
-      onAuthStateChanged
-    }
-      from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSy...",
+      apiKey: "AIzaSyD5VotnEcZ6hQduMoF5AjL0024x1VTkEu4", 
+      authDomain: "banhkietgithunbpoem.firebaseapp.com",
       projectId: "banhkietgithunbpoem",
-      authDomain: "banhkietgithunbpoem.firebaseapp.com"
+      storageBucket: "banhkietgithunbpoem.appspot.com",
+      messagingSenderId: "776019313368",
+      appId: "1:776019313368:web:75704a5e3860087796a3cb"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    const id = new URLSearchParams(location.search).get("id");
-    const ref = doc(db, "emotions", id);
+    const emotionId = new URLSearchParams(window.location.search).get("id");
+    const emotionRef = doc(db, "emotions", emotionId);
 
-    let data;
+    // --- LOGIC GỬI CHIỀU CAO LÊN PARENT ---
+    function sendHeight() {
+      // Tính toán chiều cao: Thẻ Card + Margin 40px trên/dưới
+      const height = document.getElementById("mainCard").offsetHeight + 100;
+      window.parent.postMessage(height, "*");
+    }
+
     let currentUsername = "Khách";
-    /* kiểm tra người dùng hiện tạ  */
-    /* ⭐ CHỜ LOGIN XONG mới load emotion */
+    let currentUser = null;
+    let emotionData = null;
+
     onAuthStateChanged(auth, async (user) => {
-
       if (user) {
-
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-
-        if (userDoc.exists()) {
-          const uData = userDoc.data();
+        currentUser = user;
+        const userSnap = await getDoc(doc(db, "users", user.uid));
+        if (userSnap.exists()) {
+          const uData = userSnap.data();
           currentUsername = uData.username || "Khách";
+          currentUser.role = uData.role || "user";
         }
-
-      } else {
-        currentUsername = "Khách";
       }
-
-      load();   // ⭐ load emotion sau khi biết user
+      loadDetail();
     });
 
+    async function loadDetail() {
+      if (!emotionId) return;
+      const snap = await getDoc(emotionRef);
+      if (!snap.exists()) return;
 
-    async function load() {
+      emotionData = snap.data();
+      document.getElementById('displayUser').innerText = emotionData.username || "Người dùng";
+      document.getElementById('displayText').innerText = emotionData.text || "";
+      
+      const mood = (emotionData.mood || "").toLowerCase();
+      const bg = document.getElementById('dynamicBg');
+      const weather = document.getElementById('weatherLayer');
 
-      const snap = await getDoc(ref);
-      if (!snap.exists()) {
-        alert("Emotion không tồn tại");
-        return;
+      if (mood.includes("buồn") || mood.includes("sad")) {
+          bg.style.backgroundImage = "url('rain.jpg')";
+          for(let i=0; i<30; i++) {
+              let drop = document.createElement('div');
+              drop.className = 'rain-drop';
+              drop.style.left = Math.random() * 100 + 'vw';
+              drop.style.animationDuration = (Math.random() * 1 + 0.5) + 's';
+              drop.style.animationDelay = Math.random() * 2 + 's';
+              weather.appendChild(drop);
+          }
+      } else {
+          bg.style.backgroundImage = "url('sun.jpg')";
+          let sun = document.createElement('div');
+          sun.className = 'sun-ray';
+          weather.appendChild(sun);
       }
 
-      data = snap.data();
+      if (emotionData.createdAt) {
+        document.getElementById('displayTime').innerText = new Date(emotionData.createdAt.seconds * 1000).toLocaleString();
+      }
 
-      user.innerText = data.username || "ai đó";
-      text.innerText = data.text || "";
-
-      const t = new Date(data.createdAt.seconds * 1000);
-      time.innerText = t.toLocaleString();
-
-      if (data.imgUrl) {
-        img.src = data.imgUrl;
+      if (emotionData.imgUrl) {
+        const img = document.getElementById('displayImg');
+        img.src = emotionData.imgUrl;
         img.style.display = "block";
+        // QUAN TRỌNG: Gửi lại chiều cao khi ảnh đã tải xong
+        img.onload = sendHeight;
       }
 
-      heart.innerText = data.heart || 0;
-      like.innerText = data.like || 0;
-      sad.innerText = data.sad || 0;
-      wow.innerText = data.wow || 0;
-
-      renderCmt();
+      updateReactionUI();
+      renderComments();
+      setTimeout(sendHeight, 500); // Gửi chiều cao sau khi render xong content
     }
 
-
-    /* ⭐ reaction */
-    window.react = async function (type) {
-
-      data[type] = (data[type] || 0) + 1;
-      document.getElementById(type).innerText = data[type];
-
-      await updateDoc(ref, { [type]: data[type] });
+    function updateReactionUI() {
+      ['heart', 'like', 'sad', 'wow'].forEach(type => {
+        document.getElementById(type).innerText = emotionData[type] || 0;
+      });
     }
 
+    window.react = async function(type) {
+      emotionData[type] = (emotionData[type] || 0) + 1;
+      document.getElementById(type).innerText = emotionData[type];
+      await updateDoc(emotionRef, { [type]: emotionData[type] });
+    }
 
-    /* ⭐ gửi comment AUTO USERNAME */
-    window.sendCmt = async function () {
-
-      if (!auth.currentUser) {
-        alert("⚠️ chưa đăng nhập");
-        return;
-      }
-
-      const msg = cText.value.trim();
+    window.sendCmt = async function() {
+      if (!currentUser) { alert("Đăng nhập để bình luận!"); return; }
+      const msg = document.getElementById('cInput').value.trim();
       if (!msg) return;
-
-      const obj = {
-        user: currentUsername,
-        msg: msg,
-        time: new Date().toLocaleString()
-      };
-
-      await updateDoc(ref, {
-        comments: arrayUnion(obj)
-      });
-
-      data.comments = data.comments || [];
-      data.comments.push(obj);
-
-      renderCmt();
-      cText.value = "";
+      const newCmt = { user: currentUsername, userId: currentUser.uid, msg: msg, time: new Date().toLocaleString() };
+      await updateDoc(emotionRef, { comments: arrayUnion(newCmt) });
+      if (!emotionData.comments) emotionData.comments = [];
+      emotionData.comments.push(newCmt);
+      renderComments();
+      document.getElementById('cInput').value = "";
+      setTimeout(sendHeight, 100); // Giãn Iframe khi có cmt mới
     }
 
-
-    /* ⭐ render comment */
-    function renderCmt() {
-
-      cList.innerHTML = "";
-
-      (data.comments || []).forEach(c => {
-
-        const d = document.createElement("div");
-        d.className = "cmt";
-
-        d.innerHTML = `
-      <div class="cUser">🧑 ${c.user}</div>
-      <div>${c.msg}</div>
-      <div class="cTime">${c.time}</div>
-    `;
-
-        cList.appendChild(d);
-      });
+    window.deleteCmt = async function(index) {
+        if (!confirm("Xóa nhé?")) return;
+        emotionData.comments.splice(index, 1);
+        await updateDoc(emotionRef, { comments: emotionData.comments });
+        renderComments();
+        setTimeout(sendHeight, 100);
     }
 
-
-    /* ⭐ toggle box */
-    window.toggleCmt = function () {
-      cmtBox.style.display =
-        cmtBox.style.display == "block" ? "none" : "block";
+    function renderComments() {
+      const list = document.getElementById('cList');
+      list.innerHTML = "";
+      const comments = emotionData.comments || [];
+      document.getElementById('cmtLabel').innerText = `💬 Bình luận (${comments.length})`;
+      for (let i = comments.length - 1; i >= 0; i--) {
+        const c = comments[i];
+        const div = document.createElement("div");
+        div.className = "cmt";
+        const canDelete = currentUser && (currentUser.role === 'admin' || currentUser.uid === emotionData.userId || currentUser.uid === c.userId);
+        div.innerHTML = `<div class="cUser">🍃 ${c.user}</div><div class="cText">${c.msg}</div><div class="cTime">${c.time}</div>${canDelete ? `<div class="delBtn" onclick="deleteCmt(${i})">Xóa</div>` : ""}`;
+        list.appendChild(div);
+      }
     }
 
+    window.toggleCmt = () => {
+      const box = document.getElementById('cmtBox');
+      box.style.display = box.style.display === "none" ? "block" : "none";
+      setTimeout(sendHeight, 50); // QUAN TRỌNG: Giãn Iframe khi mở bình luận
+    };
 
-    /* ⭐ back effect */
     window.goBack = () => {
-      document.body.style.transition = ".6s";
-      document.body.style.transform = "scale(.6)";
       document.body.style.opacity = "0";
-      setTimeout(() => history.back(), 600);
+      document.body.style.transition = "0.5s";
+      setTimeout(() => history.back(), 500);
     }
+
+    // Tự động theo dõi DOM để giãn Iframe
+    const observer = new MutationObserver(sendHeight);
+    observer.observe(document.body, { childList: true, subtree: true });
 
   </script>
-
-  <script src="../main_js/iframe.js"></script>
-
 </body>
-
 </html>
