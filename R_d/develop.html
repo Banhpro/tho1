@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Hệ Thống Chỉ Huy Bành - Version Final</title>
+     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Be+Vietnam+Pro:wght@300;400;600&family=Fira+Code:wght@400;500&display=swap"
+          rel="stylesheet">
+     <style>
+          :root {
+               --glow: #00f2ff;
+               --hacker: #00ff41;
+               --accent: #ff00ea;
+               --glass: rgba(0, 15, 30, 0.6);
+               --border: rgba(0, 242, 255, 0.2);
+               --text-glow: 0 0 10px rgba(0, 242, 255, 0.5);
+          }
+
+          * {
+               box-sizing: border-box;
+               transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+          }
+
+          body {
+               margin: 0;
+               padding: 0;
+               background: #00050a;
+               color: #fff;
+               font-family: 'Be Vietnam Pro', sans-serif;
+               overflow: hidden;
+               background-image:
+                    radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 80%),
+                    url('https://images.unsplash.com/photo-1614728263952-84ea206f99b6?auto=format&fit=crop&q=80&w=2072');
+               background-size: cover;
+               background-attachment: fixed;
+          }
+
+          #cockpit-layout {
+               padding: 30px;
+               display: flex;
+               flex-direction: column;
+               gap: 20px;
+               max-width: 1550px;
+               margin: 0 auto;
+          }
+
+          /* --- HUD HEADER --- */
+          .hud-header {
+               display: flex;
+               justify-content: space-between;
+               align-items: center;
+               padding: 15px 40px;
+               background: var(--glass);
+               backdrop-filter: blur(25px);
+               border: 1px solid var(--border);
+               border-bottom: 2px solid var(--glow);
+               box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+          }
+
+          .system-title {
+               font-family: 'Orbitron', sans-serif;
+               font-size: 22px;
+               font-weight: 700;
+               color: var(--glow);
+               text-shadow: var(--text-glow);
+               letter-spacing: 5px;
+          }
+
+          /* --- VIEWPORT (MÀN HÌNH QUÉT) --- */
+          .viewport-panel {
+               background: #000;
+               border: 1px solid var(--border);
+               position: relative;
+               overflow: hidden;
+               box-shadow: 0 0 50px rgba(0, 0, 0, 1);
+          }
+
+          .viewport-header {
+               background: rgba(0, 242, 255, 0.1);
+               padding: 8px 20px;
+               display: flex;
+               justify-content: space-between;
+               align-items: center;
+               border-bottom: 1px solid var(--border);
+          }
+
+          #previewFrame {
+               width: 100%;
+               border: none;
+               height: 380px;
+               display: block;
+               background: #fff;
+               opacity: 1;
+          }
+
+          /* Hiệu ứng Hacker/Matrix khi đang xây dựng */
+          #hackerOverlay {
+               position: absolute;
+               top: 35px;
+               left: 0;
+               width: 100%;
+               height: calc(100% - 35px);
+               background: #000;
+               display: none;
+               flex-direction: column;
+               padding: 20px;
+               font-family: 'Fira Code', monospace;
+               font-size: 14px;
+               color: var(--hacker);
+               z-index: 100;
+               overflow: hidden;
+               text-shadow: 0 0 5px var(--hacker);
+          }
+
+          /* --- CONTROL GRID --- */
+          .control-grid {
+               display: grid;
+               grid-template-columns: 1fr 1.5fr;
+               gap: 20px;
+          }
+
+          .glass-card {
+               background: var(--glass);
+               backdrop-filter: blur(15px);
+               border: 1px solid var(--border);
+               padding: 25px;
+               position: relative;
+          }
+
+          .glass-card:hover {
+               border-color: var(--glow);
+               background: rgba(0, 30, 60, 0.7);
+               box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
+               transform: translateY(-5px);
+          }
+
+          label {
+               display: block;
+               font-family: 'Orbitron', sans-serif;
+               font-size: 10px;
+               color: var(--glow);
+               letter-spacing: 2px;
+               margin-bottom: 12px;
+               text-shadow: var(--text-glow);
+          }
+
+          select,
+          textarea {
+               width: 100%;
+               background: rgba(0, 0, 0, 0.5);
+               border: 1px solid var(--border);
+               border-radius: 4px;
+               color: #fff;
+               padding: 12px;
+               font-family: inherit;
+               outline: none;
+          }
+
+          select:focus,
+          textarea:focus {
+               border-color: var(--glow);
+               background: rgba(0, 242, 255, 0.05);
+          }
+
+          #codeEditor {
+               height: 320px;
+               font-family: 'Fira Code', monospace;
+               font-size: 12px;
+               overflow-y: auto;
+               color: #a5dcfb;
+          }
+
+          /* --- NÚT BẤM --- */
+          .btn {
+               background: transparent;
+               border: 1px solid var(--glow);
+               color: var(--glow);
+               padding: 14px 25px;
+               font-family: 'Orbitron', sans-serif;
+               font-weight: 700;
+               font-size: 12px;
+               cursor: pointer;
+               letter-spacing: 2px;
+               position: relative;
+               overflow: hidden;
+          }
+
+          .btn::after {
+               content: "";
+               position: absolute;
+               top: 0;
+               left: -100%;
+               width: 100%;
+               height: 100%;
+               background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.2), transparent);
+               transition: 0.5s;
+          }
+
+          .btn:hover::after {
+               left: 100%;
+          }
+
+          .btn:hover {
+               background: var(--glow);
+               color: #000;
+               box-shadow: 0 0 40px var(--glow);
+          }
+
+          .btn-refresh {
+               padding: 5px 12px;
+               font-size: 10px;
+               border-radius: 4px;
+          }
+
+          .btn-submit {
+               width: 100%;
+               font-size: 18px;
+               border: 2px solid var(--accent);
+               color: var(--accent);
+               margin-top: 10px;
+               margin-bottom: 40px;
+          }
+
+          .btn-submit:hover {
+               background: var(--accent);
+               color: #fff;
+               box-shadow: 0 0 50px var(--accent);
+          }
+
+          /* --- UI INFO --- */
+          .avatar {
+               width: 45px;
+               height: 45px;
+               border: 2px solid var(--glow);
+               border-radius: 50%;
+               display: flex;
+               align-items: center;
+               justify-content: center;
+               font-family: 'Orbitron';
+               font-weight: bold;
+               font-size: 18px;
+               box-shadow: 0 0 15px var(--glow);
+          }
+
+          @keyframes matrix-scroll {
+               from {
+                    transform: translateY(0);
+               }
+
+               to {
+                    transform: translateY(-50%);
+               }
+          }
+
+          .hacker-text {
+               animation: matrix-scroll 10s linear infinite;
+               line-height: 1.8;
+          }
+
+          @media (max-width: 1000px) {
+               .control-grid {
+                    grid-template-columns: 1fr;
+               }
+          }
+     </style>
+</head>
+
+<body>
+     <div id="cockpit-layout">
+          <!-- TOP NAVIGATION -->
+          <header class="hud-header">
+               <div style="display: flex; align-items: center; gap: 20px;">
+                    <div class="avatar" id="uInit">B</div>
+                    <div>
+                         <div style="font-size: 9px; opacity: 0.7; letter-spacing: 2px; color: var(--glow);">PHI CƠ VŨ
+                              TRỤ:</div>
+                         <div id="uName" style="font-family: 'Orbitron'; font-weight: 700;">BANH_PILOT</div>
+                    </div>
+               </div>
+
+               <div class="system-title">ĐÓNG GÓP HỆ THỐNG NGÂN HÀ</div>
+
+               <div style="text-align: right; font-family: 'Orbitron'; font-size: 10px;">
+                    <div style="color: var(--accent);">SIGNAL: STABLE</div>
+                    <div id="liveClock">00:00:00</div>
+               </div>
+          </header>
+
+          <!-- VIEWPORT -->
+          <div class="viewport-panel">
+               <div class="viewport-header">
+                    <label style="margin:0">KẾT QUẢ XÂY DỰNG</label>
+                    <button class="btn btn-refresh" id="refreshBtn">🔄 QUÉT LẠI (SCAN)</button>
+               </div>
+               <div id="hackerOverlay">
+                    <div class="hacker-text" id="hackerContent"></div>
+               </div>
+               <iframe id="previewFrame" scrolling="no"></iframe>
+          </div>
+
+          <!-- CONTROLS -->
+          <div class="control-grid">
+               <div class="glass-card">
+                    <label>📍 KHU VỰC ĐÓNG GÓP</label>
+                    <select id="contribType">
+                         <option value="ui_ux">Thiết kế Giao diện (UI/UX)</option>
+                         <option value="feature">Tính năng Hệ thống</option>
+                         <option value="database">Cấu trúc Dữ liệu</option>
+                         <option value="logic">Logic Nghiệp vụ</option>
+                         <option value="security">Bảo mật Matrix</option>
+                    </select>
+
+                    <label style="margin-top: 25px;">✨ Ý TƯỞNG CỦA BẠN</label>
+                    <textarea id="aiPrompt" placeholder="Nhập yêu cầu xây dựng thực tại..."></textarea>
+                    <button class="btn" id="aiGenBtn" style="width: 100%; margin-top: 20px;">BẮT ĐẦU XÂY DỰNG HỆ
+                         THỐNG</button>
+               </div>
+
+               <div class="glass-card">
+                    <label>💻 MÃ NGUỒN TRUY XUẤT</label>
+                    <textarea id="codeEditor" spellcheck="false" placeholder="Dữ liệu mã nguồn Matrix..."></textarea>
+               </div>
+          </div>
+
+          <button class="btn btn-submit" id="submitBtn">🚀 PHÓNG TÍN HIỆU VÀO VŨ TRỤ LƯU TRỮ</button>
+     </div>
+
+     <!-- SFX -->
+     <audio id="sndHover" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" volume="0.2"></audio>
+     <audio id="bgMusic" src="audio.mp3" loop></audio>
+     <audio id="sndClick" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+     <audio id="sndBuild" src="https://assets.mixkit.co/active_storage/sfx/2559/2559-preview.mp3"></audio>
+     <audio id="sndSuccess" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
+
+     <script type="module">
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+          import { getFirestore, collection, addDoc, serverTimestamp, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+          import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+
+          const firebaseConfig = {
+               apiKey: "AIzaSyD5VotnEcZ6hQduMoF5AjL0024x1VTkEu4",
+               authDomain: "banhkietgithunbpoem.firebaseapp.com",
+               projectId: "banhkietgithunbpoem",
+               storageBucket: "banhkietgithunbpoem.firebasestorage.app",
+               messagingSenderId: "429631951698",
+               appId: "1:429631951698:web:8c5f6854de3ad22113a08b"
+          };
+          const app = initializeApp(firebaseConfig);
+          const db = getFirestore(app);
+          const auth = getAuth(app);
+          const MY_KEY = "AIzaSyCRLsnJQ-X5t0GQrREAtNTr6YJxvk4uWAk";
+
+          // --- HỆ THỐNG ÂM THANH ---
+          const playSfx = (id) => {
+               const sound = document.getElementById(id);
+               sound.currentTime = 0; sound.play().catch(e => { });
+          };
+
+          document.querySelectorAll('.btn, .glass-card, select, textarea').forEach(el => {
+               el.addEventListener('mouseenter', () => playSfx('sndHover'));
+          });
+
+          // --- ĐỒNG HỒ ---
+          setInterval(() => {
+               document.getElementById('liveClock').innerText = new Date().toLocaleTimeString();
+          }, 1000);
+
+          // --- HIỆU ỨNG HACKER MATRIX ---
+          const hackerOverlay = document.getElementById('hackerOverlay');
+          const hackerContent = document.getElementById('hackerContent');
+
+          function startHackerEffect() {
+               hackerOverlay.style.display = 'flex';
+               let codeLines = "";
+               const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>[]{}/\\|!@#$%^&*()_+";
+               for (let i = 0; i < 100; i++) {
+                    let line = "";
+                    for (let j = 0; j < 80; j++) line += chars.charAt(Math.floor(Math.random() * chars.length));
+                    codeLines += `<div>${line}</div>`;
+               }
+               hackerContent.innerHTML = codeLines + codeLines; // Nhân đôi để cuộn vô tận
+          }
+
+          // --- XỬ LÝ CHÍNH ---
+          const promptArea = document.getElementById('aiPrompt');
+          const codeEditor = document.getElementById('codeEditor');
+          const previewFrame = document.getElementById('previewFrame');
+
+          function sendHeight() {
+               const h = document.getElementById('cockpit-layout').scrollHeight;
+               window.parent.postMessage(h, "*");
+          }
+
+          // AI GENERATE
+          document.getElementById('aiGenBtn').onclick = async () => {
+               playSfx('sndClick');
+               const prompt = promptArea.value;
+               if (!prompt) return;
+
+               playSfx('sndBuild');
+               startHackerEffect();
+
+               try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${MY_KEY}`, {
+                         method: "POST",
+                         headers: { "Content-Type": "application/json" },
+                         body: JSON.stringify({
+                              contents: [{ parts: [{ text: `Tạo code HTML/CSS/JS duy nhất (Tiếng Việt) cho: "${prompt}". Trả về code thô.` }] }]
+                         })
+                    });
+                    const data = await response.json();
+                    let code = data.candidates[0].content.parts[0].text;
+                    code = code.replace(/```html|```javascript|```css|```/g, "").trim();
+
+                    codeEditor.value = code;
+                    previewFrame.srcdoc = code;
+                    previewFrame.onload = () => {
+                         const innerH = previewFrame.contentWindow.document.body.scrollHeight;
+                         previewFrame.style.height = Math.max(innerH, 380) + 'px';
+                         hackerOverlay.style.display = 'none'; // Tắt hiệu ứng hacker
+                         playSfx('sndSuccess');
+                         sendHeight();
+                    };
+               } catch (e) {
+                    hackerOverlay.style.display = 'none';
+                    alert("Lỗi kết nối vệ tinh!");
+               }
+          };
+
+          // REFRESH SCAN
+          document.getElementById('refreshBtn').onclick = () => {
+               playSfx('sndClick');
+               previewFrame.srcdoc = codeEditor.value;
+               previewFrame.onload = () => {
+                    const innerH = previewFrame.contentWindow.document.body.scrollHeight;
+                    previewFrame.style.height = Math.max(innerH, 380) + 'px';
+                    sendHeight();
+               };
+          };
+
+          // SUBMIT
+          document.getElementById('submitBtn').onclick = async () => {
+               playSfx('sndClick');
+
+               if (!codeEditor.value) return;
+
+               const type = document.getElementById('contribType').value;
+               const idea = promptArea.value;
+
+               if (!confirm(`BẠN CÓ CHẮC CHẮN MUỐN ĐÓNG GÓP VÀO MỤC [${type.toUpperCase()}] KHÔNG?`)) return;
+
+               try {
+                    // --- LẤY USER ---
+                    const user = auth.currentUser;
+                    const username = user
+                         ? (user.displayName || user.email.split('@')[0])
+                         : "guest";
+
+                    const role = "pilot"; // nếu có role thì thay vào đây
+
+                    // --- FORMAT THỜI GIAN ---
+                    const now = new Date();
+
+                    const pad = (n) => n.toString().padStart(2, "0");
+
+                    const dateStr = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`;
+                    const timeStr = `${pad(now.getHours())}${pad(now.getMinutes())}`;
+
+                    const docId = `${username}_${role}_${dateStr}_${timeStr}`;
+
+                    // --- FORMAT HIỂN THỊ ---
+                    const displayTime = now.toLocaleString('vi-VN');
+
+                    // --- LƯU FIRESTORE ---
+                    await setDoc(doc(db, "contributions", docId), {
+                         username: username,
+                         idea: idea,
+                         code: codeEditor.value,
+                         type: type,
+                         time: displayTime,
+                         createdAt: serverTimestamp()
+                    });
+
+                    playSfx('sndSuccess');
+                    alert("🚀 TÍN HIỆU ĐÃ ĐƯỢC PHÓNG THÀNH CÔNG!");
+
+               } catch (e) {
+                    alert("❌ LỖI TRUYỀN TẢI.");
+               }
+          };
+
+          // Auto height
+          promptArea.addEventListener('input', function () {
+               this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';
+               sendHeight();
+          });
+          window.addEventListener('load', sendHeight);
+          new MutationObserver(sendHeight).observe(document.getElementById('cockpit-layout'), { childList: true, subtree: true, attributes: true });
+
+          // AUTH
+          onAuthStateChanged(auth, (user) => {
+               if (user) {
+                    const name = user.displayName || user.email.split('@')[0];
+                    document.getElementById('uName').innerText = name.toUpperCase() + "SIÊU CẤP";
+                    document.getElementById('uInit').innerText = name.charAt(0).toUpperCase();
+               }
+          });
+          // --- NHẠC NỀN VŨ TRỤ ---
+          const bgMusic = document.getElementById("bgMusic");
+
+          // autoplay (trình duyệt sẽ chặn nếu chưa có tương tác)
+          window.addEventListener("load", () => {
+               bgMusic.volume = 0.5; // chỉnh âm lượng nhẹ cho chill
+               bgMusic.playbackRate = 0.95;
+               bgMusic.play().catch(() => {
+                    // fallback: click bất kỳ sẽ phát
+                    document.addEventListener("click", () => {
+                         bgMusic.play();
+                    }, { once: true });
+               });
+          });
+     </script>
+     <script src="../main_js/iframe.js"></script>

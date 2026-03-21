@@ -35,30 +35,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const darkIcon = document.getElementById("darkIcon");
 
+    // Hàm cập nhật icon Mặt trời / Mặt trăng
     function updateDarkIcon() {
         if (!darkIcon) return;
-
-        darkIcon.innerText =
-            document.body.classList.contains("dark") ? "🌙" : "☀️";
+        darkIcon.innerText = document.body.classList.contains("dark") ? "🌙" : "☀️";
     }
 
+    // 1. Kiểm tra trạng thái lưu trong máy khi vừa mở web
     if (localStorage.getItem("darkMode") === "true") {
         document.body.classList.add("dark");
     }
-
     updateDarkIcon();
 
+    // 2. Hàm xử lý khi bấm nút chuyển đổi (Click)
     window.toggleDark = () => {
-
+        // Đổi class của trang cha
         document.body.classList.toggle("dark");
-
         const isDark = document.body.classList.contains("dark");
-
+        
+        // Lưu vào máy
         localStorage.setItem("darkMode", isDark);
-
         updateDarkIcon();
 
+        // -------------------------------------------------------------
+        // THÊM MỚI: Truyền lệnh vào bên trong iframe (welcome.html)
+        // -------------------------------------------------------------
+        const iframe = document.getElementById("contentFrame");
+        if (iframe && iframe.contentWindow && typeof iframe.contentWindow.changeWelcomeTheme === 'function') {
+            iframe.contentWindow.changeWelcomeTheme(isDark);
+        }
     };
+
+    // 3. THÊM MỚI: Đồng bộ iframe khi F5 / Mở lại web
+    // Vì iframe tải chậm hơn trang cha một chút, ta phải đợi nó tải xong (load)
+    // rồi mới báo cho nó biết trang cha đang là Sáng hay Tối để nó tự đổi theo.
+    const iframeElement = document.getElementById("contentFrame");
+    if (iframeElement) {
+        iframeElement.addEventListener("load", () => {
+            const isDark = document.body.classList.contains("dark");
+            if (iframeElement.contentWindow && typeof iframeElement.contentWindow.changeWelcomeTheme === 'function') {
+                iframeElement.contentWindow.changeWelcomeTheme(isDark);
+            }
+        });
+    }
 
 
     /* ================= LOGIN + USER MENU ================= */

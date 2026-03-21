@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giai Điệu Cảm Xúc - Sáng & Tối</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body, html { 
+            height: 100%; 
+            width: 100%; 
+            overflow: hidden; 
+            font-family: 'Quicksand', sans-serif; 
+        }
+
+        /* --- BACKGROUNDS (Hiển thị đầy đủ, sắc nét) --- */
+        .bg-layer {
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            /* Dùng cover để ảnh lấp đầy toàn bộ màn hình một cách tuyệt đẹp */
+            background-size: cover; 
+            background-position: center center;
+            background-repeat: no-repeat;
+            transition: opacity 2s ease-in-out, transform 8s ease-out; 
+            z-index: -2;
+        }
+
+        .bg-day { 
+            background-image: url('lunch.jpg'); 
+            opacity: 1; 
+            transform: scale(1); 
+        }
+        
+        .bg-night { 
+            background-image: url('night.jpg'); 
+            opacity: 0; 
+            transform: scale(1.03); 
+        }
+
+        /* --- LỚP PHỦ MỜ NHẸ (Giúp chữ luôn dễ đọc trên mọi nền ảnh) --- */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 80%);
+            z-index: -1;
+            transition: background 1.5s ease;
+        }
+
+        /* --- CONTENT WRAPPER (Không còn khung cứng) --- */
+        .container { 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px; 
+            text-align: center;
+            z-index: 1;
+        }
+
+        /* --- TYPOGRAPHY & HOVER EFFECTS --- */
+        h1 { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 3.5rem; 
+            font-weight: 700; 
+            color: #ffffff;
+            margin-bottom: 20px; 
+            /* Đổ bóng chữ để nổi bật trên nền ảnh */
+            text-shadow: 0 4px 15px rgba(0,0,0,0.7); 
+            transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); 
+            cursor: default;
+        }
+
+        /* Hiệu ứng khi lướt chuột vào Tiêu đề */
+        h1:hover {
+            transform: translateY(-8px) scale(1.02);
+            letter-spacing: 2px;
+            text-shadow: 0 8px 25px rgba(255, 255, 255, 0.6), 0 4px 10px rgba(0,0,0,0.8);
+        }
+
+        p { 
+            font-size: 1.25rem; 
+            line-height: 1.8; 
+            color: #f5f6fa;
+            max-width: 700px;
+            font-weight: 400; 
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8); 
+            transition: all 0.6s ease; 
+            cursor: default;
+            opacity: 0.9;
+        }
+
+        /* Hiệu ứng khi lướt chuột vào Đoạn văn */
+        p:hover {
+            opacity: 1;
+            transform: translateY(-3px);
+            color: #ffffff;
+            text-shadow: 0 4px 15px rgba(255, 255, 255, 0.4), 0 2px 8px rgba(0,0,0,0.9);
+        }
+
+        /* --- DARK MODE CLASSES --- */
+        body.dark-mode .bg-day { opacity: 0; transform: scale(1.03); }
+        body.dark-mode .bg-night { opacity: 1; transform: scale(1); }
+        body.dark-mode .overlay { background: radial-gradient(circle, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 80%); }
+
+        /* Animation mờ chữ khi chuyển đổi Ngày/Đêm */
+        .fade-out { 
+            opacity: 0 !important; 
+            transform: translateY(-15px); 
+            filter: blur(4px);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Backgrounds & Overlay -->
+    <div class="bg-layer bg-day"></div>
+    <div class="bg-layer bg-night"></div>
+    <div class="overlay"></div>
+
+    <!-- Content Text -->
+    <div class="container">
+        <h1 id="main-title">Nắng Mai & Nhiệt Huyết</h1>
+        <p id="main-desc">
+            Hãy để những vạt nắng sớm đánh thức tâm hồn bạn. Đừng ngần ngại mở lòng, 
+            chia sẻ những dòng cảm xúc, viết nên trang nhật ký rực rỡ và cháy hết mình 
+            với năng lượng của một ngày mới.
+        </p>
+    </div>
+
+    <script>
+        const title = document.getElementById('main-title');
+        const desc = document.getElementById('main-desc');
+
+        // Nội dung Gợi mở cảm xúc
+        const contentDay = {
+            title: "Nắng Mai & Nhiệt Huyết",
+            desc: "Hãy để những vạt nắng sớm đánh thức tâm hồn bạn. Đừng ngần ngại mở lòng, chia sẻ những dòng cảm xúc, viết nên trang nhật ký rực rỡ và cháy hết mình với năng lượng của một ngày mới."
+        };
+
+        const contentNight = {
+            title: "Mưa Đêm & Bình Yên",
+            desc: "Lắng nghe tiếng mưa êm ái, rũ bỏ mọi muộn phiền để tâm trí được tự do. Đây là khoảng lặng tuyệt vời để bạn vỗ về bản thân và lưu giữ những tâm tư sâu thẳm nhất vào từng trang nhật ký."
+        };
+
+        // Hàm được gọi từ trang chủ (main.js)
+        window.changeWelcomeTheme = function(isDarkMode) {
+            title.classList.add('fade-out');
+            desc.classList.add('fade-out');
+
+            setTimeout(() => {
+                if (isDarkMode) {
+                    document.body.classList.add('dark-mode');
+                    title.textContent = contentNight.title;
+                    desc.textContent = contentNight.desc;
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    title.textContent = contentDay.title;
+                    desc.textContent = contentDay.desc;
+                }
+                title.classList.remove('fade-out');
+                desc.classList.remove('fade-out');
+            }, 600); // Tăng thời gian mờ lên một chút cho mượt mà
+        };
+
+        // Khởi tạo trạng thái ban đầu dựa vào trang cha (main.js đang dùng class "dark")
+        window.onload = function() {
+            if (window.parent && window.parent.document.body.classList.contains('dark')) {
+                document.body.classList.add('dark-mode');
+                title.textContent = contentNight.title;
+                desc.textContent = contentNight.desc;
+            }
+        };
+    </script>
+</body>
+</html>

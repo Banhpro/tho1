@@ -10,6 +10,72 @@
 
     <link rel="stylesheet" href="style.css">
 
+    <!-- PHẦN TRANG TRÍ THÊM: HOA LÁ RUNG RINH -->
+    <style>
+        .forest-welcome {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 20px;
+            text-align: center;
+            color: #4a7c59; /* Màu xanh lá nhẹ nhàng */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .forest-welcome h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #2d5a27;
+        }
+
+        .forest-welcome p {
+            font-style: italic;
+            margin-bottom: 20px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* Hiệu ứng rung động cho các icon */
+        .decor-item {
+            display: inline-block;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin: 0 10px;
+            user-select: none;
+        }
+
+        .decor-item:hover {
+            animation: vibrate 0.3s linear infinite;
+        }
+
+        @keyframes vibrate {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .cta-box {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px dashed #a2c1a1;
+            margin-top: 20px;
+        }
+
+        .leaf-float {
+            position: absolute;
+            opacity: 0.2;
+            z-index: -1;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -68,17 +134,26 @@
                         <a href="#">ĐỒNG HÀNH ▾</a>
                         <ul class="submenu">
                             <li><a href="poems_khach/poem_web/upload-poem.html" target="contentFrame">TẢI THƠ</a></li>
-                            <li><a href="poems_khach/poem_web/temp/tho_done_lib.html" target="contentFrame">TẢI TÀI LIỆU</a></li>
+                            <li><a href="R_d/develop.html" target="contentFrame">TẢI TÀI LIỆU</a></li>
                         </ul>
                     </li>
                     <li>
                         <a href="#">CHẾ ĐỘ SIU CẤP ▾</a>
                         <ul class="submenu">
                             <li><a href="smart_mode/BANH/super_BANH.html" target="contentFrame">THƠ CỦA BÀNH</a></li>
-                            <li><a href="smart_mode/KHACH/super_mode_list.html" target="contentFrame">THƠ SƯU TẦM</a></li>
+                            <li><a href="smart_mode/KHACH/super_mode_list.html" target="contentFrame">THƠ SƯU TẦM</a>
+                            </li>
                         </ul>
                     </li>
-
+                    <!-- Tìm đoạn này và sửa lại như sau -->
+                   <!-- Thêm ID và ẩn mặc định bằng style -->
+<li id="admin-menu" style="display: none;">
+    <a href="#">ADMIN ▾</a>
+    <ul class="submenu">
+        <li><a href="ADMIN/admincheck.html" target="contentFrame">D.SÁCH ĐĂNG KÝ</a></li>
+        <li><a href="ADMIN/accept_r_d.html" target="contentFrame">D.SÁCH Ý TƯỞNG</a></li>
+    </ul>
+</li>
                 </ul>
 
             </div>
@@ -129,12 +204,10 @@
 
         <!-- CONTENT -->
 
-        <main>
-
-            <iframe id="contentFrame" name="contentFrame" style="width:100%;border:none;min-height:600px;">
-            </iframe>
-
-        </main>
+       <main>
+    <iframe id="contentFrame" name="contentFrame" src="welcome.html" style="width:100%;border:none;min-height:600px;">
+    </iframe>
+</main>
 
 
         <!-- FOOTER -->
@@ -188,8 +261,6 @@
 
     <script src="main_js/main.js"></script>
     <script type="module" src="main_js/navigation.js"></script>
-    <!-- FIREBASE AUTH -->
-
     <script type="module" src="main_js/auth.js"></script>
 
 </body>

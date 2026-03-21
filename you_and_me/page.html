@@ -23,7 +23,7 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      overflow: hidden; 
+      overflow: hidden;
       height: auto;
       min-height: 100%;
       background: transparent;
@@ -31,7 +31,10 @@
 
     .bg-fixed {
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
       background-size: cover;
       z-index: -3;
@@ -39,7 +42,10 @@
 
     .rain {
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background: url('https://raw.githubusercontent.com/evertheen/simple-rain-effect/master/rain.png');
       animation: rain 0.3s linear infinite;
       z-index: -2;
@@ -48,13 +54,21 @@
     }
 
     @keyframes rain {
-      0% { background-position: 0 0; }
-      100% { background-position: 20% 100%; }
+      0% {
+        background-position: 0 0;
+      }
+
+      100% {
+        background-position: 20% 100%;
+      }
     }
 
     .sun-rays {
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background: linear-gradient(135deg, rgba(255, 255, 224, 0.2) 0%, transparent 50%, rgba(255, 255, 224, 0.1) 100%);
       z-index: -1;
       pointer-events: none;
@@ -62,8 +76,15 @@
     }
 
     @keyframes sunshine {
-      from { opacity: 0.3; transform: scale(1); }
-      to { opacity: 0.7; transform: scale(1.1); }
+      from {
+        opacity: 0.3;
+        transform: scale(1);
+      }
+
+      to {
+        opacity: 0.7;
+        transform: scale(1.1);
+      }
     }
 
     .container {
@@ -191,19 +212,21 @@
 
     /* HIỆU ỨNG KHI CLICK VÀO CẢM XÚC */
     .moodItem {
-      flex:1; 
-      text-align:center; 
-      background:white; 
-      padding:10px; 
-      border-radius:15px; 
-      cursor:pointer;
+      flex: 1;
+      text-align: center;
+      background: white;
+      padding: 10px;
+      border-radius: 15px;
+      cursor: pointer;
       border: 2px solid transparent;
       transition: all 0.3s ease;
     }
 
     .moodItem:has(input:checked) {
-      border: 2px solid #f1c40f; /* Viền màu vàng */
-      background: #fff9db; /* Nền vàng nhạt */
+      border: 2px solid #f1c40f;
+      /* Viền màu vàng */
+      background: #fff9db;
+      /* Nền vàng nhạt */
       transform: translateY(-3px);
       box-shadow: 0 5px 15px rgba(241, 196, 15, 0.3);
     }
@@ -223,8 +246,10 @@
       <div class="section" style="display: flex; justify-content: space-between; align-items: center;">
         <label style="margin-bottom:0">🔒 Chế độ hiển thị:</label>
         <div style="display: flex; gap: 10px;">
-          <label style="font-weight:normal; cursor:pointer"><input type="radio" name="privacy" value="public" checked> 🌍</label>
-          <label style="font-weight:normal; cursor:pointer"><input type="radio" name="privacy" value="private"> 🔐</label>
+          <label style="font-weight:normal; cursor:pointer"><input type="radio" name="privacy" value="public" checked>
+            🌍</label>
+          <label style="font-weight:normal; cursor:pointer"><input type="radio" name="privacy" value="private">
+            🔐</label>
         </div>
       </div>
 
@@ -294,10 +319,10 @@
     onAuthStateChanged(auth, async user => {
       if (user) {
         const t = getTimeKeys();
-        const q = query(collection(db, "emotions"), 
-                        where("uid", "==", user.uid), 
-                        where("dayKey", "==", t.dayKey));
-        
+        const q = query(collection(db, "emotions"),
+          where("uid", "==", user.uid),
+          where("dayKey", "==", t.dayKey));
+
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
           // Nếu đã viết rồi
@@ -307,8 +332,11 @@
               <p style="font-size: 1.4em; color: #1e3799; line-height: 1.6;">
                 Bạn đã viết nhật ký hôm nay rồi,<br>không cần phải viết lại đâu, ahaha! ✨
               </p>
-              <button class="send" onclick="location.href='../index.html'" style="width:auto; padding: 10px 30px; margin-top:20px;">Quay lại khu rừng</button>
-            </div>
+<button class="send" 
+onclick="window.top.location.replace('../index.html')" 
+style="width:auto; padding: 10px 30px; margin-top:20px;">
+Quay lại khu rừng
+</button>            </div>
           `;
           sendHeight();
         }
@@ -316,7 +344,7 @@
     });
 
     function sendHeight() {
-      const height = document.getElementById("mainContainer").offsetHeight + 100; 
+      const height = document.getElementById("mainContainer").offsetHeight + 100;
       window.parent.postMessage(height, "*");
     }
 
@@ -338,7 +366,7 @@
     observer.observe(document.body, { childList: true, subtree: true });
 
     window.addEventListener("load", () => {
-        setTimeout(sendHeight, 300);
+      setTimeout(sendHeight, 300);
     });
 
     const text = document.getElementById("text");

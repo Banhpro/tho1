@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trạm Kiểm Soát Bản Thảo - Bành Hệ Hệ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Be+Vietnam+Pro:wght@300;400;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glow: #00f2ff;
+            --hacker: #00ff41;
+            --accent: #ff00ea;
+            --glass: rgba(0, 15, 30, 0.85);
+            --border: rgba(0, 242, 255, 0.3);
+        }
+
+        /* TRIỆT TIÊU THANH CUỘN ĐỂ TỰ ĐỘNG GIÃN */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: auto;
+            min-height: 100%;
+            overflow: hidden; /* Quan trọng nhất: Không để iframe có thanh cuộn riêng */
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: #00050a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072') fixed center/cover;
+            color: #fff;
+        }
+
+        .admin-layout {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            box-sizing: border-box; /* Đảm bảo padding không làm sai lệch chiều cao */
+        }
+
+        /* HUD HEADER */
+        .hud-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-bottom: 3px solid var(--glow);
+            margin-bottom: 30px;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+        }
+
+        .system-status {
+            font-family: 'Orbitron';
+            font-size: 12px;
+            color: var(--hacker);
+            text-shadow: 0 0 10px var(--hacker);
+        }
+
+        /* GRID DANH SÁCH */
+        .contribution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px;
+            padding-bottom: 50px; /* Tạo khoảng trống cuối trang */
+        }
+
+        .draft-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: 0.3s;
+        }
+
+        .draft-card:hover {
+            border-color: var(--glow);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .user-info { font-family: 'Orbitron'; font-size: 14px; color: var(--glow); }
+        .type-tag { font-size: 10px; padding: 2px 8px; border: 1px solid var(--accent); color: var(--accent); }
+
+        .idea-box {
+            font-size: 14px;
+            color: #ccc;
+            line-height: 1.6;
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 4px;
+        }
+
+        /* NÚT ĐIỀU KHIỂN */
+        .action-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px;
+            font-family: 'Orbitron';
+            font-size: 10px;
+            cursor: pointer;
+            border: 1px solid var(--glow);
+            background: transparent;
+            color: var(--glow);
+            transition: 0.2s;
+        }
+
+        .btn:hover { background: var(--glow); color: #000; }
+        .btn-approve { border-color: var(--hacker); color: var(--hacker); }
+        .btn-delete { border-color: #ff4444; color: #ff4444; }
+
+        /* LOADING */
+        .loading {
+            text-align: center;
+            padding: 100px;
+            font-family: 'Orbitron';
+            letter-spacing: 5px;
+            color: var(--glow);
+        }
+
+        /* MODAL SIMULATION */
+        #simOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .sim-window { flex: 1; background: #fff; border: 4px solid var(--glow); border-radius: 8px; overflow: hidden; }
+        #simFrame { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+
+<body>
+
+    <div class="admin-layout" id="mainContainer">
+        <header class="hud-header">
+            <div>
+                <h1 style="margin:0; font-family: 'Orbitron'; letter-spacing: 3px;">CENTRAL COMMAND ADMIN</h1>
+                <div class="system-status" id="statusText">● TRẠM KIỂM SOÁT BẢN THẢO VŨ TRỤ</div>
+            </div>
+            <div style="text-align: right;">
+                <div id="countInfo" style="color: var(--accent); font-family: 'Orbitron'; font-size: 14px;">PENDING: 0</div>
+                <div id="liveClock" style="font-family: 'Fira Code'; font-size: 12px; opacity: 0.7;">00:00:00</div>
+            </div>
+        </header>
+
+        <div id="loading" class="loading">ĐANG TRUY XUẤT DỮ LIỆU MATRIX...</div>
+        <div id="contributionList" class="contribution-grid"></div>
+    </div>
+
+    <!-- Màn hình mô phỏng -->
+    <div id="simOverlay">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center;">
+            <div style="font-family: 'Orbitron'; color: var(--glow); font-size: 14px;">PHÒNG THÍ NGHIỆM MÔ PHỎNG (VIRTUAL SANDBOX)</div>
+            <button class="btn" onclick="closeSim()" style="border-color: #ff4444; color: #ff4444; padding: 5px 20px;">ĐÓNG [ESC]</button>
+        </div>
+        <div class="sim-window">
+            <iframe id="simFrame"></iframe>
+        </div>
+    </div>
+
+    <!-- TÍCH HỢP FILE IFRAME CỦA BẠN -->
+    <script src="../main_js/iframe.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD5VotnEcZ6hQduMoF5AjL0024x1VTkEu4",
+            authDomain: "banhkietgithunbpoem.firebaseapp.com",
+            projectId: "banhkietgithunbpoem",
+            storageBucket: "banhkietgithunbpoem.firebasestorage.app",
+            messagingSenderId: "429631951698",
+            appId: "1:429631951698:web:8c5f6854de3ad22113a08b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- HÀM TỰ ĐỘNG CẬP NHẬT CHIỀU CAO ---
+        function refreshIframe() {
+            // Lấy chiều cao thực tế của thẻ bao ngoài cùng
+            const height = document.getElementById('mainContainer').offsetHeight + 100; // Cộng thêm 100px dự phòng cho bóng đổ/grid
+            
+            // Ưu tiên gọi hàm từ iframe.js của bạn
+            if (typeof sendHeight === "function") {
+                sendHeight(); 
+            } else {
+                // Nếu không thấy hàm đó, gửi tin nhắn trực tiếp lên cha
+                window.parent.postMessage({
+                    type: 'setHeight',
+                    height: height
+                }, "*");
+            }
+        }
+
+        // Theo dõi sự thay đổi của danh sách card để kéo dài iframe ngay lập tức
+        const observer = new MutationObserver(() => {
+            setTimeout(refreshIframe, 100);
+        });
+        observer.observe(document.getElementById('contributionList'), { childList: true, subtree: true });
+
+        // --- ĐỒNG HỒ ---
+        setInterval(() => {
+            document.getElementById('liveClock').innerText = new Date().toLocaleTimeString();
+        }, 1000);
+
+        // --- LOAD DỮ LIỆU ---
+        const listContainer = document.getElementById('contributionList');
+        const loadingOverlay = document.getElementById('loading');
+
+        onSnapshot(collection(db, "contributions"), (snapshot) => {
+            loadingOverlay.style.display = 'none';
+            listContainer.innerHTML = '';
+            document.getElementById('countInfo').innerText = `PENDING: ${snapshot.size}`;
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const card = createCard(doc.id, data);
+                listContainer.appendChild(card);
+            });
+
+            // Sau khi tải xong dữ liệu và vẽ xong Card, cập nhật chiều cao
+            setTimeout(refreshIframe, 300);
+        });
+
+        function createCard(id, data) {
+            const div = document.createElement('div');
+            div.className = 'draft-card';
+            // Dùng Base64 hoặc mã hóa URL để truyền code an toàn qua onclick
+            const safeCode = btoa(unescape(encodeURIComponent(data.code)));
+            
+            div.innerHTML = `
+                <div class="card-header">
+                    <div class="user-info">👤 ${data.username}</div>
+                    <div class="type-tag">${data.type || 'SYSTEM'}</div>
+                </div>
+                <div class="idea-box">
+                    <strong>Ý tưởng:</strong> ${data.idea || 'Không có mô tả chi tiết'}
+                    <div style="font-size:10px; margin-top:10px; color: var(--glow); opacity: 0.6;">Time: ${data.time}</div>
+                </div>
+                <div class="action-group">
+                    <button class="btn" onclick="simulateCode('${safeCode}')">👁️ MÔ PHỎNG</button>
+                    <button class="btn" onclick="copyCode('${safeCode}')">📋 COPY MÃ</button>
+                    <button class="btn btn-approve" onclick="approveContribution('${id}')">✅ DUYỆT</button>
+                    <button class="btn btn-delete" onclick="deleteContribution('${id}')">🗑️ HỦY</button>
+                </div>
+            `;
+            return div;
+        }
+
+        // --- LOGIC XỬ LÝ NÚT ---
+        window.simulateCode = (base64Code) => {
+            const code = decodeURIComponent(escape(atob(base64Code)));
+            document.getElementById('simOverlay').style.display = 'flex';
+            document.getElementById('simFrame').srcdoc = code;
+        };
+
+        window.closeSim = () => {
+            document.getElementById('simOverlay').style.display = 'none';
+            document.getElementById('simFrame').srcdoc = '';
+        };
+
+        window.copyCode = (base64Code) => {
+            const code = decodeURIComponent(escape(atob(base64Code)));
+            navigator.clipboard.writeText(code).then(() => alert("🚀 Đã sao chép mã nguồn Matrix!"));
+        };
+
+        window.deleteContribution = async (id) => {
+            if (confirm("Xác nhận tiêu hủy bản thảo này khỏi hệ thống?")) {
+                await deleteDoc(doc(db, "contributions", id));
+            }
+        };
+
+        window.approveContribution = (id) => {
+            alert("Bản thảo đã được đánh dấu lưu trữ thành công!");
+        };
+
+        // Gửi chiều cao khi load trang
+        window.addEventListener('load', refreshIframe);
+        window.addEventListener('resize', refreshIframe);
+
+    </script>
+</body>
+</html>

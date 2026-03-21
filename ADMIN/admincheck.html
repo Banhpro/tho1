@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Khu Rừng Tri Kỷ</title>
+    <style>
+        :root {
+            --forest-dark: #1b3022;
+            --forest-green: #2e7d32;
+            --wood-brown: #5d4037;
+            --parchment: rgba(255, 255, 255, 0.85);
+        }
+
+        /* Quan trọng: Cấu hình body để iframe.js lấy chiều cao chính xác */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: auto;
+            min-height: 100%;
+            overflow: hidden; /* Không cho hiện thanh cuộn bên trong iframe */
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-attachment: fixed;
+            color: #f5f5f5;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .slogan {
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            transition: 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 16px;
+        }
+
+        .tab-btn.active {
+            background: var(--forest-green);
+            box-shadow: 0 0 15px var(--forest-green);
+        }
+
+        /* Content Area */
+        .content-section {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .content-section.active {
+            display: grid;
+        }
+
+        /* Response Card */
+        .card {
+            background: var(--parchment);
+            color: #333;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            border-left: 5px solid var(--wood-brown);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--forest-dark);
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .info-row {
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: var(--wood-brown);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .answer {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 8px;
+            border-radius: 5px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .timestamp {
+            font-size: 11px;
+            color: #777;
+            text-align: right;
+            margin-top: 15px;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #ddd;
+            border-top: 5px solid var(--forest-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+
+<body>
+
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Đang băng qua rừng tìm dữ liệu...</p>
+    </div>
+
+    <div class="admin-container">
+        <header>
+            <h1>Trạm Dừng Chân Của Người Giữ Rừng</h1>
+            <p class="slogan">Nơi lưu giữ những tiếng lòng của khách ghé thăm</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('teacher')">Giáo Viên</button>
+            <button class="tab-btn" onclick="showTab('friend')">Bạn Bè</button>
+            <button class="tab-btn" onclick="showTab('unknown')">Người Dưng</button>
+        </div>
+
+        <div id="teacher" class="content-section active"></div>
+        <div id="friend" class="content-section"></div>
+        <div id="unknown" class="content-section"></div>
+    </div>
+
+    <!-- Nhúng file xử lý chiều cao iframe của bạn -->
+    <script src="../main_js/iframe.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD5VotnEcZ6hQduMoF5AjL0024x1VTkEu4",
+            authDomain: "banhkietgithunbpoem.firebaseapp.com",
+            projectId: "banhkietgithunbpoem",
+            storageBucket: "banhkietgithunbpoem.appspot.com",
+            messagingSenderId: "429631951698",
+            appId: "1:429631951698:web:8c5f6854de3ad22113a08b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Hàm hỗ trợ gọi lại hàm từ iframe.js nếu cần (tùy thuộc vào nội dung file iframe.js của bạn)
+        function refreshIframeHeight() {
+            if (typeof sendHeight === "function") {
+                sendHeight(); // Tên hàm phổ biến trong các file xử lý iframe
+            } else if (window.parent && window.parent.postMessage) {
+                // Nếu file iframe.js không chạy auto, ta dùng logic dự phòng:
+                const height = document.documentElement.scrollHeight || document.body.scrollHeight;
+                window.parent.postMessage({ type: 'setHeight', height: height }, "*");
+            }
+        }
+
+        // --- Hàm Chuyển Tab ---
+        window.showTab = function (role) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(role).classList.add('active');
+            if(event) event.currentTarget.classList.add('active');
+
+            // Cập nhật lại chiều cao khi nội dung thay đổi do đổi Tab
+            setTimeout(refreshIframeHeight, 100);
+        }
+
+        // --- Hàm lấy dữ liệu từ Firebase ---
+        async function loadData() {
+            try {
+                const usersSnap = await getDocs(collection(db, "users"));
+                
+                for (const userDoc of usersSnap.docs) {
+                    const userData = userDoc.data();
+                    const userId = userDoc.id;
+                    const role = userData.role;
+
+                    if (!role) continue;
+
+                    const signupDocId = `${role}_${userId}`;
+                    const signupSnap = await getDoc(doc(db, "signup", signupDocId));
+                    
+                    if (signupSnap.exists()) {
+                        const answers = signupSnap.data();
+                        renderCard(role, userData, answers);
+                    }
+                }
+                
+                // Ẩn loading
+                document.getElementById('loading').style.display = 'none';
+                
+                // Cập nhật chiều cao sau khi dữ liệu đã render xong hoàn toàn
+                setTimeout(refreshIframeHeight, 300);
+
+            } catch (error) {
+                console.error("Lỗi lấy dữ liệu:", error);
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function renderCard(role, user, answers) {
+            const container = document.getElementById(role);
+            const date = user.created ? new Date(user.created).toLocaleString('vi-VN') : 'Không rõ';
+            
+            let questionsHtml = '';
+            
+            if (role === 'teacher') {
+                questionsHtml = `
+                    <div class="info-row"><span class="label">1. Có mệt không?</span><span class="answer">${answers.tired || ''}</span></div>
+                    <div class="info-row"><span class="label">2. Dạy môn:</span><span class="answer">${answers.subject || ''}</span></div>
+                    <div class="info-row"><span class="label">3. Trường dạy Bành:</span><span class="answer">${answers.school || ''}</span></div>
+                    <div class="info-row"><span class="label">4. Bành làm buồn chưa?</span><span class="answer">${answers.sad || ''}</span></div>
+                    <div class="info-row"><span class="label">5. Nghĩ gì về Bành:</span><span class="answer">${answers.think || ''}</span></div>
+                    <div class="info-row"><span class="label">6. Kỉ niệm:</span><span class="answer">${answers.memory || ''}</span></div>
+                    <div class="info-row"><span class="label">7. Điểm đầu tiên:</span><span class="answer">${answers.score || ''}</span></div>
+                `;
+            } else if (role === 'friend') {
+                questionsHtml = `
+                    <div class="info-row"><span class="label">1. Giới tính:</span><span class="answer">${answers.gender || ''}</span></div>
+                    <div class="info-row"><span class="label">2. Quen năm cấp:</span><span class="answer">${answers.level || ''}</span></div>
+                    <div class="info-row"><span class="label">3. Bành gọi là:</span><span class="answer">${answers.call || ''}</span></div>
+                    <div class="info-row"><span class="label">4. Đã bị đấm chưa?</span><span class="answer">${answers.punch || ''}</span></div>
+                    <div class="info-row"><span class="label">5. Ghét Bành điểm nào:</span><span class="answer">${answers.hate || ''}</span></div>
+                    <div class="info-row"><span class="label">6. Lý do còn làm bạn:</span><span class="answer">${answers.reason || ''}</span></div>
+                    <div class="info-row"><span class="label">7. Câu cửa miệng Bành:</span><span class="answer">${answers.sentence || ''}</span></div>
+                    <div class="info-row"><span class="label">8. Giờ kết bạn:</span><span class="answer">${answers.time || ''}</span></div>
+                `;
+            } else {
+                questionsHtml = `
+                    <div class="info-row"><span class="label">1. Biết Bành do:</span><span class="answer">${answers.know || ''}</span></div>
+                    <div class="info-row"><span class="label">2. Thích thơ không:</span><span class="answer">${answers.like || ''}</span></div>
+                    <div class="info-row"><span class="label">3. Sẵn sàng chia sẻ:</span><span class="answer">${answers.share || ''}</span></div>
+                    <div class="info-row"><span class="label">4. Có thể làm bạn:</span><span class="answer">${answers.friend || ''}</span></div>
+                `;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <h3>${user.fullname} (@${user.username})</h3>
+                <p style="font-size:12px; color:#666; margin-top:-10px;">Email: ${user.email}</p>
+                <div class="questions-list">${questionsHtml}</div>
+                <div class="timestamp">Ghé thăm lúc: ${date}</div>
+            `;
+            container.appendChild(card);
+        }
+
+        // Theo dõi sự thay đổi của DOM (nếu file iframe.js của bạn không có MutationObserver)
+        const observer = new MutationObserver(() => {
+            refreshIframeHeight();
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        // Chạy load data
+        loadData();
+    </script>
+</body>
+</html>

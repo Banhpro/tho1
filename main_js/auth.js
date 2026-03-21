@@ -145,41 +145,49 @@ window.login = async function () {
 
 /* ================= HIỂN THỊ USERNAME TRÊN NAVBAR ================= */
 
+/* ================= HIỂN THỊ USERNAME & ADMIN TRÊN NAVBAR TRANG CHA ================= */
+
 onAuthStateChanged(auth, async (user) => {
-
-    const nameBox = document.getElementById("usernameshow");
-
-    if (!nameBox) return;
+    // Truy cập vào Document của trang cha
+    const parentDoc = window.parent.document;
+    
+    // Lấy các thẻ nằm ở trang cha
+    const nameBox = parentDoc.getElementById("usernameshow");
+    const adminMenu = parentDoc.getElementById("admin-menu");
 
     if (user) {
-
         try {
-
             const snap = await getDoc(doc(db, "users", user.uid));
 
             if (snap.exists()) {
-
                 const data = snap.data();
 
-                nameBox.innerText = data.username || "bạn";
+                // 1. Hiển thị Username ở trang cha
+                if (nameBox) {
+                    nameBox.innerText = data.username || "bạn";
+                }
+
+                // 2. Kiểm tra quyền ADMIN và hiển thị menu ở trang cha
+                if (adminMenu) {
+                    if (data.role === "admin") {
+                        adminMenu.style.display = "block"; // Hiện menu Admin
+                    } else {
+                        adminMenu.style.display = "none";  // Ẩn nếu ko phải Admin
+                    }
+                }
 
             } else {
-
-                nameBox.innerText = "bạn";
-
+                if (nameBox) nameBox.innerText = "bạn";
+                if (adminMenu) adminMenu.style.display = "none";
             }
-
         } catch (err) {
-
-            console.error(err);
-            nameBox.innerText = "bạn";
-
+            console.error("Lỗi lấy dữ liệu user:", err);
+            if (nameBox) nameBox.innerText = "bạn";
+            if (adminMenu) adminMenu.style.display = "none";
         }
-
     } else {
-
-        nameBox.innerText = "bạn";
-
+        // Khi chưa đăng nhập hoặc đăng xuất
+        if (nameBox) nameBox.innerText = "bạn";
+        if (adminMenu) adminMenu.style.display = "none";
     }
-
 });
