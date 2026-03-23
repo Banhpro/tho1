@@ -3,28 +3,28 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Đăng bài thơ - Galaxy Theme</title>
+    <title>Đăng bài thơ - Tropical Forest Theme</title>
 
     <script src="../../poems/js/selpoem.js"></script>
+    <!-- Thư viện TinyMCE -->
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
 
+    <!-- Google Fonts cho trang chủ -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Merriweather&family=Lora&family=Playfair+Display&family=Roboto&family=Be+Vietnam+Pro&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Merriweather&family=Lora&family=Playfair+Display&family=Roboto&family=Be+Vietnam+Pro&family=Vollkorn&display=swap"
         rel="stylesheet">
 
     <style>
-        /* ===== GALAXY THEME CSS ===== */
+        /* ===== TROPICAL FOREST THEME CSS ===== */
         body {
             font-family: 'Be Vietnam Pro', Arial, sans-serif;
-            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
-            color: #e0e0e0;
+            background: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2000&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            color: #2c3e50;
             margin: 0;
             padding: 20px;
-            /* Để scrollHeight tính toán đúng cho iframe, không dùng hidden nếu muốn tự dãn */
-            overflow-x: hidden;
-            position: relative;
         }
 
-        /* Hiệu ứng sao lấp lánh */
         body::before {
             content: "";
             position: fixed;
@@ -32,134 +32,124 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('https://www.transparenttextures.com/patterns/stardust.png');
-            opacity: 0.3;
+            background: rgba(14, 56, 35, 0.15);
             pointer-events: none;
-            z-index: 0;
+            z-index: -1;
         }
 
         .container {
             max-width: 850px;
             margin: 20px auto;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
             padding: 40px;
             border-radius: 24px;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 50, 25, 0.2);
             position: relative;
             z-index: 1;
         }
 
         h2 {
             text-align: center;
-            margin-bottom: 35px;
             font-family: 'Playfair Display', serif;
-            font-size: 32px;
-            background: linear-gradient(to right, #fff, #a5dcfb, #6b9dfc);
+            font-size: 34px;
+            background: linear-gradient(to right, #0ba360, #11998e);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 15px rgba(107, 157, 252, 0.4);
         }
 
         h3 {
-            color: #a5dcfb;
-            border-left: 4px solid #6b9dfc;
+            color: #11998e;
+            border-left: 4px solid #38ef7d;
             padding-left: 12px;
             margin-top: 35px;
-            font-size: 19px;
-            letter-spacing: 0.5px;
         }
 
         label b {
-            color: #6b9dfc;
-            font-size: 16px;
+            color: #0ba360;
             display: block;
+            margin-top: 20px;
             margin-bottom: 5px;
         }
 
-        input[type="text"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 14px;
-            margin: 10px 0 20px 0;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(107, 157, 252, 0.2);
-            border-radius: 12px;
-            color: #fff;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
-            font-size: 15px;
+        /* ===== CUSTOM TOOLBAR INPUTS ===== */
+        .tiny-custom-bar {
+            background: #fff;
+            border: 1px solid rgba(17, 153, 142, 0.3);
+            border-bottom: none;
+            padding: 10px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        input:focus,
-        textarea:focus,
-        select:focus {
+        .ql-custom-input {
+            background: #f8fcfb;
+            border: 1px solid #bceadd;
+            color: #2c3e50;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
             outline: none;
-            border-color: #6b9dfc;
-            box-shadow: 0 0 12px rgba(107, 157, 252, 0.3);
-            background: rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: 0.3s;
         }
 
-        textarea {
-            height: auto;
-            /* Thay đổi từ 220px thành auto */
-            min-height: 220px;
-            /* Giữ chiều cao tối thiểu ban đầu */
-            line-height: 1.7;
-            overflow: hidden;
-            /* Triệt tiêu thanh cuộn */
-            resize: none;
-            /* Tắt nút kéo giãn thủ công để giao diện đẹp hơn */
+        .ql-custom-input:focus {
+            border-color: #11998e;
+            background: #fff;
+        }
+
+        .font-input {
+            width: 180px;
+        }
+
+        .size-input {
+            width: 100px;
+        }
+
+        .tox-promotion,
+        .tox-statusbar__branding {
+            display: none !important;
+        }
+
+        .tox-tinymce {
+            border: 1px solid rgba(17, 153, 142, 0.3) !important;
+            border-radius: 0 0 12px 12px !important;
         }
 
         .checkbox-group {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
             gap: 15px;
-            margin-top: 15px;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.5);
             padding: 20px;
             border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .checkbox-row {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 14px;
-            cursor: pointer;
+            font-weight: 500;
         }
 
         .other-input {
             display: none;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid #444;
-            color: #fff;
-            width: 130px;
+            padding: 6px;
             border-radius: 6px;
-            margin-left: 5px;
+            border: 1px solid #11998e;
+            width: 120px;
         }
 
         .preview-img {
-            max-width: 100%;
-            width: 280px;
+            max-width: 280px;
             margin-top: 15px;
             display: none;
             border-radius: 12px;
-            border: 2px solid rgba(107, 157, 252, 0.2);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        audio {
-            margin-top: 15px;
-            display: none;
-            width: 100%;
-            filter: invert(100%) hue-rotate(180deg) brightness(1.2);
+            border: 2px solid rgba(17, 153, 142, 0.3);
         }
 
         .button-group {
@@ -176,36 +166,23 @@
             border-radius: 12px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.4s;
         }
 
         #previewBtn {
-            background: rgba(255, 255, 255, 0.08);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        #previewBtn:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-3px);
+            background: rgba(17, 153, 142, 0.1);
+            color: #11998e;
+            border: 1px solid #11998e;
         }
 
         #submitBtn {
-            background: linear-gradient(45deg, #1e3c72, #2a5298, #6b9dfc);
-            background-size: 200% auto;
+            background: linear-gradient(45deg, #11998e, #38ef7d, #0ba360);
             color: white;
-            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.4);
-        }
-
-        #submitBtn:hover {
-            background-position: right center;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(107, 157, 252, 0.5);
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
         }
 
         button.disabled {
-            opacity: 0.4;
+            opacity: 0.5;
             pointer-events: none;
             filter: grayscale(1);
         }
@@ -213,18 +190,17 @@
         #progressBarContainer {
             margin-top: 25px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.05);
             height: 12px;
             border-radius: 20px;
             overflow: hidden;
             display: none;
-            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         #progressBar {
             width: 0%;
             height: 100%;
-            background: linear-gradient(to right, #6b9dfc, #00ff88);
+            background: linear-gradient(to right, #38ef7d, #11998e);
             transition: width 0.4s ease;
         }
 
@@ -235,114 +211,81 @@
             min-height: 24px;
         }
 
-        .font-row {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .font-note {
-            font-size: 13px;
-            color: #888;
-            margin-top: -15px;
-            margin-bottom: 10px;
-        }
-
         input[type="file"] {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.7);
             padding: 10px;
             border-radius: 8px;
-            border: 1px dashed rgba(107, 157, 252, 0.4);
+            border: 1px dashed #11998e;
             cursor: pointer;
             width: 100%;
-            color: #bbb;
-        }
-
-        /* Tùy chỉnh thanh cuộn cho đẹp */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #090A0F;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #1B2735;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #2a5298;
+            margin-top: 10px;
         }
     </style>
 </head>
 
 <body>
 
+    <datalist id="font-list">
+        <option value="Be Vietnam Pro"></option>
+        <option value="Playfair Display"></option>
+        <option value="Merriweather"></option>
+        <option value="Vollkorn"></option>
+        <option value="Lora"></option>
+        <option value="Roboto"></option>
+        <option value="Times New Roman"></option>
+        <option value="Georgia"></option>
+        <option value="Arial"></option>
+        <option value="Courier New"></option>
+        <option value="Vladimir Script"></option>
+    </datalist>
+    <datalist id="size-list">
+        <option value="12px"></option>
+        <option value="14px"></option>
+        <option value="16px"></option>
+        <option value="18px"></option>
+        <option value="20px"></option>
+        <option value="24px"></option>
+        <option value="32px"></option>
+        <option value="48px"></option>
+        <option value="72px"></option>
+    </datalist>
+
     <div class="container">
-        <h2>🚀 Gửi Bài Thơ Vào Dải Ngân Hà</h2>
+        <h2>🌿 Gieo Hạt Mầm Thơ Ca</h2>
 
         <label><b>Tên bài thơ</b></label>
-        <input type="text" id="title" placeholder="Nhập tên bài thơ trăng sao...">
-
-        <div class="font-note">Kiểu chữ cho tiêu đề:</div>
-        <div class="font-row">
-            <select id="fontTitleSelect" style="width: 200px; margin:0;">
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Georgia">Georgia</option>
-                <option value="Merriweather">Merriweather</option>
-                <option value="Playfair Display">Playfair Display</option>
-                <option value="Lora">Lora</option>
-                <option value="Roboto">Roboto</option>
-                <option value="Be Vietnam Pro">Be Vietnam Pro</option>
-                <option value="other">Khác</option>
-            </select>
-            <input type="text" id="fontTitleOther" class="other-input" style="flex:1; margin:0;"
-                placeholder="Tên font..." />
+        <div class="tiny-custom-bar">
+            <input type="text" list="font-list" class="ql-custom-input font-input" data-editor="title-editor"
+                placeholder="Chọn hoặc nhập Font...">
+            <input type="text" list="size-list" class="ql-custom-input size-input" data-editor="title-editor"
+                placeholder="Size...">
         </div>
+        <textarea id="title-editor"></textarea>
 
         <label><b>Nội dung bài thơ</b></label>
-        <textarea id="content" placeholder="Viết những vần thơ của bạn tại đây..."></textarea>
-
-        <div class="font-note">Kiểu chữ cho nội dung:</div>
-        <div class="font-row">
-            <select id="fontContentSelect" style="width: 200px; margin:0;">
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Georgia">Georgia</option>
-                <option value="Merriweather">Merriweather</option>
-                <option value="Playfair Display">Playfair Display</option>
-                <option value="Lora">Lora</option>
-                <option value="Roboto">Roboto</option>
-                <option value="Be Vietnam Pro">Be Vietnam Pro</option>
-                <option value="other">Khác</option>
-            </select>
-            <input type="text" id="fontContentOther" class="other-input" style="flex:1; margin:0;"
-                placeholder="Tên font..." />
+        <div class="tiny-custom-bar">
+            <input type="text" list="font-list" class="ql-custom-input font-input" data-editor="content-editor"
+                placeholder="Chọn hoặc nhập Font...">
+            <input type="text" list="size-list" class="ql-custom-input size-input" data-editor="content-editor"
+                placeholder="Size...">
         </div>
+        <textarea id="content-editor"></textarea>
 
-        <h3>🌌 Thể thơ</h3>
+        <h3>🎋 Thể thơ</h3>
         <div id="theThoBox" class="checkbox-group"></div>
-
-        <h3>🏷️ Thể loại</h3>
+        <h3>🌸 Thể loại</h3>
         <div id="theLoaiBox" class="checkbox-group"></div>
-
-        <h3>🎙️ Âm thanh giọng đọc (MP3 < 20MB)</h3>
+        <h3>🎙️ Âm thanh rừng gọi (MP3 < 20MB)</h3>
                 <input type="file" id="audioFile" accept=".mp3">
-                <audio id="audioPreview" controls></audio>
-
-                <h3>🖼️ Hình nền bài thơ (JPG)</h3>
-                <input type="file" id="backgroundFile" accept=".jpg,.jpeg">
-                <img id="back_imgPreview" class="preview-img">
-
-                <h3>👤 Ảnh đại diện bài thơ (JPG)</h3>
-                <input type="file" id="imageFile" accept=".jpg,.jpeg">
-                <img id="imgPreview" class="preview-img">
+                <audio id="audioPreview" controls style="display:none; width:100%; margin-top:10px;"></audio>
+                <h3>🍃 Hình nền (JPG)</h3><input type="file" id="backgroundFile" accept=".jpg,.jpeg"><img
+                    id="back_imgPreview" class="preview-img">
+                <h3>🌺 Ảnh đại diện (JPG)</h3><input type="file" id="imageFile" accept=".jpg,.jpeg"><img id="imgPreview"
+                    class="preview-img">
 
                 <div class="button-group">
                     <button type="button" id="previewBtn">👁️ Xem thử</button>
-                    <button id="submitBtn">✨ Gửi bài thơ</button>
+                    <button id="submitBtn">✨ Gieo mầm</button>
                 </div>
 
                 <div id="progressBarContainer">
@@ -364,268 +307,156 @@
             messagingSenderId: "429631951698",
             appId: "1:429631951698:web:8c5f6854de3ad22113a08b"
         };
-
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // Hàm hỗ trợ gửi chiều cao thủ công nếu cần thiết sau khi DOM thay đổi lớn
-        const forceSendHeight = () => {
-            if (typeof sendHeight === "function") sendHeight();
+        const forceSendHeight = () => { if (typeof sendHeight === "function") sendHeight(); };
+
+        /* =========================================
+           FIX LỖI FONT: CHÈN GOOGLE FONTS VÀO EDITOR
+        ========================================= */
+        const commonTinyConfig = {
+            menubar: false,
+            plugins: 'autoresize lists link charmap emoticons wordcount',
+            toolbar: 'bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright | removeformat',
+            autoresize_bottom_margin: 20,
+            min_height: 100,
+            keep_styles: true,
+            forced_root_block: 'p',
+
+            // Dòng này cực kỳ quan trọng: Nó tải Font vào bên trong cái Iframe soạn thảo
+            content_css: 'https://fonts.googleapis.com/css2?family=Merriweather&family=Lora&family=Playfair+Display&family=Roboto&family=Be+Vietnam+Pro&family=Vollkorn&display=swap',
+
+            content_style: "body { font-family: 'Be Vietnam Pro', sans-serif; font-size: 16px; line-height: 1.6; } p { margin: 0; }",
+
+            setup: (editor) => {
+                editor.on('init change keyup ResizeEditor', forceSendHeight);
+                editor.on('NodeChange', () => {
+                    const font = editor.queryCommandValue('FontName').replace(/"/g, "");
+                    const size = editor.queryCommandValue('FontSize');
+                    const wrapper = editor.getElement().previousElementSibling;
+                    if (wrapper) {
+                        const fInp = wrapper.querySelector('.font-input');
+                        const sInp = wrapper.querySelector('.size-input');
+                        if (document.activeElement !== fInp) fInp.value = font || "";
+                        if (document.activeElement !== sInp) sInp.value = size ? (size.includes('pt') ? size : size.replace('px', '') + 'px') : "";
+                    }
+                });
+            }
         };
 
-        function cleanText(text) {
-            return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "").replace(/[^a-z0-9]/g, "");
-        }
+        tinymce.init({ ...commonTinyConfig, selector: '#title-editor', placeholder: "Nhập tên bài thơ..." });
+        tinymce.init({ ...commonTinyConfig, selector: '#content-editor', placeholder: "Gieo vần thơ tại đây..." });
 
-        const fontTitleSelect = document.getElementById("fontTitleSelect");
-        const fontTitleOther = document.getElementById("fontTitleOther");
-        const fontContentSelect = document.getElementById("fontContentSelect");
-        const fontContentOther = document.getElementById("fontContentOther");
-        const backgroundFile = document.getElementById("backgroundFile");
-        const imageFile = document.getElementById("imageFile");
-        const audioFile = document.getElementById("audioFile");
-        const back_imgPreview = document.getElementById("back_imgPreview");
-        const imgPreview = document.getElementById("imgPreview");
-        const audioPreview = document.getElementById("audioPreview");
-        const submitBtn = document.getElementById("submitBtn");
-        const previewBtn = document.getElementById("previewBtn");
-        const progressBar = document.getElementById("progressBar");
-        const progressBarContainer = document.getElementById("progressBarContainer");
-        const msg = document.getElementById("msg");
-        const theThoBox = document.getElementById("theThoBox");
-        const theLoaiBox = document.getElementById("theLoaiBox");
-        const contentBox = document.getElementById("content");
-        function autoResizeTextarea(el) {
-            el.style.height = "auto";
-            el.style.height = el.scrollHeight + "px";
-            if (typeof sendHeight === "function") sendHeight();
-        }
-
-        // khi gõ
-        contentBox.addEventListener("input", () => {
-            autoResizeTextarea(contentBox);
+        document.querySelectorAll('.ql-custom-input').forEach(input => {
+            let tempVal = "";
+            input.onfocus = function () { tempVal = this.value; this.value = ""; };
+            input.onblur = function () { if (this.value === "") this.value = tempVal; };
+            input.oninput = function () {
+                const editorId = this.getAttribute('data-editor');
+                const editor = tinymce.get(editorId);
+                const val = this.value.trim();
+                if (!val) return;
+                if (this.classList.contains('font-input')) {
+                    editor.execCommand('FontName', false, val);
+                } else {
+                    const sizeVal = isNaN(val) ? val : val + 'px';
+                    editor.execCommand('FontSize', false, sizeVal);
+                }
+            };
         });
 
-        // chạy lần đầu
-        setTimeout(() => autoResizeTextarea(contentBox), 100);
-        function createFolder(username, role, title) {
-            const date = new Date();
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const u = cleanText(username);
-            const r = cleanText(role);
-            const t = cleanText(title);
-            return `poem_temp/${u}_${r}/${t}_${day}-${month}-${year}_${hours}:${minutes}`;
-        }
-
-        async function uploadFile(file, folder) {
-            const url = "https://api.cloudinary.com/v1_1/dp6rc7ghq/auto/upload";
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("upload_preset", "uploadfilepoem");
-            formData.append("folder", folder);
-            const res = await fetch(url, { method: "POST", body: formData });
-            const data = await res.json();
-            return data.secure_url;
-        }
-
-        fontTitleSelect.onchange = function () {
-            fontTitleOther.style.display = this.value === "other" ? "block" : "none";
-            forceSendHeight();
-        };
-        fontContentSelect.onchange = function () {
-            fontContentOther.style.display = this.value === "other" ? "block" : "none";
-            forceSendHeight();
-        };
-
+        /* =========================================
+           LOGIC FORM & FIREBASE (GIỮ NGUYÊN)
+        ========================================= */
+        function cleanText(text) { return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "").replace(/[^a-z0-9]/g, ""); }
         function createOptions(container, data, type) {
             data.forEach(item => {
-                const row = document.createElement("div");
-                row.className = "checkbox-row";
+                const row = document.createElement("div"); row.className = "checkbox-row";
                 const input = document.createElement("input");
-                if (type === "radio") { input.type = "radio"; input.name = container.id; }
-                else { input.type = "checkbox"; }
+                input.type = (type === "radio") ? "radio" : "checkbox";
+                if (type === "radio") input.name = container.id;
                 input.value = item;
-                const label = document.createElement("span");
-                label.innerText = item;
-                row.appendChild(input);
-                row.appendChild(label);
-                let otherInput = null;
+                const label = document.createElement("span"); label.innerText = item;
+                row.appendChild(input); row.appendChild(label);
                 if (item.toLowerCase() === "khác") {
-                    otherInput = document.createElement("input");
-                    otherInput.type = "text";
-                    otherInput.placeholder = "Nhập...";
-                    otherInput.className = "other-input";
+                    const otherInput = document.createElement("input");
+                    otherInput.type = "text"; otherInput.placeholder = "Nhập..."; otherInput.className = "other-input";
                     row.appendChild(otherInput);
-                }
-                if (type === "radio") {
-                    input.addEventListener("change", () => {
-                        container.querySelectorAll(".other-input").forEach(el => el.style.display = "none");
-                        if (item.toLowerCase() === "khác" && input.checked) otherInput.style.display = "block";
-                        forceSendHeight();
-                    });
-                }
-                if (type === "checkbox") {
-                    input.addEventListener("change", () => {
-                        const otherCheck = container.querySelector('input[value="Khác"]');
-                        const otherBox = container.querySelector(".other-input");
-                        if (item.toLowerCase() === "khác") {
-                            if (input.checked) {
-                                container.querySelectorAll('input[type="checkbox"]').forEach(cb => { if (cb !== input) { cb.checked = false; cb.disabled = true; } });
-                                if (otherBox) otherBox.style.display = "block";
-                            } else {
-                                container.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.disabled = false; });
-                                if (otherBox) otherBox.style.display = "none";
-                            }
-                        } else {
-                            if (input.checked && otherCheck) { otherCheck.checked = false; if (otherBox) otherBox.style.display = "none"; }
-                        }
-                        forceSendHeight();
-                    });
+                    input.addEventListener("change", () => { otherInput.style.display = input.checked ? "block" : "none"; forceSendHeight(); });
                 }
                 container.appendChild(row);
             });
         }
-
-        createOptions(theThoBox, config.theTho, "radio");
-        createOptions(theLoaiBox, config.theLoai, "checkbox");
-
-        backgroundFile.onchange = () => {
-            const file = backgroundFile.files[0];
-            if (!file) return;
-            if (file.size > 5 * 1024 * 1024) { msg.style.color = "#ff4d4d"; msg.innerText = "Background phải nhỏ hơn 5MB"; backgroundFile.value = ""; return; }
-            back_imgPreview.src = URL.createObjectURL(file);
-            back_imgPreview.style.display = "block";
-            forceSendHeight();
+        if (typeof config !== 'undefined') {
+            createOptions(document.getElementById("theThoBox"), config.theTho, "radio");
+            createOptions(document.getElementById("theLoaiBox"), config.theLoai, "checkbox");
         }
+        document.getElementById("backgroundFile").onchange = function () { const f = this.files[0]; if (f) { const p = document.getElementById("back_imgPreview"); p.src = URL.createObjectURL(f); p.style.display = "block"; forceSendHeight(); } };
+        document.getElementById("imageFile").onchange = function () { const f = this.files[0]; if (f) { const p = document.getElementById("imgPreview"); p.src = URL.createObjectURL(f); p.style.display = "block"; forceSendHeight(); } };
+        document.getElementById("audioFile").onchange = function () { const f = this.files[0]; if (f) { const a = document.getElementById("audioPreview"); a.src = URL.createObjectURL(f); a.style.display = "block"; forceSendHeight(); } };
 
-        imageFile.onchange = () => {
-            const file = imageFile.files[0];
-            if (!file) return;
-            if (file.size > 5 * 1024 * 1024) { msg.style.color = "#ff4d4d"; msg.innerText = "Ảnh đại diện phải nhỏ hơn 5MB"; imageFile.value = ""; return; }
-            imgPreview.src = URL.createObjectURL(file);
-            imgPreview.style.display = "block";
-            forceSendHeight();
-        }
-
-        audioFile.onchange = () => {
-            const file = audioFile.files[0];
-            if (!file) return;
-            if (file.size > 20 * 1024 * 1024) { msg.style.color = "#ff4d4d"; msg.innerText = "File audio phải nhỏ hơn 20MB"; audioFile.value = ""; return; }
-            audioPreview.src = URL.createObjectURL(file);
-            audioPreview.style.display = "block";
-            forceSendHeight();
-        }
-
-        function validateForm() {
-            msg.style.color = "#ff4d4d";
-            const title = document.getElementById("title").value.trim();
-            const content = document.getElementById("content").value.trim();
-            if (!title) { msg.innerText = "Bạn chưa nhập tên bài thơ"; return false; }
-            if (!content) { msg.innerText = "Bạn chưa nhập nội dung bài thơ"; return false; }
-            const tho = document.querySelector("#theThoBox input[type=radio]:checked");
-            if (!tho) { msg.innerText = "Bạn chưa chọn thể thơ"; return false; }
-            const loai = document.querySelectorAll("#theLoaiBox input[type=checkbox]:checked");
-            if (loai.length === 0) { msg.innerText = "Bạn chưa chọn thể loại"; return false; }
-            if (!backgroundFile.files[0]) { msg.innerText = "Bạn chưa chọn background"; return false; }
-            if (!imageFile.files[0]) { msg.innerText = "Bạn chưa chọn ảnh đại diện"; return false; }
-            return true;
-        }
-
-        previewBtn.onclick = function () {
-            const title = document.getElementById("title").value;
-            const content = document.getElementById("content").value;
-            let fontTitle = fontTitleSelect.value === "other" ? fontTitleOther.value : fontTitleSelect.value;
-            let fontContent = fontContentSelect.value === "other" ? fontContentOther.value : fontContentSelect.value;
-            let back_img = backgroundFile.files[0] ? URL.createObjectURL(backgroundFile.files[0]) : "";
-            let avatar = imageFile.files[0] ? URL.createObjectURL(imageFile.files[0]) : "";
-            let audio = audioFile.files[0] ? URL.createObjectURL(audioFile.files[0]) : "";
-            const previewData = { title, content, fontTitle, fontContent, back_img, avatar, audio };
-            localStorage.setItem("preview_poem", JSON.stringify(previewData));
+        document.getElementById("previewBtn").onclick = () => {
+            const data = { title: tinymce.get('title-editor').getContent(), content: tinymce.get('content-editor').getContent(), back_img: document.getElementById("back_imgPreview").src, avatar: document.getElementById("imgPreview").src };
+            localStorage.setItem("preview_poem", JSON.stringify(data));
             window.open("review_poem.html", "_blank");
         };
 
-        submitBtn.onclick = async function () {
-            if (!validateForm()) return;
-            submitBtn.classList.add("disabled");
-            submitBtn.innerText = "Đang gửi...";
-            const ok = confirm("Bạn có chắc muốn gửi bài thơ này không?");
-            if (!ok) { msg.innerText = "Đã huỷ gửi bài"; submitBtn.classList.remove("disabled"); submitBtn.innerText = "Gửi bài thơ"; return; }
-            progressBarContainer.style.display = "block";
-            msg.innerText = "Hành trình lên mây đang bắt đầu...";
-            progressBar.style.width = "10%";
-
+        document.getElementById("submitBtn").onclick = async function () {
+            const titleHTML = tinymce.get('title-editor').getContent();
+            const contentHTML = tinymce.get('content-editor').getContent();
+            const rawTitle = tinymce.get('title-editor').getContent({ format: 'text' }).trim();
+            if (!rawTitle || !contentHTML || !document.getElementById("backgroundFile").files[0] || !document.getElementById("imageFile").files[0]) { alert("Bạn chưa hoàn thành các bước gieo mầm!"); return; }
+            if (!confirm("Xác nhận gieo mầm thơ vào rừng?")) return;
+            this.classList.add("disabled");
+            document.getElementById("progressBarContainer").style.display = "block";
+            const pb = document.getElementById("progressBar"); const msg = document.getElementById("msg");
             try {
-                const user = auth.currentUser;
-                if (!user) { msg.innerText = "Bạn chưa đăng nhập"; progressBarContainer.style.display = "none"; submitBtn.classList.remove("disabled"); return; }
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                const userData = userDoc.data();
-                const titleValue = document.getElementById("title").value;
-                const folder = createFolder(userData.username, userData.role, titleValue);
-
-                const back_img = await uploadFile(backgroundFile.files[0], folder);
-                progressBar.style.width = "40%";
-                const image = await uploadFile(imageFile.files[0], folder);
-                progressBar.style.width = "70%";
-                let audio = "";
-                if (audioFile.files[0]) audio = await uploadFile(audioFile.files[0], folder);
-                progressBar.style.width = "100%";
-
+                const user = auth.currentUser; if (!user) throw new Error("Chưa đăng nhập");
+                const userDoc = await getDoc(doc(db, "users", user.uid)); const userData = userDoc.data();
+                const folder = `poem_temp/${cleanText(userData.username)}_${cleanText(userData.role)}/${cleanText(rawTitle)}_${Date.now()}`;
+                const upload = async (file) => {
+                    const fd = new FormData(); fd.append("file", file); fd.append("upload_preset", "uploadfilepoem"); fd.append("folder", folder);
+                    const res = await fetch("https://api.cloudinary.com/v1_1/dp6rc7ghq/auto/upload", { method: "POST", body: fd });
+                    return (await res.json()).secure_url;
+                };
+                pb.style.width = "30%"; msg.innerText = "Đang tải ảnh nền..."; const b_url = await upload(document.getElementById("backgroundFile").files[0]);
+                pb.style.width = "60%"; msg.innerText = "Đang tải ảnh đại diện..."; const i_url = await upload(document.getElementById("imageFile").files[0]);
+                let a_url = ""; if (document.getElementById("audioFile").files[0]) { pb.style.width = "80%"; msg.innerText = "Đang tải âm thanh..."; a_url = await upload(document.getElementById("audioFile").files[0]); }
                 let theLoai = [];
-                const otherLoai = document.querySelector("#theLoaiBox .other-input");
-                if (otherLoai && otherLoai.style.display === "block") theLoai = [otherLoai.value];
-                else document.querySelectorAll("#theLoaiBox input[type=checkbox]:checked").forEach(el => theLoai.push(el.value));
 
-                let theTho = "";
-                const tho = document.querySelector("#theThoBox input[type=radio]:checked");
-                if (tho) theTho = (tho.value.toLowerCase() === "khác") ? document.querySelector("#theThoBox .other-input").value : tho.value;
 
-                await addDoc(collection(db, "temp"), {
-                    email: userData.email,
-                    role: userData.role,
-                    folder: folder,
-                    title: titleValue,
-                    content: document.getElementById("content").value,
-                    username: userData.username,
-                    fontTitle: fontTitleSelect.value === "other" ? fontTitleOther.value : fontTitleSelect.value,
-                    fontContent: fontContentSelect.value === "other" ? fontContentOther.value : fontContentSelect.value,
-                    theLoai, theTho, back_img, image, audio, created: Date.now()
+                document.querySelectorAll("#theLoaiBox input:checked").forEach(el => {
+                    if (el.value.toLowerCase() === "khác") {
+                        const otherInput = el.parentElement.querySelector(".other-input");
+                        const val = otherInput ? otherInput.value.trim() : "";
+                        if (val) {
+                            theLoai.push(val);
+                        }
+                    } else {
+                        theLoai.push(el.value);
+                    }
                 });
 
-                msg.style.color = "#00ff88";
-                msg.innerText = "✨ Bài thơ đã bay vào dải ngân hà thành công!";
-                setTimeout(() => { progressBarContainer.style.display = "none"; msg.innerText = ""; progressBar.style.width = "0%"; }, 3000);
+                let theTho = "";
+                const thoChecked = document.querySelector("#theThoBox input:checked");
 
-                // Reset form
-                document.getElementById("title").value = "";
-                const contentEl = document.getElementById("content");
-                contentEl.value = "";
+                if (thoChecked) {
+                    if (thoChecked.value.toLowerCase() === "khác") {
+                        const otherInput = thoChecked.parentElement.querySelector(".other-input");
+                        theTho = otherInput ? otherInput.value.trim() : "";
+                    } else {
+                        theTho = thoChecked.value;
+                    }
+                }
 
-                // reset về auto rồi set lại đúng min-height
-                contentEl.style.height = "auto";
-                contentEl.style.height = "220px";
-
-                forceSendHeight(); backgroundFile.value = ""; imageFile.value = ""; audioFile.value = "";
-                back_imgPreview.style.display = "none"; imgPreview.style.display = "none"; audioPreview.style.display = "none";
-                document.querySelectorAll(".other-input").forEach(el => el.style.display = "none");
-                document.querySelectorAll("input[type=checkbox], input[type=radio]").forEach(el => { el.checked = false; el.disabled = false; });
-
-                submitBtn.classList.remove("disabled");
-                submitBtn.innerText = "Gửi bài thơ";
-                forceSendHeight();
-            } catch (e) {
-                submitBtn.classList.remove("disabled");
-                submitBtn.innerText = "Gửi bài thơ";
-                console.error(e);
-                msg.innerText = "Vũ trụ đang gặp lỗi kỹ thuật!";
-            }
+                await addDoc(collection(db, "temp"), { email: userData.email, role: userData.role, username: userData.username, folder: folder, title: titleHTML, rawTitle: rawTitle, content: contentHTML, theLoai, theTho, back_img: b_url, image: i_url, audio: a_url, created: Date.now() });
+                pb.style.width = "100%"; msg.innerText = "✨ Gieo mầm thành công!";
+                setTimeout(() => location.reload(), 2000);
+            } catch (e) { alert("Lỗi: " + e.message); this.classList.remove("disabled"); }
         };
     </script>
-    <!-- Nhúng file iframe.js xử lý tự động dãn chiều cao -->
     <script src="../../main_js/iframe.js"></script>
 </body>
 

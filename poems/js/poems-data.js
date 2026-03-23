@@ -1,12 +1,12 @@
 const basePath = "list_poem/";
 const poems = [
     {
-        title: "Mẹ Già",
-        name: "me_gia",
-        date: "12/05/2023",
+        title: "Dám Nghĩ, Dám Bước, Dám Đi",
+        name: "dam_nghi_dam_buoc_dam_di",
+        date: "23/03/2026",
         author: "Bành",
-        category: ["GIA ĐÌNH", "QUÊ HƯƠNG"],
-        type: "LỤC BÁT",
+        category: ["ĐỜI NGƯỜI"],
+        type: "BÁT NGÔN",
         fontTitle: "Bahnschrift",
         fontContent: "Viner Hand ITC",
         content: ""  // Nội dung sẽ được lấy từ HTML

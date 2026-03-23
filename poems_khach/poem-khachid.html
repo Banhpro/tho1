@@ -97,10 +97,14 @@
             line-height: 1.8;
             font-size: 20px;
             text-align: center;
-            font-style: italic;
-            white-space: pre-wrap;
+            /* font-style: italic;  <- Bỏ cố định cái này vì Quill đã có sẵn định dạng riêng */
             color: #2b1d1d;
         }
+
+        /* THÊM 3 DÒNG NÀY ĐỂ ĐỌC ĐƯỢC CĂN LỀ CỦA QUILL */
+        .ql-align-center { text-align: center; }
+        .ql-align-right { text-align: right; }
+        .ql-align-justify { text-align: justify; }
 
         /* ===== IMAGE ===== */
 
@@ -204,7 +208,8 @@
 
             <div id="poem-title"></div>
 
-            <pre id="poem-content"></pre>
+            <!-- THAY PRE THÀNH DIV ĐỂ HIỂN THỊ HTML ĐÚNG -->
+            <div id="poem-content"></div>
 
             <div class="audio-wrapper">
 
@@ -281,35 +286,30 @@
             const data = snap.data();
             loadFont(data.fontTitle);
             loadFont(data.fontContent);
-            /* title */
-
+            
+            /* title - SỬA THÀNH INNERHTML */
             const title = document.getElementById("poem-title");
-            title.innerText = data.title || "";
+            title.innerHTML = data.title || "";
 
-            /* content */
-
+            /* content - SỬA THÀNH INNERHTML */
             const content = document.getElementById("poem-content");
-            content.textContent = data.content || "";
+            content.innerHTML = data.content || "";
 
             /* font */
-
             if (data.fontTitle) title.style.fontFamily = data.fontTitle;
             if (data.fontContent) content.style.fontFamily = data.fontContent;
 
             /* background */
-
             if (data.back_img) {
                 document.body.style.backgroundImage = `url(${data.back_img})`;
             }
 
             /* image */
-
             if (data.image) {
                 document.getElementById("poemImage").style.backgroundImage = `url(${data.image})`;
             }
 
             /* audio */
-
             if (data.audio) {
                 document.getElementById("audio").src = data.audio;
             }

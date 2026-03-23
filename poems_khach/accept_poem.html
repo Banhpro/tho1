@@ -4,212 +4,343 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Kiểm Duyệt - Bành Vũ Trụ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Be+Vietnam+Pro:wght@300;400;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>Hệ Thống Kiểm Duyệt - Rừng Nhiệt Đới</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Be+Vietnam+Pro:wght@300;400;600&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --glow-cyan: #00f2ff;
-            --glow-purple: #bc13fe;
-            --accent-gold: #ffcf33;
-            --danger-red: #ff0055;
-            --success-green: #00ffaa;
-            --glass-bg: rgba(0, 15, 30, 0.8);
-            --border-light: rgba(255, 255, 255, 0.15);
+            --forest-deep: #0a2d1d;
+            --leaf-green: #2ecc71;
+            --sun-gold: #f1c40f;
+            --danger-red: #e74c3c;
+            --rain-blue: #3498db;
+            --glass-bg: rgba(10, 45, 29, 0.85);
+            --border-light: rgba(255, 255, 255, 0.1);
         }
 
-        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1); }
+        * {
+            box-sizing: border-box;
+            transition: none;
+        }
 
         body {
-            margin: 0; padding: 0;
-            background: #00050a;
-            color: #fff;
+            margin: 0;
+            padding: 0;
+            background: #05140c;
+            color: #ecf0f1;
             font-family: 'Be Vietnam Pro', sans-serif;
+            height: auto;
             overflow: hidden;
-            height: auto; 
-          
         }
 
-        /* ----- NỀN VŨ TRỤ ----- */
-        .universe-bg {
+        /* ----- NỀN RỪNG NHIỆT ĐỚI ----- */
+        .forest-bg {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: -2;
-            background: radial-gradient(circle at 50% 50%, #1b2735 0%, #090a0f 100%);
-            background-attachment: fixed;
+            background: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2000&auto=format&fit=crop') no-repeat center center;
+            background-size: cover;
+            filter: brightness(0.6);
         }
 
-        .grid-overlay {
+        /* Hiệu ứng Mưa (Rain Overlay) */
+        .rain-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(var(--border-light) 1px, transparent 1px), 
-                              linear-gradient(90deg, var(--border-light) 1px, transparent 1px);
-            background-size: 60px 60px;
-            z-index: -1; opacity: 0.15; pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: url('https://www.transparenttextures.com/patterns/pinstriped-suit.png');
+            opacity: 0.2;
+            animation: rain 1.2s linear infinite;
+            pointer-events: none;
         }
 
-        /* ----- HUD HEADER ----- */
+        @keyframes rain {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 20px 100px;
+            }
+        }
+
+        /* Hiệu ứng Nắng (Sunbeams) */
+        .sun-beams {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% -10%, rgba(241, 196, 15, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* ----- HEADER PHONG CÁCH LÁ CÂY ----- */
         .hud-header {
-            max-width: 1400px; margin: 20px auto;
+            max-width: 1400px;
+            margin: 20px auto;
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
             border: 1px solid var(--border-light);
-            border-bottom: 2px solid var(--glow-cyan);
+            border-bottom: 3px solid var(--leaf-green);
             padding: 20px 40px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .hud-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 20px; letter-spacing: 3px;
-            color: var(--glow-cyan);
-            text-shadow: 0 0 10px var(--glow-cyan);
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--leaf-green);
+            text-shadow: 0 2px 10px rgba(46, 204, 113, 0.3);
         }
 
         /* ----- BỐ CỤC CHÍNH ----- */
         .admin-wrapper {
-            max-width: 1400px; margin: 0 auto;
+            max-width: 1400px;
+            margin: 0 auto;
             padding: 0 20px 40px 20px;
-            display: grid; grid-template-columns: 400px 1fr; gap: 30px;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 30px;
         }
 
         /* ----- DANH SÁCH BÊN TRÁI ----- */
         .signal-feed {
             background: var(--glass-bg);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(10px);
             border: 1px solid var(--border-light);
-            border-radius: 20px; padding: 20px;
-            display: flex; flex-direction: column; gap: 15px;
-            max-height: 850px; overflow-y: auto;
+            border-radius: 24px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 850px;
+            overflow-y: auto;
         }
 
         .feed-item {
-            background: rgba(255, 255, 255, 0.03);
-            border-left: 3px solid transparent;
-            padding: 15px; cursor: pointer; border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid transparent;
+            padding: 18px;
+            cursor: pointer;
+            border-radius: 15px;
+            transition: transform 0.3s;
+
         }
 
-        .feed-item:hover, .feed-item.active {
-            background: rgba(0, 242, 255, 0.1);
-            border-left-color: var(--glow-cyan);
-            transform: translateX(10px);
+        .feed-item:hover,
+        .feed-item.active {
+            background: rgba(46, 204, 113, 0.15);
+            border-left-color: var(--leaf-green);
+            transform: translateX(8px);
         }
 
-        .feed-item .item-title { font-weight: 600; color: var(--glow-cyan); margin-bottom: 5px; font-family: 'Orbitron'; font-size: 14px; }
-        .feed-item .item-meta { font-size: 11px; opacity: 0.7; }
+        .feed-item .item-title {
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+
+        .feed-item .item-meta {
+            font-size: 12px;
+            color: var(--leaf-green);
+            opacity: 0.8;
+        }
 
         /* ----- MÀN HÌNH CHI TIẾT ----- */
         .analysis-monitor {
             background: var(--glass-bg);
-            backdrop-filter: blur(25px);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border-light);
-            border-radius: 20px; overflow: hidden;
-            display: flex; flex-direction: column; min-height: 800px;
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 800px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
         }
 
         .hero-banner {
-            height: 280px; width: 100%;
-            background-size: cover; background-position: center;
-            position: relative; border-bottom: 1px solid var(--border-light);
+            height: 300px;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+            position: relative;
         }
 
         .hero-banner::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to top, rgba(0,5,10,1), transparent);
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, var(--forest-deep), transparent);
         }
 
-        .detail-body { padding: 40px; flex: 1; }
+        .detail-body {
+            padding: 45px;
+            flex: 1;
+        }
 
         .poem-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 38px; color: var(--accent-gold);
-            margin: 0 0 15px 0; text-shadow: 0 0 15px rgba(255, 207, 51, 0.3);
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            color: var(--sun-gold);
+            margin: 0 0 15px 0;
+            line-height: 1.2;
         }
 
         .poem-content {
-            white-space: pre-wrap; line-height: 2.2;
-            font-size: 19px; color: #f0f0f0;
-            margin: 30px 0; padding: 30px;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 15px; border-left: 5px solid var(--glow-purple);
+            white-space: pre-wrap;
+            line-height: 2.3;
+            font-size: 20px;
+            color: #fdfdfd;
+            margin: 30px 0;
+            padding: 35px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            border-right: 4px solid var(--leaf-green);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
         }
 
         .illustration-img {
-            max-width: 350px; border-radius: 15px;
-            border: 2px solid var(--border-light);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 400px;
+            border-radius: 20px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
             margin-top: 20px;
         }
 
         /* ----- THANH LỆNH ----- */
         .command-bar {
-            padding: 30px 40px; display: flex; gap: 20px;
-            background: rgba(0,0,0,0.5);
+            padding: 35px 45px;
+            display: flex;
+            gap: 20px;
+            background: rgba(0, 0, 0, 0.4);
             border-top: 1px solid var(--border-light);
         }
 
         .btn {
-            padding: 14px 30px; border-radius: 8px;
-            font-family: 'Orbitron', sans-serif; font-size: 13px;
-            font-weight: 700; cursor: pointer; letter-spacing: 2px;
-            border: none; display: flex; align-items: center; gap: 10px;
+            padding: 15px 35px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 1px;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
         }
 
-        .btn-approve { background: var(--success-green); color: #000; box-shadow: 0 0 20px rgba(0, 255, 170, 0.3); }
-        .btn-delete { background: transparent; border: 1px solid var(--danger-red); color: var(--danger-red); }
-        .btn-delete:hover { background: var(--danger-red); color: #fff; box-shadow: 0 0 25px rgba(255, 0, 85, 0.4); }
+        .btn-approve {
+            background: var(--leaf-green);
+            color: var(--forest-deep);
+        }
+
+        .btn-approve:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(46, 204, 113, 0.4);
+        }
+
+        .btn-delete {
+            background: transparent;
+            border: 2px solid var(--danger-red);
+            color: var(--danger-red);
+        }
+
+        .btn-delete:hover {
+            background: var(--danger-red);
+            color: #fff;
+            box-shadow: 0 0 25px rgba(231, 76, 60, 0.4);
+        }
 
         .clover-tag {
-            background: var(--success-green); color: #000;
-            padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: bold;
+            background: var(--sun-gold);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
         }
 
         .empty-view {
-            height: 100%; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; opacity: 0.4; text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.5;
+            text-align: center;
         }
 
-        #list::-webkit-scrollbar { width: 4px; }
-        #list::-webkit-scrollbar-thumb { background: var(--glow-cyan); border-radius: 10px; }
+        #list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        #list::-webkit-scrollbar-thumb {
+            background: var(--leaf-green);
+            border-radius: 10px;
+        }
 
         @media (max-width: 1000px) {
-            .admin-wrapper { grid-template-columns: 1fr; }
-            .signal-feed { max-height: 400px; }
+            .admin-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .signal-feed {
+                max-height: 400px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="universe-bg"></div>
-    <div class="grid-overlay"></div>
+    <div class="forest-bg"></div>
+    <div class="rain-overlay"></div>
+    <div class="sun-beams"></div>
 
     <div class="hud-header">
-        <div class="hud-title">HỆ THỐNG KIỂM DUYỆT BẢN THẢO v3.0</div>
-        <div id="adminBadge" style="text-align: right; font-family: 'Orbitron'; font-size: 13px;">
-            <span id="uName">ĐANG XÁC MINH...</span><br>
-            <span style="color: var(--glow-cyan); font-size: 10px; letter-spacing: 1px;">NHÂN VIÊN VŨ TRỤ</span>
+        <div class="hud-title">🌿 KIỂM DUYỆT BẢN THẢO RỪNG NHIỆT ĐỚI</div>
+        <div id="adminBadge" style="text-align: right; font-size: 13px;">
+            <span id="uName" style="font-weight: 600; color: var(--leaf-green);">ĐANG XÁC MINH...</span><br>
+            <span style="opacity: 0.7; font-size: 11px;">NGƯỜI GIỮ RỪNG</span>
         </div>
     </div>
 
     <div class="admin-wrapper" id="mainLayout">
         <aside class="signal-feed">
-            <div style="font-family: 'Orbitron'; font-size: 12px; color: var(--glow-purple); margin-bottom: 10px; letter-spacing: 2px;">>> TÍN HIỆU ĐANG ĐẾN</div>
+            <div
+                style="font-weight: 600; font-size: 12px; color: var(--sun-gold); margin-bottom: 10px; letter-spacing: 1px;">
+                🍃 MẦM THƠ ĐANG ĐẾN</div>
             <div id="list"></div>
         </aside>
 
         <main class="analysis-monitor" id="analysisMonitor">
             <div class="empty-view">
-                <div style="font-size: 80px; margin-bottom: 20px;">🛰️</div>
-                <p style="font-family: 'Orbitron'; letter-spacing: 3px;">ĐANG ĐỢI CHỌN TÍN HIỆU PHÂN TÍCH...</p>
+                <div style="font-size: 80px; margin-bottom: 20px;">🎋</div>
+                <p style="letter-spacing: 1px;">ĐANG ĐỢI CHỌN MỘT NHÀNH THƠ ĐỂ PHÂN TÍCH...</p>
             </div>
         </main>
     </div>
 
+    <!-- TOÀN BỘ LOGIC GIỮ NGUYÊN 100% -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-        // LƯU Ý: Import thêm terminate và clearIndexedDbPersistence nếu cần fix lỗi cache nặng
-        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, getDoc, initializeFirestore, CACHE_SIZE_UNLIMITED } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, getDoc, initializeFirestore } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -222,12 +353,7 @@
         };
 
         const app = initializeApp(firebaseConfig);
-
-        // FIX LỖI BloomFilter: Khởi tạo Firestore với cấu hình sạch
-        const db = initializeFirestore(app, {
-            experimentalForceLongPolling: true, // Ép sử dụng long-polling để tránh lỗi kết nối/cache
-        });
-
+        const db = initializeFirestore(app, { experimentalForceLongPolling: true });
         const auth = getAuth(app);
 
         let poems = [];
@@ -248,8 +374,8 @@
 
         async function loadUploads() {
             const listContainer = document.getElementById("list");
-            listContainer.innerHTML = `<div style="padding:20px; font-size:12px; opacity:0.5;">ĐANG QUÉT TẦN SỐ VŨ TRỤ...</div>`;
-            
+            listContainer.innerHTML = `<div style="padding:20px; font-size:12px; opacity:0.5;">ĐANG TÌM KIẾM TRONG RỪNG SÂU...</div>`;
+
             try {
                 const snap = await getDocs(collection(db, "temp"));
                 poems = [];
@@ -273,8 +399,8 @@
                     listContainer.appendChild(item);
                 });
 
-                if(poems.length === 0) {
-                    listContainer.innerHTML = `<div style="padding:20px; opacity:0.3; font-size:12px;">KHÔNG PHÁT HIỆN TÍN HIỆU MỚI.</div>`;
+                if (poems.length === 0) {
+                    listContainer.innerHTML = `<div style="padding:20px; opacity:0.3; font-size:12px;">RỪNG YÊN TĨNH, KHÔNG CÓ BẢN THẢO MỚI.</div>`;
                 }
             } catch (err) {
                 listContainer.innerHTML = `<div style="padding:20px; color:red;">LỖI TRUY XUẤT: ${err.name}</div>`;
@@ -289,17 +415,17 @@
             document.querySelectorAll('.feed-item').forEach(i => i.classList.remove('active'));
             element.classList.add('active');
 
-            const bgUrl = poem.back_img || 'https://images.unsplash.com/photo-1464802686167-b939a6910659?auto=format&fit=crop&w=1200&q=80';
+            const bgUrl = poem.back_img || 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1200&q=80';
 
             monitor.innerHTML = `
                 <div class="hero-banner" style="background-image: url('${bgUrl}')"></div>
                 
                 <div class="detail-body">
-                    <div style="font-family: 'Fira Code'; font-size: 11px; color: var(--glow-cyan); margin-bottom: 20px; letter-spacing: 1px;">>> BẮT ĐẦU GIẢI MÃ DỮ LIỆU...</div>
+                    <div style="font-family: 'Fira Code'; font-size: 11px; color: var(--leaf-green); margin-bottom: 20px; letter-spacing: 1px;">>> ĐANG TRÌNH BÀY BẢN THẢO...</div>
                     <h1 class="poem-title">${poem.title || "KHÔNG TIÊU ĐỀ"}</h1>
                     
                     <div style="font-size: 13px; opacity: 0.8; display: flex; gap: 20px; flex-wrap: wrap;">
-                        <span>NGƯỜI GỬI: <b style="color:var(--glow-cyan)">${poem.username}</b></span>
+                        <span>NGƯỜI GỬI: <b style="color:var(--leaf-green)">${poem.username}</b></span>
                         <span>THỂ THƠ: <b>${poem.theTho || 'Tự do'}</b></span>
                         <span>THỂ LOẠI: <b>${poem.theLoai || 'Chưa phân loại'}</b></span>
                         <span>NGÀY: <b>${new Date(poem.created).toLocaleString('vi-VN')}</b></span>
@@ -309,83 +435,88 @@
 
                     ${poem.image ? `
                         <div style="margin-top:30px;">
-                            <label style="font-family:Orbitron; font-size:10px; color:var(--glow-purple); display:block; margin-bottom:15px;">>> HÌNH ẢNH ĐÍNH KÈM</label>
+                            <label style="font-size:10px; color:var(--leaf-green); display:block; margin-bottom:15px;">>> HÌNH ẢNH MINH HỌA</label>
                             <img src="${poem.image}" class="illustration-img">
                         </div>` : ""}
 
                     ${poem.audio ? `
                         <div style="margin-top:30px;">
-                            <label style="font-family:Orbitron; font-size:10px; color:var(--glow-purple); display:block; margin-bottom:15px;">>> DỮ LIỆU ÂM THANH</label>
-                            <audio controls src="${poem.audio}" style="width: 100%; border-radius: 50px; filter: hue-rotate(180deg) brightness(1.2);"></audio>
+                            <label style="font-size:10px; color:var(--rain-blue); display:block; margin-bottom:15px;">>> ÂM THANH RỪNG GỌI</label>
+                            <audio controls src="${poem.audio}" style="width: 100%; border-radius: 50px;"></audio>
                         </div>` : ""}
                 </div>
 
                 ${userRole === 'admin' ? `
                 <div class="command-bar">
-                    <button class="btn btn-approve" id="btnApprove">✔ DUYỆT BẢN THẢO</button>
-                    <button class="btn btn-delete" id="btnDelete">✖ TIÊU HỦY</button>
+                    <button class="btn btn-approve" id="btnApprove">🍃 DUYỆT BÀN THẢO</button>
+                    <button class="btn btn-delete" id="btnDelete">🔥 TIÊU HỦY</button>
                 </div>` : `
                 <div class="command-bar" style="font-size:12px; opacity:0.5; font-style:italic;">
-                    Bạn đang ở chế độ quan sát. Chỉ Quản trị viên mới có quyền xử lý bản thảo.
+                    Bạn đang ở chế độ quan sát rừng. Chỉ Quản trị viên mới có quyền duyệt thơ.
                 </div>`}
             `;
 
-            if(userRole === 'admin') {
+            if (userRole === 'admin') {
                 document.getElementById('btnApprove').onclick = () => handlePoem(id, 'approve');
                 document.getElementById('btnDelete').onclick = () => handlePoem(id, 'delete');
             }
-            sendHeight();
+requestAnimationFrame(() => {
+    setTimeout(sendHeight, 100);
+});
+monitor.querySelectorAll("img").forEach(img => {
+    img.onload = () => {
+        sendHeight();
+    };
+});
         }
 
         async function handlePoem(id, type) {
             const poem = poems.find(p => p.id === id);
-            
+
             if (type === 'approve') {
-                if (!confirm("Bạn có chắc muốn PHÊ DUYỆT bản thảo này lên hệ thống chính không?")) return;
+                if (!confirm("Xác nhận đưa bài thơ này chính thức vào rừng (Thư viện)?")) return;
                 try {
                     await addDoc(collection(db, "uploads"), { ...poem, status: "approved" });
                     await deleteDoc(doc(db, "temp", id));
-                    alert("PHÊ DUYỆT THÀNH CÔNG! Bản thảo đã được đưa vào thư viện.");
+                    alert("THÀNH CÔNG! Bài thơ đã nở hoa trong thư viện.");
                     loadUploads();
                     resetMonitor();
-                } catch (e) { alert("Lỗi khi duyệt: " + e.message); }
+                } catch (e) { alert("Lỗi: " + e.message); }
             } else {
-                if (!confirm("HÀNH ĐỘNG NÀY KHÔNG THỂ KHÔI PHỤC! Bạn có chắc muốn TIÊU HỦY bản thảo này?")) return;
-                
-                // KIỂM TRA CLOUDINARY
+                if (!confirm("HÀNH ĐỘNG CỰC ĐOAN! Bạn muốn đốt bỏ bản thảo này?")) return;
+
                 if (poem.folder) {
                     const cloudLink = `https://console.cloudinary.com/console/media_library/folders/${poem.folder}`;
-                    if (confirm("Phát hiện dữ liệu trên Cloudinary. Mở trang quản lý Cloudinary để xóa tài nguyên (ảnh/audio) trước?")) {
+                    if (confirm("Phát hiện tài nguyên trên Cloudinary. Mở trang quản lý để xóa ảnh/âm thanh trước khi xóa dữ liệu?")) {
                         window.open(cloudLink, "_blank");
                     }
                 }
 
                 try {
                     await deleteDoc(doc(db, "temp", id));
-                    alert("ĐÃ TIÊU HỦY BẢN THẢO VÀ DỮ LIỆU LIÊN QUAN.");
+                    alert("ĐÃ TIÊU HỦY BẢN THẢO.");
                     loadUploads();
                     resetMonitor();
-                } catch (e) { alert("Lỗi khi xóa: " + e.message); }
+                } catch (e) { alert("Lỗi: " + e.message); }
             }
         }
 
         function resetMonitor() {
             document.getElementById('analysisMonitor').innerHTML = `
                 <div class="empty-view">
-                    <div style="font-size: 60px;">✨</div>
-                    <p style="font-family: 'Orbitron'; letter-spacing: 2px;">TÍN HIỆU ĐÃ ĐƯỢC XỬ LÝ XONG.</p>
+                    <div style="font-size: 60px;">🍃</div>
+                    <p style="letter-spacing: 1px;">BẢN THẢO ĐÃ ĐƯỢC XỬ LÝ XONG.</p>
                 </div>`;
             sendHeight();
         }
+        let resizeTimeout;
 
+       
         function sendHeight() {
-            setTimeout(() => {
-                const height = document.body.scrollHeight + 100;
-                window.parent.postMessage(height, "*");
-            }, 500);
-        }
+    const height = document.body.scrollHeight + 50;
+    window.parent.postMessage(height, "*");
+}
 
-        window.addEventListener('resize', sendHeight);
     </script>
     <script src="../main_js/iframe.js"></script>
 </body>

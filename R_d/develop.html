@@ -5,84 +5,198 @@
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <title>Hệ Thống Chỉ Huy Bành - Version Final</title>
-     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Be+Vietnam+Pro:wght@300;400;600&family=Fira+Code:wght@400;500&display=swap"
+     <!-- Font chữ Bo tròn, Đáng yêu và Dễ đọc -->
+     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap"
           rel="stylesheet">
      <style>
           :root {
-               --glow: #00f2ff;
-               --hacker: #00ff41;
-               --accent: #ff00ea;
-               --glass: rgba(0, 15, 30, 0.6);
-               --border: rgba(0, 242, 255, 0.2);
-               --text-glow: 0 0 10px rgba(0, 242, 255, 0.5);
+               /* Bảng màu Ngôi Nhà Rừng Nhiệt Đới Cute */
+               --wood-light: #E6CCB2;
+               --wood-main: #D4A373;
+               --wood-dark: #A98467;
+               --wood-shadow: #8A5A44;
+
+               --leaf-light: #D9ED92;
+               --leaf-main: #99D98C;
+               --leaf-dark: #34A0A4;
+
+               --bg-cream: #FEFAE0;
+               --text-brown: #5E503F;
+
+               --accent-peach: #F4A261;
+               --accent-coral: #E76F51;
           }
 
           * {
                box-sizing: border-box;
-               transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+               transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+
+          /* Thanh cuộn cute */
+          ::-webkit-scrollbar {
+               width: 12px;
+          }
+
+          ::-webkit-scrollbar-track {
+               background: var(--bg-cream);
+               border-radius: 10px;
+          }
+
+          ::-webkit-scrollbar-thumb {
+               background: var(--wood-main);
+               border-radius: 10px;
+               border: 3px solid var(--bg-cream);
           }
 
           body {
                margin: 0;
                padding: 0;
-               background: #00050a;
-               color: #fff;
-               font-family: 'Be Vietnam Pro', sans-serif;
+               background-color: #B5E2FA;
+               /* Bầu trời trong xanh */
+               color: var(--text-brown);
+               font-family: 'Nunito', sans-serif;
                overflow: hidden;
+               /* Nền rừng mưa hoạt hình đáng yêu */
                background-image:
-                    radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 80%),
-                    url('https://images.unsplash.com/photo-1614728263952-84ea206f99b6?auto=format&fit=crop&q=80&w=2072');
+                    url('https://images.unsplash.com/photo-1596138663737-2936a28d6268?q=80&w=2070&auto=format&fit=crop');
                background-size: cover;
+               background-position: bottom;
                background-attachment: fixed;
           }
 
-          #cockpit-layout {
-               padding: 30px;
-               display: flex;
-               flex-direction: column;
-               gap: 20px;
-               max-width: 1550px;
-               margin: 0 auto;
+          /* Lớp mờ nhẹ để dễ nhìn UI */
+          body::before {
+               content: "";
+               position: fixed;
+               top: 0;
+               left: 0;
+               width: 100%;
+               height: 100%;
+               background: rgba(255, 255, 255, 0.4);
+               backdrop-filter: blur(5px);
+               z-index: -1;
           }
 
-          /* --- HUD HEADER --- */
+          #cockpit-layout {
+               padding: 20px;
+               display: flex;
+               flex-direction: column;
+               gap: 25px;
+               max-width: 1300px;
+               margin: 20px auto;
+               background: rgba(254, 250, 224, 0.85);
+               border: 6px solid var(--wood-main);
+               border-radius: 40px;
+               box-shadow: 0 15px 0 var(--wood-shadow), 0 25px 30px rgba(0, 0, 0, 0.2);
+               position: relative;
+          }
+
+          /* Decor Rừng Dễ Thương */
+          #cockpit-layout::before {
+               content: "🐒🌴";
+               position: absolute;
+               top: -35px;
+               left: 20px;
+               font-size: 50px;
+               z-index: 10;
+               filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.2));
+          }
+
+          #cockpit-layout::after {
+               content: "🛖✨";
+               position: absolute;
+               bottom: -20px;
+               right: -10px;
+               font-size: 70px;
+               z-index: 10;
+               transform: rotate(-10deg);
+          }
+
+          /* --- BẢNG HIỆU GỖ CỬA NHÀ --- */
           .hud-header {
                display: flex;
                justify-content: space-between;
                align-items: center;
-               padding: 15px 40px;
-               background: var(--glass);
-               backdrop-filter: blur(25px);
-               border: 1px solid var(--border);
-               border-bottom: 2px solid var(--glow);
-               box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+               padding: 15px 30px;
+               background: var(--wood-light);
+               border: 4px dashed var(--wood-dark);
+               border-radius: 25px;
+               box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05), 0 6px 0 var(--wood-main);
+               position: relative;
+          }
+
+          /* Dây treo bảng hiệu */
+          .hud-header::before,
+          .hud-header::after {
+               content: "";
+               position: absolute;
+               top: -25px;
+               width: 6px;
+               height: 25px;
+               background: var(--text-brown);
+               border-radius: 5px;
+          }
+
+          .hud-header::before {
+               left: 40px;
+          }
+
+          .hud-header::after {
+               right: 40px;
           }
 
           .system-title {
-               font-family: 'Orbitron', sans-serif;
-               font-size: 22px;
+               font-family: 'Fredoka', sans-serif;
+               font-size: 24px;
                font-weight: 700;
-               color: var(--glow);
-               text-shadow: var(--text-glow);
-               letter-spacing: 5px;
+               color: var(--text-brown);
+               text-transform: uppercase;
+               display: flex;
+               align-items: center;
+               gap: 10px;
           }
 
-          /* --- VIEWPORT (MÀN HÌNH QUÉT) --- */
+          .system-title::before {
+               content: "🌺";
+               font-size: 28px;
+          }
+
+          .system-title::after {
+               content: "🍃";
+               font-size: 28px;
+          }
+
+          /* --- KHUNG BẢN VẼ NHÀ (VIEWPORT) --- */
           .viewport-panel {
-               background: #000;
-               border: 1px solid var(--border);
+               background: #fff;
+               border: 5px solid var(--wood-main);
+               border-radius: 25px;
                position: relative;
                overflow: hidden;
-               box-shadow: 0 0 50px rgba(0, 0, 0, 1);
+               box-shadow: 0 8px 0 var(--wood-shadow);
           }
 
           .viewport-header {
-               background: rgba(0, 242, 255, 0.1);
-               padding: 8px 20px;
+               background: var(--leaf-light);
+               padding: 12px 25px;
                display: flex;
                justify-content: space-between;
                align-items: center;
-               border-bottom: 1px solid var(--border);
+               border-bottom: 4px solid var(--leaf-main);
+          }
+
+          .viewport-header label {
+               margin: 0;
+               font-family: 'Fredoka';
+               font-size: 18px;
+               color: var(--leaf-dark);
+               display: flex;
+               align-items: center;
+               gap: 8px;
+          }
+
+          .viewport-header label::before {
+               content: "📐";
           }
 
           #previewFrame {
@@ -90,177 +204,210 @@
                border: none;
                height: 380px;
                display: block;
-               background: #fff;
+               background: url('https://www.transparenttextures.com/patterns/blueprint.png'), #E8F1F2;
+               /* Giao diện bản thiết kế cute */
                opacity: 1;
           }
 
-          /* Hiệu ứng Hacker/Matrix khi đang xây dựng */
+          /* Hiệu ứng Matrix -> Hiệu ứng Xây dựng Rừng Cây */
           #hackerOverlay {
                position: absolute;
-               top: 35px;
+               top: 60px;
                left: 0;
                width: 100%;
-               height: calc(100% - 35px);
-               background: #000;
+               height: calc(100% - 60px);
+               background: rgba(254, 250, 224, 0.9);
                display: none;
                flex-direction: column;
                padding: 20px;
-               font-family: 'Fira Code', monospace;
-               font-size: 14px;
-               color: var(--hacker);
+               font-family: 'Fredoka', sans-serif;
+               font-size: 24px;
+               font-weight: bold;
+               color: var(--leaf-main);
                z-index: 100;
                overflow: hidden;
-               text-shadow: 0 0 5px var(--hacker);
+               text-align: center;
           }
 
-          /* --- CONTROL GRID --- */
+          /* --- GÓC CHUẨN BỊ VẬT LIỆU --- */
           .control-grid {
                display: grid;
                grid-template-columns: 1fr 1.5fr;
-               gap: 20px;
+               gap: 25px;
           }
 
           .glass-card {
-               background: var(--glass);
-               backdrop-filter: blur(15px);
-               border: 1px solid var(--border);
+               background: #fff;
+               border: 4px solid var(--leaf-light);
+               border-radius: 25px;
                padding: 25px;
                position: relative;
+               box-shadow: 0 8px 0 var(--leaf-main);
           }
 
-          .glass-card:hover {
-               border-color: var(--glow);
-               background: rgba(0, 30, 60, 0.7);
-               box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
-               transform: translateY(-5px);
+          .glass-card::before {
+               content: "📌";
+               position: absolute;
+               top: -15px;
+               left: 20px;
+               font-size: 30px;
           }
 
           label {
                display: block;
-               font-family: 'Orbitron', sans-serif;
-               font-size: 10px;
-               color: var(--glow);
-               letter-spacing: 2px;
-               margin-bottom: 12px;
-               text-shadow: var(--text-glow);
+               font-family: 'Fredoka', sans-serif;
+               font-size: 16px;
+               font-weight: 700;
+               color: var(--leaf-dark);
+               margin-bottom: 10px;
           }
 
           select,
           textarea {
                width: 100%;
-               background: rgba(0, 0, 0, 0.5);
-               border: 1px solid var(--border);
-               border-radius: 4px;
-               color: #fff;
-               padding: 12px;
-               font-family: inherit;
+               background: var(--bg-cream);
+               border: 3px solid var(--wood-light);
+               border-radius: 15px;
+               color: var(--text-brown);
+               padding: 15px;
+               font-family: 'Nunito', sans-serif;
+               font-size: 15px;
+               font-weight: 600;
                outline: none;
+               resize: vertical;
           }
 
           select:focus,
           textarea:focus {
-               border-color: var(--glow);
-               background: rgba(0, 242, 255, 0.05);
+               border-color: var(--accent-peach);
+               box-shadow: 0 0 0 4px rgba(244, 162, 97, 0.2);
           }
 
+          /* Sổ tay Code */
           #codeEditor {
-               height: 320px;
+               height: 300px;
                font-family: 'Fira Code', monospace;
-               font-size: 12px;
-               overflow-y: auto;
-               color: #a5dcfb;
+               font-size: 14px;
+               background: #2A3B47;
+               color: #99D98C;
+               border-color: #2A3B47;
+               border-radius: 15px;
           }
 
-          /* --- NÚT BẤM --- */
+          /* --- NÚT BẤM (PHONG CÁCH GAME) --- */
           .btn {
-               background: transparent;
-               border: 1px solid var(--glow);
-               color: var(--glow);
-               padding: 14px 25px;
-               font-family: 'Orbitron', sans-serif;
+               background: var(--leaf-main);
+               border: none;
+               border-radius: 15px;
+               color: #fff;
+               padding: 15px 25px;
+               font-family: 'Fredoka', sans-serif;
                font-weight: 700;
-               font-size: 12px;
+               font-size: 16px;
                cursor: pointer;
-               letter-spacing: 2px;
                position: relative;
-               overflow: hidden;
+               box-shadow: 0 6px 0 var(--leaf-dark);
+               text-transform: uppercase;
           }
 
-          .btn::after {
-               content: "";
-               position: absolute;
-               top: 0;
-               left: -100%;
-               width: 100%;
-               height: 100%;
-               background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.2), transparent);
-               transition: 0.5s;
-          }
-
-          .btn:hover::after {
-               left: 100%;
-          }
-
-          .btn:hover {
-               background: var(--glow);
-               color: #000;
-               box-shadow: 0 0 40px var(--glow);
+          .btn:active {
+               transform: translateY(6px);
+               box-shadow: 0 0px 0 var(--leaf-dark);
           }
 
           .btn-refresh {
-               padding: 5px 12px;
-               font-size: 10px;
-               border-radius: 4px;
+               padding: 8px 15px;
+               font-size: 14px;
+               background: var(--accent-peach);
+               box-shadow: 0 5px 0 var(--accent-coral);
+               border-radius: 12px;
+          }
+
+          .btn-refresh:active {
+               transform: translateY(5px);
+               box-shadow: 0 0px 0 var(--accent-coral);
           }
 
           .btn-submit {
                width: 100%;
-               font-size: 18px;
-               border: 2px solid var(--accent);
-               color: var(--accent);
+               font-size: 20px;
+               padding: 20px;
+               background: var(--accent-coral);
+               box-shadow: 0 8px 0 #D04F36;
                margin-top: 10px;
-               margin-bottom: 40px;
+               margin-bottom: 20px;
+               border-radius: 20px;
           }
 
-          .btn-submit:hover {
-               background: var(--accent);
-               color: #fff;
-               box-shadow: 0 0 50px var(--accent);
+          .btn-submit:active {
+               transform: translateY(8px);
+               box-shadow: 0 0px 0 #D04F36;
           }
 
-          /* --- UI INFO --- */
+          /* --- AVATAR CHỦ NHÀ --- */
           .avatar {
-               width: 45px;
-               height: 45px;
-               border: 2px solid var(--glow);
+               width: 55px;
+               height: 55px;
+               background: var(--accent-peach);
+               border: 4px solid #fff;
                border-radius: 50%;
                display: flex;
                align-items: center;
                justify-content: center;
-               font-family: 'Orbitron';
+               font-family: 'Fredoka';
                font-weight: bold;
-               font-size: 18px;
-               box-shadow: 0 0 15px var(--glow);
+               font-size: 24px;
+               color: #fff;
+               box-shadow: 0 4px 0 var(--accent-coral);
+               position: relative;
+               animation: bounce 2s infinite ease-in-out;
           }
 
-          @keyframes matrix-scroll {
-               from {
+          .avatar::after {
+               content: "🦜";
+               position: absolute;
+               top: -10px;
+               right: -15px;
+               font-size: 20px;
+          }
+
+          @keyframes bounce {
+
+               0%,
+               100% {
                     transform: translateY(0);
                }
 
+               50% {
+                    transform: translateY(-5px);
+               }
+          }
+
+          /* --- HIỆU ỨNG RƠI CHỮ LÚC BUILD --- */
+          @keyframes leaf-fall {
+               from {
+                    transform: translateY(-10%);
+               }
+
                to {
-                    transform: translateY(-50%);
+                    transform: translateY(100%);
                }
           }
 
           .hacker-text {
-               animation: matrix-scroll 10s linear infinite;
-               line-height: 1.8;
+               animation: leaf-fall 5s linear infinite;
+               line-height: 2;
+               letter-spacing: 5px;
           }
 
           @media (max-width: 1000px) {
                .control-grid {
                     grid-template-columns: 1fr;
+               }
+
+               #cockpit-layout {
+                    border-width: 4px;
+                    box-shadow: 0 10px 0 var(--wood-shadow);
                }
           }
      </style>
@@ -273,27 +420,33 @@
                <div style="display: flex; align-items: center; gap: 20px;">
                     <div class="avatar" id="uInit">B</div>
                     <div>
-                         <div style="font-size: 9px; opacity: 0.7; letter-spacing: 2px; color: var(--glow);">PHI CƠ VŨ
-                              TRỤ:</div>
-                         <div id="uName" style="font-family: 'Orbitron'; font-weight: 700;">BANH_PILOT</div>
+                         <div
+                              style="font-size: 12px; font-weight: 800; color: var(--wood-dark); text-transform: uppercase;">
+                              THỢ XÂY CHÍNH:</div>
+                         <div id="uName"
+                              style="font-family: 'Fredoka'; font-weight: 700; font-size: 18px; color: var(--text-brown);">
+                              BANH_BUILDER</div>
                     </div>
                </div>
 
-               <div class="system-title">ĐÓNG GÓP HỆ THỐNG NGÂN HÀ</div>
+               <div class="system-title">XÂY DỰNG NHÀ RỪNG</div>
 
-               <div style="text-align: right; font-family: 'Orbitron'; font-size: 10px;">
-                    <div style="color: var(--accent);">SIGNAL: STABLE</div>
-                    <div id="liveClock">00:00:00</div>
+               <div style="text-align: right; font-family: 'Nunito'; font-weight: 800;">
+                    <div style="color: var(--leaf-dark); font-size: 12px; text-transform: uppercase;">MÙA MÀNG: TỐT TƯƠI
+                         ☀️</div>
+                    <div id="liveClock" style="font-size: 18px; font-family: 'Fredoka'; color: var(--accent-coral);">
+                         00:00:00</div>
                </div>
           </header>
 
           <!-- VIEWPORT -->
           <div class="viewport-panel">
                <div class="viewport-header">
-                    <label style="margin:0">KẾT QUẢ XÂY DỰNG</label>
-                    <button class="btn btn-refresh" id="refreshBtn">🔄 QUÉT LẠI (SCAN)</button>
+                    <label>BẢN THIẾT KẾ</label>
+                    <button class="btn btn-refresh" id="refreshBtn">🔄 XEM LẠI BẢN VẼ</button>
                </div>
                <div id="hackerOverlay">
+                    <div style="margin-bottom: 20px; font-size: 30px;">🏗️ CÁC BÉ KHỈ ĐANG XÂY DỰNG... 🌿</div>
                     <div class="hacker-text" id="hackerContent"></div>
                </div>
                <iframe id="previewFrame" scrolling="no"></iframe>
@@ -302,28 +455,29 @@
           <!-- CONTROLS -->
           <div class="control-grid">
                <div class="glass-card">
-                    <label>📍 KHU VỰC ĐÓNG GÓP</label>
+                    <label>🪵 GÓC THI CÔNG NGÔI NHÀ</label>
                     <select id="contribType">
-                         <option value="ui_ux">Thiết kế Giao diện (UI/UX)</option>
-                         <option value="feature">Tính năng Hệ thống</option>
-                         <option value="database">Cấu trúc Dữ liệu</option>
-                         <option value="logic">Logic Nghiệp vụ</option>
-                         <option value="security">Bảo mật Matrix</option>
+                         <option value="ui_ux">Trang trí Nội thất (UI/UX)</option>
+                         <option value="feature">Tiện ích Sinh hoạt (Tính năng)</option>
+                         <option value="database">Cấu trúc Móng nhà (Database)</option>
+                         <option value="logic">Hệ thống Điện Nước (Logic)</option>
+                         <option value="security">Hàng Rào Bảo Vệ (Security)</option>
                     </select>
 
-                    <label style="margin-top: 25px;">✨ Ý TƯỞNG CỦA BẠN</label>
-                    <textarea id="aiPrompt" placeholder="Nhập yêu cầu xây dựng thực tại..."></textarea>
-                    <button class="btn" id="aiGenBtn" style="width: 100%; margin-top: 20px;">BẮT ĐẦU XÂY DỰNG HỆ
-                         THỐNG</button>
+                    <label style="margin-top: 25px;">💡 Ý TƯỞNG CỦA BẠN</label>
+                    <textarea id="aiPrompt" placeholder="Vẽ ra ngôi nhà trong mơ của bạn nhé... 🌸"></textarea>
+                    <button class="btn" id="aiGenBtn" style="width: 100%; margin-top: 20px;">🪄 NHỜ KHỈ CON XÂY
+                         GIÚP</button>
                </div>
 
                <div class="glass-card">
-                    <label>💻 MÃ NGUỒN TRUY XUẤT</label>
-                    <textarea id="codeEditor" spellcheck="false" placeholder="Dữ liệu mã nguồn Matrix..."></textarea>
+                    <label>📝 SỔ TAY NGUYÊN VẬT LIỆU (MÃ NGUỒN)</label>
+                    <textarea id="codeEditor" spellcheck="false"
+                         placeholder="Ghi chép công thức gỗ, lá, gạch... 🪵🌿"></textarea>
                </div>
           </div>
 
-          <button class="btn btn-submit" id="submitBtn">🚀 PHÓNG TÍN HIỆU VÀO VŨ TRỤ LƯU TRỮ</button>
+          <button class="btn btn-submit" id="submitBtn">⚒️ HOÀN THÀNH & KHAI TRƯƠNG NHÀ MỚI!</button>
      </div>
 
      <!-- SFX -->
@@ -349,7 +503,7 @@
           const app = initializeApp(firebaseConfig);
           const db = getFirestore(app);
           const auth = getAuth(app);
-          const MY_KEY = "AIzaSyCRLsnJQ-X5t0GQrREAtNTr6YJxvk4uWAk";
+          const MY_KEY = "AIzaSyBCeEnzavbMr4mbyZXh4xwg2GCaGONXE4k";
 
           // --- HỆ THỐNG ÂM THANH ---
           const playSfx = (id) => {
@@ -357,7 +511,7 @@
                sound.currentTime = 0; sound.play().catch(e => { });
           };
 
-          document.querySelectorAll('.btn, .glass-card, select, textarea').forEach(el => {
+          document.querySelectorAll('.btn, select, textarea').forEach(el => {
                el.addEventListener('mouseenter', () => playSfx('sndHover'));
           });
 
@@ -366,20 +520,21 @@
                document.getElementById('liveClock').innerText = new Date().toLocaleTimeString();
           }, 1000);
 
-          // --- HIỆU ỨNG HACKER MATRIX ---
+          // --- HIỆU ỨNG XÂY DỰNG NHÀ ---
           const hackerOverlay = document.getElementById('hackerOverlay');
           const hackerContent = document.getElementById('hackerContent');
 
           function startHackerEffect() {
                hackerOverlay.style.display = 'flex';
                let codeLines = "";
-               const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>[]{}/\\|!@#$%^&*()_+";
-               for (let i = 0; i < 100; i++) {
+               // Thay đổi ma trận số thành các Emoji đáng yêu xây rừng
+               const chars = "🍃🌸🌿🌴🌻🌺🪵✨🍄🪵🥥";
+               for (let i = 0; i < 30; i++) {
                     let line = "";
-                    for (let j = 0; j < 80; j++) line += chars.charAt(Math.floor(Math.random() * chars.length));
+                    for (let j = 0; j < 15; j++) line += chars.charAt(Math.floor(Math.random() * chars.length)) + " ";
                     codeLines += `<div>${line}</div>`;
                }
-               hackerContent.innerHTML = codeLines + codeLines; // Nhân đôi để cuộn vô tận
+               hackerContent.innerHTML = codeLines + codeLines;
           }
 
           // --- XỬ LÝ CHÍNH ---
@@ -387,10 +542,15 @@
           const codeEditor = document.getElementById('codeEditor');
           const previewFrame = document.getElementById('previewFrame');
 
+          let resizeTimeout;
           function sendHeight() {
-               const h = document.getElementById('cockpit-layout').scrollHeight;
-               window.parent.postMessage(h, "*");
+               clearTimeout(resizeTimeout);
+               resizeTimeout = setTimeout(() => {
+                    const h = document.getElementById('cockpit-layout').scrollHeight;
+                    window.parent.postMessage(h, "*");
+               }, 100); // delay 100ms cho mượt
           }
+
 
           // AI GENERATE
           document.getElementById('aiGenBtn').onclick = async () => {
@@ -416,15 +576,18 @@
                     codeEditor.value = code;
                     previewFrame.srcdoc = code;
                     previewFrame.onload = () => {
-                         const innerH = previewFrame.contentWindow.document.body.scrollHeight;
-                         previewFrame.style.height = Math.max(innerH, 380) + 'px';
-                         hackerOverlay.style.display = 'none'; // Tắt hiệu ứng hacker
-                         playSfx('sndSuccess');
-                         sendHeight();
+                         requestAnimationFrame(() => {
+                              const innerH = previewFrame.contentWindow.document.body.scrollHeight;
+                              previewFrame.style.height = Math.max(innerH, 380) + 'px';
+                              hackerOverlay.style.display = 'none';
+                              playSfx('sndSuccess');
+                              sendHeight();
+                         });
                     };
+
                } catch (e) {
                     hackerOverlay.style.display = 'none';
-                    alert("Lỗi kết nối vệ tinh!");
+                    alert("Ối! Đường truyền bị khỉ cắt đứt rồi!");
                }
           };
 
@@ -448,7 +611,7 @@
                const type = document.getElementById('contribType').value;
                const idea = promptArea.value;
 
-               if (!confirm(`BẠN CÓ CHẮC CHẮN MUỐN ĐÓNG GÓP VÀO MỤC [${type.toUpperCase()}] KHÔNG?`)) return;
+               if (!confirm(`BẠN CÓ CHẮC CHẮN MUỐN CHỐT BẢN THIẾT KẾ MỤC [${type.toUpperCase()}] KHÔNG? 🌸`)) return;
 
                try {
                     // --- LẤY USER ---
@@ -483,10 +646,10 @@
                     });
 
                     playSfx('sndSuccess');
-                    alert("🚀 TÍN HIỆU ĐÃ ĐƯỢC PHÓNG THÀNH CÔNG!");
+                    alert("🍄 YAY! BẢN THIẾT KẾ ĐÃ ĐƯỢC CHUYỂN CHO CÁC BÉ KHỈ LƯU TRỮ!");
 
                } catch (e) {
-                    alert("❌ LỖI TRUYỀN TẢI.");
+                    alert("❌ LỖI VẬN CHUYỂN.");
                }
           };
 
@@ -496,25 +659,22 @@
                sendHeight();
           });
           window.addEventListener('load', sendHeight);
-          new MutationObserver(sendHeight).observe(document.getElementById('cockpit-layout'), { childList: true, subtree: true, attributes: true });
 
           // AUTH
           onAuthStateChanged(auth, (user) => {
                if (user) {
                     const name = user.displayName || user.email.split('@')[0];
-                    document.getElementById('uName').innerText = name.toUpperCase() + "SIÊU CẤP";
+                    document.getElementById('uName').innerText = "THỢ XÂY " + name.toUpperCase();
                     document.getElementById('uInit').innerText = name.charAt(0).toUpperCase();
                }
           });
-          // --- NHẠC NỀN VŨ TRỤ ---
-          const bgMusic = document.getElementById("bgMusic");
 
-          // autoplay (trình duyệt sẽ chặn nếu chưa có tương tác)
+          // --- NHẠC NỀN ---
+          const bgMusic = document.getElementById("bgMusic");
           window.addEventListener("load", () => {
-               bgMusic.volume = 0.5; // chỉnh âm lượng nhẹ cho chill
+               bgMusic.volume = 0.5;
                bgMusic.playbackRate = 0.95;
                bgMusic.play().catch(() => {
-                    // fallback: click bất kỳ sẽ phát
                     document.addEventListener("click", () => {
                          bgMusic.play();
                     }, { once: true });
@@ -522,3 +682,6 @@
           });
      </script>
      <script src="../main_js/iframe.js"></script>
+</body>
+
+</html>

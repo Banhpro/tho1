@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng bài thơ - Tropical Forest Theme</title>
+
+    <script src="../../poems/js/selpoem.js"></script>
+    <!-- Thư viện TinyMCE -->
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather&family=Lora&family=Playfair+Display&family=Roboto&family=Be+Vietnam+Pro&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===== TROPICAL FOREST THEME CSS ===== */
+        body {
+            font-family: 'Be Vietnam Pro', Arial, sans-serif;
+            background: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2000&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover; color: #2c3e50; margin: 0; padding: 20px;
+        }
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(14, 56, 35, 0.15); pointer-events: none; z-index: -1;
+        }
+        .container {
+            max-width: 850px; margin: 20px auto; background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px); padding: 40px; border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 50, 25, 0.2); position: relative; z-index: 1;
+        }
+        h2 {
+            text-align: center; font-family: 'Playfair Display', serif; font-size: 34px;
+            background: linear-gradient(to right, #0ba360, #11998e);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        h3 { color: #11998e; border-left: 4px solid #38ef7d; padding-left: 12px; margin-top: 35px; }
+        label b { color: #0ba360; display: block; margin-top: 20px; margin-bottom: 5px; }
+
+        /* ===== CUSTOM TOOLBAR INPUTS ===== */
+        .tiny-custom-bar {
+            background: #fff; border: 1px solid rgba(17, 153, 142, 0.3);
+            border-bottom: none; padding: 10px; border-radius: 12px 12px 0 0;
+            display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+        }
+        .ql-custom-input {
+            background: #f8fcfb; border: 1px solid #bceadd; color: #2c3e50;
+            padding: 8px 12px; border-radius: 8px; font-size: 14px; outline: none;
+            cursor: pointer; transition: 0.3s;
+        }
+        .ql-custom-input:focus { border-color: #11998e; background: #fff; }
+        .font-input { width: 180px; }
+        .size-input { width: 100px; }
+
+        /* Hide TinyMCE branding */
+        .tox-promotion, .tox-statusbar__branding { display: none !important; }
+        .tox-tinymce { border: 1px solid rgba(17, 153, 142, 0.3) !important; border-radius: 0 0 12px 12px !important; }
+
+        /* ===== UI ELEMENTS GIỮ NGUYÊN LOGIC ===== */
+        .checkbox-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 15px; background: rgba(255, 255, 255, 0.5); padding: 20px; border-radius: 15px; }
+        .checkbox-row { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+        .other-input { display: none; padding: 6px; border-radius: 6px; border: 1px solid #11998e; width: 120px; }
+        .preview-img { max-width: 280px; margin-top: 15px; display: none; border-radius: 12px; border: 2px solid rgba(17, 153, 142, 0.3); }
+        
+        .button-group { display: flex; gap: 20px; margin-top: 40px; }
+        button { flex: 1; padding: 16px 25px; border: none; cursor: pointer; border-radius: 12px; font-weight: 700; text-transform: uppercase; transition: all 0.4s; }
+        #previewBtn { background: rgba(17, 153, 142, 0.1); color: #11998e; border: 1px solid #11998e; }
+        #submitBtn { background: linear-gradient(45deg, #11998e, #38ef7d, #0ba360); color: white; box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3); }
+        button.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+        
+        #progressBarContainer { margin-top: 25px; width: 100%; background: rgba(0, 0, 0, 0.05); height: 12px; border-radius: 20px; overflow: hidden; display: none; }
+        #progressBar { width: 0%; height: 100%; background: linear-gradient(to right, #38ef7d, #11998e); transition: width 0.4s ease; }
+        #msg { text-align: center; margin-top: 20px; font-weight: 600; min-height: 24px; }
+        
+        input[type="file"] { background: rgba(255, 255, 255, 0.7); padding: 10px; border-radius: 8px; border: 1px dashed #11998e; cursor: pointer; width: 100%; margin-top: 10px; }
+    </style>
+</head>
+
+<body>
+
+    <datalist id="font-list">
+        <option value="Times New Roman"></option>
+        <option value="Be Vietnam Pro"></option>
+        <option value="Playfair Display"></option>
+        <option value="Merriweather"></option>
+        <option value="Vollkorn"></option>
+        <option value="Roboto"></option>
+        <option value="Georgia"></option>
+        <option value="Playfair Display"></option>
+        <option value="Vladimir Script"></option>
+    </datalist>
+    <datalist id="size-list">
+        <option value="12px"></option><option value="14px"></option><option value="16px"></option>
+        <option value="18px"></option><option value="20px"></option><option value="24px"></option>
+        <option value="32px"></option><option value="48px"></option><option value="72px"></option></option>
+    </datalist>
+
+    <div class="container">
+        <h2>🌿 Gieo Hạt Mầm Thơ Ca</h2>
+
+        <!-- Tên bài thơ -->
+        <label><b>Tên bài thơ</b></label>
+        <div class="tiny-custom-bar">
+            <input type="text" list="font-list" class="ql-custom-input font-input" data-editor="title-editor" placeholder="Chọn hoặc nhập Font...">
+            <input type="text" list="size-list" class="ql-custom-input size-input" data-editor="title-editor" placeholder="Size...">
+        </div>
+        <textarea id="title-editor"></textarea>
+
+        <!-- Nội dung bài thơ -->
+        <label><b>Nội dung bài thơ</b></label>
+        <div class="tiny-custom-bar">
+            <input type="text" list="font-list" class="ql-custom-input font-input" data-editor="content-editor" placeholder="Chọn hoặc nhập Font...">
+            <input type="text" list="size-list" class="ql-custom-input size-input" data-editor="content-editor" placeholder="Size...">
+        </div>
+        <textarea id="content-editor"></textarea>
+
+        <h3>🎋 Thể thơ</h3>
+        <div id="theThoBox" class="checkbox-group"></div>
+
+        <h3>🌸 Thể loại</h3>
+        <div id="theLoaiBox" class="checkbox-group"></div>
+
+        <h3>🎙️ Âm thanh rừng gọi (MP3 < 20MB)</h3>
+        <input type="file" id="audioFile" accept=".mp3">
+        <audio id="audioPreview" controls style="display:none; width:100%; margin-top:10px;"></audio>
+
+        <h3>🍃 Hình nền bài thơ (JPG)</h3>
+        <input type="file" id="backgroundFile" accept=".jpg,.jpeg">
+        <img id="back_imgPreview" class="preview-img">
+
+        <h3>🌺 Ảnh đại diện bài thơ (JPG)</h3>
+        <input type="file" id="imageFile" accept=".jpg,.jpeg">
+        <img id="imgPreview" class="preview-img">
+
+        <div class="button-group">
+            <button type="button" id="previewBtn">👁️ Xem thử</button>
+            <button id="submitBtn">✨ Gieo mầm</button>
+        </div>
+
+        <div id="progressBarContainer">
+            <div id="progressBar"></div>
+        </div>
+        <p id="msg"></p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD5VotnEcZ6hQduMoF5AjL0024x1VTkEu4",
+            authDomain: "banhkietgithunbpoem.firebaseapp.com",
+            projectId: "banhkietgithunbpoem",
+            storageBucket: "banhkietgithunbpoem.firebasestorage.app",
+            messagingSenderId: "429631951698",
+            appId: "1:429631951698:web:8c5f6854de3ad22113a08b"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        const forceSendHeight = () => { if (typeof sendHeight === "function") sendHeight(); };
+
+        /* =========================================
+           KHỞI TẠO TINYMCE - AUTOEXPAND
+        ========================================= */
+        const commonTinyConfig = {
+            menubar: false,
+            plugins: 'autoresize lists link charmap emoticons wordcount',
+            toolbar: 'bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright | removeformat',
+            autoresize_bottom_margin: 20,
+            min_height: 100,
+            keep_styles: true,
+            forced_root_block: 'p',
+            content_style: "body { font-family: 'Be Vietnam Pro', sans-serif; font-size: 16px; line-height: 1.6; } p { margin: 0; }",
+            setup: (editor) => {
+                editor.on('init change keyup ResizeEditor', forceSendHeight);
+
+                editor.on('NodeChange', () => {
+                    const font = editor.queryCommandValue('FontName').replace(/"/g, "");
+                    const size = editor.queryCommandValue('FontSize');
+                    const wrapper = editor.getElement().previousElementSibling;
+                    if(wrapper) {
+                        const fInp = wrapper.querySelector('.font-input');
+                        const sInp = wrapper.querySelector('.size-input');
+                        // Chỉ cập nhật giá trị nếu người dùng không đang tập trung gõ vào ô đó
+                        if(document.activeElement !== fInp) fInp.value = font || "";
+                        if(document.activeElement !== sInp) sInp.value = size ? size.replace('pt','px') : "";
+                    }
+                });
+            }
+        };
+
+        tinymce.init({ ...commonTinyConfig, selector: '#title-editor', placeholder: "Nhập tên bài thơ..." });
+        tinymce.init({ ...commonTinyConfig, selector: '#content-editor', placeholder: "Gieo vần thơ tại đây..." });
+
+        // XỬ LÝ HYBRID DROPDOWN (VỪA CHỌN VỪA NHẬP - LUÔN HIỆN FULL LIST)
+        document.querySelectorAll('.ql-custom-input').forEach(input => {
+            let tempVal = "";
+
+            // Khi click vào ô: Tạm xóa để hiện toàn bộ danh sách gợi ý
+            input.onfocus = function() {
+                tempVal = this.value;
+                this.value = ""; 
+            };
+
+            // Khi thoát khỏi ô: Nếu không chọn gì thì trả lại giá trị cũ
+            input.onblur = function() {
+                if (this.value === "") {
+                    this.value = tempVal;
+                }
+            };
+
+            // Khi có thay đổi (chọn từ list hoặc gõ tay)
+            input.oninput = function() {
+                const editorId = this.getAttribute('data-editor');
+                const editor = tinymce.get(editorId);
+                const val = this.value.trim();
+                if (!val) return;
+
+                if (this.classList.contains('font-input')) {
+                    editor.execCommand('FontName', false, val);
+                } else {
+                    const sizeVal = isNaN(val) ? val : val + 'px';
+                    editor.execCommand('FontSize', false, sizeVal);
+                }
+            };
+        });
+
+        /* =========================================
+           GIỮ NGUYÊN TOÀN BỘ LOGIC GỐC
+        ========================================= */
+        function cleanText(text) { return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "").replace(/[^a-z0-9]/g, ""); }
+
+        function createOptions(container, data, type) {
+            data.forEach(item => {
+                const row = document.createElement("div"); row.className = "checkbox-row";
+                const input = document.createElement("input");
+                input.type = (type === "radio") ? "radio" : "checkbox";
+                if(type === "radio") input.name = container.id;
+                input.value = item;
+                const label = document.createElement("span"); label.innerText = item;
+                row.appendChild(input); row.appendChild(label);
+                
+                if (item.toLowerCase() === "khác") {
+                    const otherInput = document.createElement("input"); 
+                    otherInput.type = "text"; otherInput.placeholder = "Nhập..."; otherInput.className = "other-input";
+                    row.appendChild(otherInput);
+                    input.addEventListener("change", () => {
+                        otherInput.style.display = input.checked ? "block" : "none";
+                        forceSendHeight();
+                    });
+                }
+                
+                if (type === "checkbox") {
+                    input.addEventListener("change", () => {
+                        const otherCheck = container.querySelector('input[value="Khác"]');
+                        if (item === "Khác") {
+                            if (input.checked) {
+                                container.querySelectorAll('input[type="checkbox"]').forEach(cb => { if (cb !== input) { cb.checked = false; cb.disabled = true; } });
+                            } else {
+                                container.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.disabled = false; });
+                            }
+                        }
+                    });
+                }
+                container.appendChild(row);
+            });
+        }
+
+        if (typeof config !== 'undefined') {
+            createOptions(document.getElementById("theThoBox"), config.theTho, "radio");
+            createOptions(document.getElementById("theLoaiBox"), config.theLoai, "checkbox");
+        }
+
+        document.getElementById("backgroundFile").onchange = function() {
+            const f = this.files[0]; if(f) { const p = document.getElementById("back_imgPreview"); p.src = URL.createObjectURL(f); p.style.display = "block"; forceSendHeight(); }
+        };
+        document.getElementById("imageFile").onchange = function() {
+            const f = this.files[0]; if(f) { const p = document.getElementById("imgPreview"); p.src = URL.createObjectURL(f); p.style.display = "block"; forceSendHeight(); }
+        };
+        document.getElementById("audioFile").onchange = function() {
+            const f = this.files[0]; if(f) { const a = document.getElementById("audioPreview"); a.src = URL.createObjectURL(f); a.style.display = "block"; forceSendHeight(); }
+        };
+
+        document.getElementById("previewBtn").onclick = () => {
+            const data = {
+                title: tinymce.get('title-editor').getContent(),
+                content: tinymce.get('content-editor').getContent(),
+                back_img: document.getElementById("back_imgPreview").src,
+                avatar: document.getElementById("imgPreview").src
+            };
+            localStorage.setItem("preview_poem", JSON.stringify(data));
+            window.open("review_poem.html", "_blank");
+        };
+
+        document.getElementById("submitBtn").onclick = async function () {
+            const titleHTML = tinymce.get('title-editor').getContent();
+            const contentHTML = tinymce.get('content-editor').getContent();
+            const rawTitle = tinymce.get('title-editor').getContent({format: 'text'}).trim();
+
+            if(!rawTitle || !contentHTML || !document.getElementById("backgroundFile").files[0] || !document.getElementById("imageFile").files[0]) {
+                alert("Bạn chưa hoàn thành các bước gieo mầm!"); return;
+            }
+
+            if(!confirm("Xác nhận gieo mầm thơ vào rừng?")) return;
+
+            this.classList.add("disabled");
+            document.getElementById("progressBarContainer").style.display = "block";
+            const pb = document.getElementById("progressBar");
+            const msg = document.getElementById("msg");
+
+            try {
+                const user = auth.currentUser;
+                if (!user) throw new Error("Chưa đăng nhập");
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                const userData = userDoc.data();
+
+                const folder = `poem_temp/${cleanText(userData.username)}_${cleanText(userData.role)}/${cleanText(rawTitle)}_${Date.now()}`;
+
+                const upload = async (file) => {
+                    const fd = new FormData(); fd.append("file", file); fd.append("upload_preset", "uploadfilepoem"); fd.append("folder", folder);
+                    const res = await fetch("https://api.cloudinary.com/v1_1/dp6rc7ghq/auto/upload", { method: "POST", body: fd });
+                    return (await res.json()).secure_url;
+                };
+
+                pb.style.width = "30%"; msg.innerText = "Đang tải ảnh nền...";
+                const back_url = await upload(document.getElementById("backgroundFile").files[0]);
+                
+                pb.style.width = "60%"; msg.innerText = "Đang tải ảnh đại diện...";
+                const img_url = await upload(document.getElementById("imageFile").files[0]);
+                
+                let audio_url = "";
+                if (document.getElementById("audioFile").files[0]) {
+                    pb.style.width = "80%"; msg.innerText = "Đang tải âm thanh...";
+                    audio_url = await upload(document.getElementById("audioFile").files[0]);
+                }
+
+                let theLoai = [];
+                document.querySelectorAll("#theLoaiBox input:checked").forEach(el => {
+                    if(el.value === "Khác") theLoai.push(document.querySelector("#theLoaiBox .other-input").value);
+                    else theLoai.push(el.value);
+                });
+
+                let theTho = "";
+                const thoChecked = document.querySelector("#theThoBox input:checked");
+                if(thoChecked) {
+                    theTho = thoChecked.value === "Khác" ? document.querySelector("#theThoBox .other-input").value : thoChecked.value;
+                }
+
+                await addDoc(collection(db, "temp"), {
+                    email: userData.email, role: userData.role, username: userData.username,
+                    folder: folder, title: titleHTML, rawTitle: rawTitle, content: contentHTML,
+                    theLoai, theTho, back_img: back_url, image: img_url, audio: audio_url,
+                    created: Date.now()
+                });
+
+                pb.style.width = "100%"; msg.innerText = "✨ Gieo mầm thành công!";
+                setTimeout(() => location.reload(), 2000);
+
+            } catch (e) {
+                console.error(e);
+                alert("Gặp bão kỹ thuật: " + e.message);
+                this.classList.remove("disabled");
+            }
+        };
+
+    </script>
+    <script src="../../main_js/iframe.js"></script>
+</body>
+
+</html>

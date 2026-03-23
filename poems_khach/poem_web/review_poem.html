@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xem thử bài thơ</title>
 
+    <!-- Nhúng Google Fonts để hiện thị đúng font chữ đã chọn -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather&family=Lora&family=Playfair+Display&family=Roboto&family=Be+Vietnam+Pro&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
@@ -20,6 +23,7 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            background-attachment: fixed; /* Giúp ảnh nền không bị trượt khi cuộn */
         }
 
         .container {
@@ -43,23 +47,29 @@
         /* ===== TITLE ===== */
 
         #poem-title {
-            font-size: 34px;
-            font-weight: bold;
             text-align: center;
             margin-bottom: 18px;
             color: #3a2e2e;
+            /* Đã xóa size và font cố định ở đây vì Quill sẽ tự lo phần này */
         }
 
         /* ===== CONTENT ===== */
 
         #poem-content {
             line-height: 1.8;
-            font-size: 20px;
-            text-align: center;
-            font-style: italic;
-            white-space: pre-wrap;
             color: #2b1d1d;
+            /* Bỏ white-space: pre-wrap và font-style: italic vì Editor (Quill) đã định dạng sẵn HTML */
         }
+
+        /* ===== HỖ TRỢ CĂN LỀ TỪ QUILL JS ===== */
+        .ql-align-center { text-align: center; }
+        .ql-align-right { text-align: right; }
+        .ql-align-justify { text-align: justify; }
+        .ql-align-left { text-align: left; }
+        
+        /* Tránh ảnh/văn bản bị tràn khung */
+        #poem-content img { max-width: 100%; height: auto; }
+        #poem-content p { margin: 5px 0; }
 
         /* ===== IMAGE ===== */
 
@@ -159,7 +169,8 @@
 
             <div id="poem-title"></div>
 
-            <pre id="poem-content"></pre>
+            <!-- Đổi từ thẻ <pre> thành <div> để HTML hoạt động đúng -->
+            <div id="poem-content"></div>
 
             <div class="audio-wrapper">
 
@@ -199,20 +210,13 @@
             throw "No preview data";
         }
 
-        /* title */
-
+        /* title & content (Sử dụng innerHTML thay vì innerText để hiển thị được Font, Màu sắc) */
+        
         const title = document.getElementById("poem-title");
-        title.innerText = data.title || "";
-
-        /* content */
+        title.innerHTML = data.title || ""; 
 
         const content = document.getElementById("poem-content");
-        content.textContent = data.content || "";
-
-        /* font */
-
-        if (data.fontTitle) title.style.fontFamily = data.fontTitle;
-        if (data.fontContent) content.style.fontFamily = data.fontContent;
+        content.innerHTML = data.content || "";
 
         /* background */
 
@@ -249,43 +253,30 @@
         });
 
         audioIcon.addEventListener("click", () => {
-
             if (!isOpen) {
-
                 player.classList.add("show");
                 audio.play();
                 playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
                 isOpen = true;
-
             } else {
-
                 audio.pause();
                 player.classList.remove("show");
                 playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
                 isOpen = false;
-
             }
-
         });
 
         playBtn.addEventListener("click", () => {
-
             if (audio.paused) {
-
                 audio.play();
                 playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-
             } else {
-
                 audio.pause();
                 playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-
             }
-
         });
 
         audio.addEventListener("timeupdate", () => {
-
             if (!audio.duration) return;
 
             const percent = (audio.currentTime / audio.duration) * 100;
@@ -297,16 +288,12 @@
             if (seconds < 10) seconds = "0" + seconds;
 
             timeDisplay.textContent = minutes + ":" + seconds;
-
         });
 
         progressContainer.addEventListener("click", (e) => {
-
             const width = progressContainer.clientWidth;
             const clickX = e.offsetX;
-
             audio.currentTime = (clickX / width) * audio.duration;
-
         });
 
     </script>

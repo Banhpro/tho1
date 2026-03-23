@@ -6,6 +6,7 @@ const config = {
         "TỰ DO",
         "NGŨ NGÔN",
         "SONG THẤT LỤC BÁT",
+        "BÁT NGÔN",
         "KHÁC"
     ],
 
@@ -14,6 +15,7 @@ const config = {
         "TÌNH YÊU",
         "GIA ĐÌNH",
         "CUỘC SỐNG",
+        "ĐỜI NGƯỜI",
         "BUỒN",
         "KHÁC"
     ]

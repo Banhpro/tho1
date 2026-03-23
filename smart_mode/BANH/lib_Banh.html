@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cosmic Poetry Library</title>
+
+    <style>
+        /* ================= GLOBAL ================= */
+
+        body {
+
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+
+            background:
+                radial-gradient(circle at 20% 10%, #2a2f5c 0%, transparent 40%),
+                radial-gradient(circle at 80% 90%, #2c2f6e 0%, transparent 45%),
+                linear-gradient(180deg, #02030a, #0a1030);
+
+            color: white;
+
+            overflow: hidden;
+
+        }
+body::before{
+
+content:"";
+
+position:fixed;
+
+inset:0;
+
+background:
+radial-gradient(circle at 50% 0%,rgba(255,240,200,.12),transparent 60%);
+
+filter:blur(120px);
+
+pointer-events:none;
+
+z-index:-1;
+
+}
+        /* ================= STARFIELD ================= */
+
+        canvas {
+
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+
+        }
+
+        /* ================= HEADER ================= */
+
+        header {
+
+            text-align: center;
+            margin-top: 70px;
+
+        }
+
+        header h1 {
+
+font-size:48px;
+
+letter-spacing:6px;
+
+background: linear-gradient(90deg,#fff,#a5b4ff,#fff);
+
+-webkit-background-clip:text;
+
+color:transparent;
+
+text-shadow:
+0 0 10px rgba(255,255,255,.4),
+0 0 35px rgba(120,140,255,.5);
+
+animation: titleWind 7s ease-in-out infinite;
+
+}
+
+        /* ================= SEARCH ================= */
+
+        .search {
+
+            display: flex;
+            justify-content: center;
+
+            margin: 40px 0;
+
+        }
+
+        .search input {
+
+            width: 420px;
+
+            padding: 16px 26px;
+
+            border-radius: 50px;
+
+            border: 1px solid rgba(255, 255, 255, .15);
+
+            background: rgba(255, 255, 255, .05);
+
+            backdrop-filter: blur(15px);
+
+            color: white;
+
+            font-size: 16px;
+
+            outline: none;
+
+            transition: .4s;
+
+            box-shadow: 0 0 30px rgba(0, 0, 0, .6);
+
+        }
+
+        .search input:focus {
+
+            box-shadow:
+                0 0 15px rgba(120, 150, 255, .6),
+                0 0 50px rgba(120, 150, 255, .3);
+
+        }
+
+        /* ================= GRID ================= */
+
+        .grid {
+
+            width: 90%;
+            margin: auto;
+
+            display: grid;
+
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+
+            gap: 35px;
+
+            padding-bottom: 80px;
+
+        }
+
+        /* ================= CARD ================= */
+
+        .card {
+
+            position: relative;
+
+            padding: 28px 24px;
+
+            border-radius: 22px;
+
+            background: rgba(255, 255, 255, .05);
+
+            border: 1px solid rgba(255, 255, 255, .15);
+
+            backdrop-filter: blur(12px);
+
+            cursor: pointer;
+
+            overflow: hidden;
+animation:cardFloat 6s ease-in-out infinite;
+
+            transition: .4s;
+
+        }
+@keyframes cardFloat{
+
+0%,100%{transform:translateY(0)}
+50%{transform:translateY(-6px)}
+
+}
+
+        /* halo */
+
+        .card::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: -60%;
+            left: -60%;
+
+            width: 220%;
+            height: 220%;
+
+            background: radial-gradient(circle,
+                    rgba(120, 150, 255, .3),
+                    transparent 60%);
+
+            opacity: 0;
+
+            transition: .5s;
+
+        }
+
+        /* glow line */
+
+        .card::after {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            border-radius: 22px;
+
+            border: 1px solid rgba(120, 150, 255, .5);
+
+            opacity: 0;
+
+            transition: .4s;
+
+        }
+
+        .card:hover::before {
+
+            opacity: 1;
+
+            animation: rotateHalo 8s linear infinite;
+
+        }
+
+        .card:hover::after {
+
+            opacity: 1;
+
+        }
+
+        .card:hover {
+
+            transform: translateY(-10px) scale(1.04);
+
+            box-shadow:
+                0 0 25px rgba(120, 150, 255, .5),
+                0 20px 50px rgba(0, 0, 0, .8);
+
+        }
+
+        @keyframes rotateHalo {
+
+            0% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+
+        }
+
+        /* ================= TITLE ================= */
+
+        .title {
+
+            font-size: 20px;
+
+            font-weight: 600;
+
+            margin-bottom: 8px;
+
+            text-shadow:
+                0 0 10px rgba(255, 255, 255, .4),
+                0 0 20px rgba(120, 150, 255, .4);
+            animation: nightWind 6s ease-in-out infinite;
+
+
+        }
+@keyframes titleWind {
+
+0%{
+transform: translateX(0px) rotate(0deg);
+text-shadow:
+0 0 10px rgba(255,255,255,.4),
+0 0 35px rgba(120,140,255,.5);
+}
+
+25%{
+transform: translateX(6px) rotate(0.4deg);
+}
+
+50%{
+transform: translateX(10px) rotate(0deg);
+text-shadow:
+0 0 14px rgba(255,255,255,.6),
+0 0 40px rgba(120,140,255,.7);
+}
+
+75%{
+transform: translateX(6px) rotate(-0.4deg);
+}
+
+100%{
+transform: translateX(0px) rotate(0deg);
+}
+
+}
+        /* ================= AUTHOR ================= */
+
+        .author {
+
+            font-size: 14px;
+
+            color: #b0b8ff;
+animation: nightWind 8s ease-in-out infinite;
+
+        }
+.card:nth-child(odd) .title{
+animation-delay:1s;
+}
+
+.card:nth-child(3n) .title{
+animation-delay:2s;
+}
+
+.card:nth-child(4n) .title{
+animation-delay:3s;
+}
+        /* ================= DATE ================= */
+
+        .date {
+
+            font-size: 12px;
+
+            margin-top: 6px;
+
+            color: #7d85ff;
+
+        }
+        @keyframes nightWind {
+
+0%{
+transform: translateX(0px);
+}
+
+50%{
+transform: translateX(6px);
+}
+
+100%{
+transform: translateX(0px);
+}
+
+}
+        .quote{
+
+margin-top:12px;
+
+font-size:14px;
+
+color:#cfd3ff;
+
+opacity:.7;
+
+letter-spacing:1px;
+
+font-style:italic;
+
+}
+    </style>
+
+</head>
+
+<body>
+    <audio id="spaceMusic">
+        <source src="audio.mp3" type="audio/mpeg">
+    </audio>
+    <canvas id="stars"></canvas>
+
+    <header>
+
+        <h1>THƯ VIỆN THƠ CỦA BÀNH</h1>
+<p class="quote">     "Giữa khoảng lặng giữa đời, giữ an nhiên"</p>
+        <div class="search">
+            <input id="search" placeholder="Tìm bài thơ...">
+        </div>
+
+    </header>
+
+    <div id="grid" class="grid"></div>
+    <script src="../../poems/js/poems-data.js"></script>
+
+    <script type="module">
+
+        const DEBUG = true;
+
+        function debug(...msg) {
+            if (DEBUG) console.log("[POEM LIB]", ...msg);
+        }
+
+        /* DATA */
+
+        let poemsData = typeof poems !== "undefined" ? poems : [];
+
+        if (poemsData.length === 0) {
+            console.warn("⚠ poems-data.js chưa load hoặc rỗng");
+        }
+        debug("PoemsData:", poemsData);
+
+        const grid = document.getElementById("grid");
+        const search = document.getElementById("search");
+
+        /* LOAD */
+
+        function load() {
+
+            debug("Loading poems");
+
+            if (!poemsData) {
+                console.error("poems-data.js chưa load");
+                return;
+            }
+
+            debug("Poems found:", poemsData.length);
+
+            render(poemsData);
+
+        }
+
+        /* RENDER */
+
+        function render(data) {
+
+            debug("Rendering:", data.length);
+
+            grid.innerHTML = "";
+
+            data.forEach((p, i) => {
+
+                debug("Render poem:", p.title);
+
+                const card = document.createElement("div");
+
+                card.className = "card";
+
+                card.innerHTML = `
+
+<div class="title">${p.title}</div>
+<div class="author">${p.author}</div>
+<div class="date">${p.date}</div>
+
+`;
+
+                card.onclick = () => {
+
+                    const target = "content_lib_Banh.html?poem=" + p.name;
+
+                    debug("Open:", p.name, "->", target);
+
+                    location.href = target;
+                    document.body.style.transition = "1s";
+                    document.body.style.transform = "scale(1.2)";
+                    document.body.style.opacity = "0";
+
+                    setTimeout(() => {
+
+                        location.href = "content_lib_Banh.html?poem=" + p.name;
+
+                    }, 600);
+
+                };
+
+                grid.appendChild(card);
+
+            });
+
+        }
+
+        /* SEARCH */
+
+        search.oninput = () => {
+
+const k = search.value.toLowerCase();
+
+debug("Search:", k);
+
+const f = poemsData.filter(p =>
+    (p.title || "").toLowerCase().includes(k)
+);
+
+debug("Search result:", f.length);
+
+render(f);
+
+};
+        /* ================= STAR CANVAS ================= */
+
+        const canvas = document.getElementById("stars");
+        const ctx = canvas.getContext("2d");
+
+        let stars = [];
+
+        function resize() {
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+        }
+
+        window.onresize = resize;
+        resize();
+
+        for (let i = 0; i < 250; i++) {
+
+            stars.push({
+
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                r: Math.random() * 1.5,
+                s: Math.random() * 0.4
+
+            });
+
+        }
+
+        function animate() {
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            stars.forEach(st => {
+
+                st.y += st.s;
+
+                if (st.y > canvas.height) st.y = 0;
+
+                ctx.beginPath();
+
+                ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
+
+                ctx.fillStyle = "white";
+
+                ctx.fill();
+
+            });
+
+            requestAnimationFrame(animate);
+
+        }
+
+        load();
+        animate();
+
+        /* ================= MUSIC SYSTEM ================= */
+
+        function startSpaceMusic() {
+
+            const music = document.getElementById("spaceMusic");
+
+            if (!music) return;
+
+            music.loop = true;
+            music.volume = 0;
+
+            const playPromise = music.play();
+
+            function fadeIn() {
+
+                let v = 0;
+
+                const fade = setInterval(() => {
+
+                    v += 0.01;
+
+                    music.volume = Math.min(v, 0.35);
+
+                    if (v >= 0.35) clearInterval(fade);
+
+                }, 120);
+
+            }
+
+            if (playPromise !== undefined) {
+
+                playPromise
+                    .then(() => fadeIn())
+                    .catch(() => {
+
+                        document.body.addEventListener("click", () => {
+
+                            music.play();
+                            fadeIn();
+
+                        }, { once: true });
+
+                    });
+
+            }
+
+        }
+
+        window.addEventListener("load", startSpaceMusic);
+    </script>
+    <script src="../../main_js/iframe.js"></script>
+</body>
+
+</html>
