@@ -43,7 +43,7 @@ const poems = [
         fontTitle: "Verdana",
         fontContent: "Viner Hand ITC",
         content: ""  // Nội dung sẽ được lấy từ HTML
-    },
+    }
 
 ];
 
