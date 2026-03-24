@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hai Chữ Tương Lai</title>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <link rel="stylesheet" href="../../css/unit.css">
+
+        <style>
+                /* ===== RIÊNG CHO BÀI NÀY ===== */
+
+                body {
+                        position: relative;
+                        margin: 0;
+                }
+
+                body::before {
+                        content: "";
+                        position: fixed;
+                        inset: 0;
+                        background: url("background.jpg") center/cover no-repeat;
+                        opacity: 0.75;
+                        /* chỉnh độ mờ ở đây */
+                        z-index: -1;
+                }
+
+                #poem-title {
+                        font-size: 34px;
+                        font-weight: bold;
+                        text-align: center;
+                        margin-bottom: 18px;
+                        color: #3a2e2e;
+                        font-family: 'Bahnschrift', cursive;
+                }
+
+                #poem-content {
+                        line-height: 1.8;
+                        font-size: 20px;
+                        text-align: center;
+                        font-style: italic;
+                        font-family: 'Bahnschrift', cursive;
+                        white-space: pre-wrap;
+                        color: #2b1d1d;
+                }
+
+                .poem-image {
+                        background-image: url("image.jpg");
+
+                }
+        </style>
+</head>
+
+<body>
+
+        <div class="container">
+
+                <div class="poem-box">
+
+                        <a href="#" class="back-btn" id="backBtn">
+                                <img src="../../icon.jpg">
+                        </a>
+
+                        <div id="poem-title">HAI CHỮ TƯƠNG LAI</div>
+
+                        <pre id="poem-content">
+        Nhìn về hai chữ tương lai
+Chữ tình hiu hắt chữ tài hắt hiu
+        Thuở nào còn bé xíu xiu
+Ước là người lớn làm điều lớn lao.
+        Giờ thành người lớn lao đao
+Tìm về thuở bé đường nào có ga?
+        Tuổi thơ như nắng xa hoa
+Xác thân mục rữa ... đã là màn đêm.
+        Kiếm tìm lẽ sống không tên
+Nhét vào thân xác cồng kềnh còn thơ
+        Để rồi lỡ chuyến trong mơ
+Chuyến tàu khởi bến ... không chờ ... không ga. 
+                                                    ---NTK---
+</pre>
+
+                        <div class="audio-wrapper">
+
+                                <i class="fa-solid fa-volume-high audio-icon" id="audioIcon"></i>
+
+                                <div class="audio-player" id="player">
+
+                                        <div class="play-btn" id="playBtn">
+                                                <i class="fa-solid fa-play"></i>
+                                        </div>
+
+                                        <div class="progress-container" id="progressContainer">
+                                                <div class="progress" id="progress"></div>
+                                        </div>
+
+                                        <div class="time" id="time">00:00</div>
+
+                                </div>
+                        </div>
+
+                        <audio id="audio">
+                                <source src="audio.mp3" type="audio/mpeg">
+                        </audio>
+
+                </div>
+
+                <div class="poem-image"></div>
+
+        </div>
+
+        <script src="../../js/unit.js"></script>
+        <script>
+                document.getElementById("backBtn").onclick = function (e) {
+
+                        e.preventDefault();
+
+                        if (history.length > 1) {
+                                history.back();
+                        } else {
+                                window.location = "../../tho-banh.html";
+                        }
+
+                };
+        </script>
+</body>
+
+</html>

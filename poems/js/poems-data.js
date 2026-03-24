@@ -21,7 +21,30 @@ const poems = [
         fontTitle: "Bahnschrift",
         fontContent: "Viner Hand ITC",
         content: ""  // Nội dung sẽ được lấy từ HTML
-    }
+    },
+    {
+        title: "Đấng vua cô đơn",
+        name: "dang_vua_co_don",
+        date: "24/03/2026",
+        author: "Bành",
+        category: ["TÌNH YÊU", "CỔ TÍCH", "BUỒN"],
+        type: "THẤT NGÔN",
+        fontTitle: "Verdana",
+        fontContent: "Viewtiengviet",
+        content: ""  // Nội dung sẽ được lấy từ HTML
+    },
+    {
+        title: "Hai chữ tương lai",
+        name: "hai_chu_tuong_lai",
+        date: "24/03/2026",
+        author: "Bành",
+        category: ["ĐỜI NGƯỜI", "BUỒN"],
+        type: "LỤC BÁT",
+        fontTitle: "Verdana",
+        fontContent: "Viner Hand ITC",
+        content: ""  // Nội dung sẽ được lấy từ HTML
+    },
+
 ];
 
 // Đảm bảo đường dẫn chính xác

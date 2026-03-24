@@ -17,6 +17,7 @@ const config = {
         "CUỘC SỐNG",
         "ĐỜI NGƯỜI",
         "BUỒN",
+        "CỔ TÍCH",
         "KHÁC"
     ]
 
