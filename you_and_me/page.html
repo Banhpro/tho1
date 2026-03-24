@@ -15,17 +15,15 @@
       --text: #2d3436;
     }
 
-    /* TỐI ƯU BODY CHO IFRAME */
+    /* TRIỆT TIÊU THANH CUỘN NỘI BỘ TUYỆT ĐỐI */
+    html,
     body {
       margin: 0;
       padding: 0;
       font-family: 'Patrick Hand', cursive;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      overflow: hidden;
+      overflow: hidden !important;
+      /* Không cho phép hiện thanh cuộn trong iframe */
       height: auto;
-      min-height: 100%;
       background: transparent;
     }
 
@@ -35,7 +33,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+      background: url('forest.jpg') no-repeat center center fixed;
       background-size: cover;
       z-index: -3;
     }
@@ -46,7 +44,6 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: url('https://raw.githubusercontent.com/evertheen/simple-rain-effect/master/rain.png');
       animation: rain 0.3s linear infinite;
       z-index: -2;
       pointer-events: none;
@@ -99,7 +96,8 @@
       position: relative;
       z-index: 10;
       border: 1px solid rgba(255, 255, 255, 0.3);
-      margin: 40px auto;
+      margin: 20px auto;
+      /* Margin nhỏ để tránh hụt chiều cao */
     }
 
     h2 {
@@ -139,8 +137,12 @@
       background: rgba(255, 255, 255, 0.9);
       resize: none;
       outline: none;
+      overflow: hidden;
+      transition: height 0.15s ease;
+
     }
 
+    /* HIỆU ỨNG NÚT MICROPHONE KHI ĐANG NÓI */
     .mic-btn {
       position: absolute;
       right: 12px;
@@ -152,6 +154,17 @@
       height: 40px;
       border-radius: 50%;
       cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .mic-btn.speaking {
+      background: #95a5a6 !important;
+      /* Chuyển sang màu xám */
+      opacity: 0.5;
+      /* Làm mờ đi */
+      transform: scale(0.9);
+      pointer-events: none;
+      /* Tránh bấm liên tục khi đang nhận diện */
     }
 
     #holdRec {
@@ -162,10 +175,10 @@
       border-radius: 50px;
       cursor: pointer;
       font-family: inherit;
-      /* PHẦN SỬA: Chặn chọn văn bản trên điện thoại */
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-touch-callout: none;
+      -webkit-touch-callout: none !important;
+      -webkit-user-select: none !important;
+      user-select: none !important;
+      touch-action: none !important;
     }
 
     .previewImg {
@@ -193,6 +206,13 @@
       border-radius: 20px;
       font-size: 1.2em;
       cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    button.send:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 8px 20px rgba(0, 184, 148, 0.4);
+      filter: brightness(1.1);
     }
 
     button.skip {
@@ -201,6 +221,13 @@
       border: none;
       border-radius: 20px;
       cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    button.skip:hover {
+      background: rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
     }
 
     .file-label {
@@ -214,7 +241,6 @@
       color: #0984e3;
     }
 
-    /* HIỆU ỨNG KHI CLICK VÀO CẢM XÚC */
     .moodItem {
       flex: 1;
       text-align: center;
@@ -228,9 +254,7 @@
 
     .moodItem:has(input:checked) {
       border: 2px solid #f1c40f;
-      /* Viền màu vàng */
       background: #fff9db;
-      /* Nền vàng nhạt */
       transform: translateY(-3px);
       box-shadow: 0 5px 15px rgba(241, 196, 15, 0.3);
     }
@@ -246,7 +270,6 @@
     <h2>🍃 Nhật Ký Rừng Xanh</h2>
 
     <div id="diaryForm">
-      <!-- Chế độ hiển thị -->
       <div class="section" style="display: flex; justify-content: space-between; align-items: center;">
         <label style="margin-bottom:0">🔒 Chế độ hiển thị:</label>
         <div style="display: flex; gap: 10px;">
@@ -257,23 +280,20 @@
         </div>
       </div>
 
-      <!-- Nội dung text -->
       <div class="section">
         <label>💭 Tâm sự với lá rừng...</label>
         <div style="position: relative;">
           <textarea id="text" placeholder="Hôm nay lòng bạn có mưa hay có nắng?"></textarea>
-          <button class="mic-btn" onclick="startSpeech()">🎤</button>
+          <button class="mic-btn" id="micBtn" onclick="startSpeech()">🎤</button>
         </div>
       </div>
 
-      <!-- Ghi âm -->
       <div class="section" style="display: flex; align-items: center; gap: 15px;">
         <label style="margin-bottom:0">🎙️ Ghi âm:</label>
         <button id="holdRec">Giữ để nói</button>
         <audio id="audioPlayback" controls style="display:none; height: 35px;"></audio>
       </div>
 
-      <!-- Hình ảnh -->
       <div class="section">
         <label>📸 Chụp lại khoảnh khắc</label>
         <label class="file-label" for="imgInput">Gửi một tấm ảnh vào rừng...</label>
@@ -281,7 +301,6 @@
         <img id="preview" class="previewImg" />
       </div>
 
-      <!-- Cảm xúc -->
       <div class="section">
         <label>🎭 Cảm xúc hiện tại</label>
         <div class="gridMood" style="display: flex; gap: 10px;">
@@ -319,42 +338,37 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    // --- LOGIC KIỂM TRA ĐÃ VIẾT NHẬT KÝ CHƯA ---
-    onAuthStateChanged(auth, async user => {
-      if (user) {
-        const t = getTimeKeys();
-        const q = query(collection(db, "emotions"),
-          where("uid", "==", user.uid),
-          where("dayKey", "==", t.dayKey));
+   onAuthStateChanged(auth, async user => {
+  if (user) {
+    const t = getTimeKeys();
+    const q = query(collection(db, "emotions"), where("uid", "==", user.uid), where("dayKey", "==", t.dayKey));
+    const querySnapshot = await getDocs(q);
 
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-          // Nếu đã viết rồi
-          document.getElementById("mainContainer").innerHTML = `
-            <h2>🍃 Nhật Ký Rừng Xanh</h2>
-            <div class="section" style="text-align:center; padding: 40px 20px;">
-              <p style="font-size: 1.4em; color: #1e3799; line-height: 1.6;">
-                Bạn đã viết nhật ký hôm nay rồi,<br>không cần phải viết lại đâu, ahaha! ✨
-              </p>
-<button class="send" 
-onclick="window.top.location.replace('../index.html')" 
-style="width:auto; padding: 10px 30px; margin-top:20px;">
-Quay lại khu rừng
-</button>            </div>
-          `;
-          sendHeight();
-        }
-      }
-    });
-
+    if (!querySnapshot.empty) {
+      document.getElementById("mainContainer").innerHTML = `
+        <h2>🍃 Nhật Ký Rừng Xanh</h2>
+        <div id="contentFrame" class="section" style="text-align:center; padding: 40px 20px;">
+          <p style="font-size: 1.4em; color: #1e3799; line-height: 1.6;">
+            Bạn đã viết nhật ký hôm nay rồi,<br>không cần phải viết lại đâu, ahaha! ✨
+          </p>
+          <button class="send" onclick="window.top.location.replace('index.html')">
+            Quay lại khu rừng
+          </button>
+        </div>
+      `;
+      if (typeof sendHeight === "function") sendHeight();
+    }
+  }
+});
+    // HÀM TÍNH CHIỀU CAO THỰC TẾ VÀ GỬI CHO PAGE CHA
     function sendHeight() {
-      const height = document.getElementById("mainContainer").offsetHeight + 100;
+      // Dùng offsetHeight của body để lấy chính xác kích thước nội dung đang hiển thị
+      const height = document.body.offsetHeight;
       window.parent.postMessage(height, "*");
     }
 
     const preview = document.getElementById("preview");
     const audioPlayback = document.getElementById("audioPlayback");
-
     preview.onload = () => sendHeight();
     audioPlayback.onloadedmetadata = () => sendHeight();
 
@@ -366,22 +380,38 @@ Quay lại khu rừng
       }
     };
 
+    // Theo dõi mọi thay đổi trong DOM để cập nhật chiều cao iframe liên tục
     const observer = new MutationObserver(() => sendHeight());
     observer.observe(document.body, { childList: true, subtree: true });
 
-    window.addEventListener("load", () => {
-      setTimeout(sendHeight, 300);
-    });
+    window.addEventListener("load", () => { setTimeout(sendHeight, 500); });
 
     const text = document.getElementById("text");
+    function autoResize() {
+      const minHeight = 100;
+
+      text.style.height = "auto";
+
+      if (text.scrollHeight > minHeight) {
+        text.style.height = text.scrollHeight + "px";
+      } else {
+        text.style.height = minHeight + "px";
+      }
+
+      sendHeight(); // cập nhật iframe
+    }
+
+    text.addEventListener("input", autoResize);
     const holdRec = document.getElementById("holdRec");
+    const micBtn = document.getElementById("micBtn");
 
     function cleanText(text) { return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "").replace(/[^a-z0-9]/g, ""); }
     function getTimeKeys() {
       const now = new Date();
-      const day = String(now.getDate()).padStart(2, "0"), month = String(now.getMonth() + 1).padStart(2, "0"), year = now.getFullYear();
-      const hours = String(now.getHours()).padStart(2, "0"), minutes = String(now.getMinutes()).padStart(2, "0");
-      return { dayKey: `${day}-${month}-${year}`, monthKey: `${month}-${year}`, yearKey: `${year}`, timeKey: `${hours}-${minutes}` };
+      return {
+        dayKey: `${String(now.getDate()).padStart(2, "0")}-${String(now.getMonth() + 1).padStart(2, "0")}-${now.getFullYear()}`,
+        timeKey: `${String(now.getHours()).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}`
+      };
     }
 
     async function uploadCloudinary(file, folder) {
@@ -393,11 +423,27 @@ Quay lại khu rừng
       return (await res.json()).secure_url;
     }
 
+    // SPEECH RECOGNITION VỚI HIỆU ỨNG NÚT
     window.startSpeech = function () {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SR) return alert("Trình duyệt không hỗ trợ.");
-      const r = new SR(); r.lang = "vi-VN"; r.start();
-      r.onresult = e => { text.value += e.results[0][0].transcript; sendHeight(); }
+      const r = new SR();
+      r.lang = "vi-VN";
+
+      // Khi bắt đầu nói: Thêm hiệu ứng
+      r.onstart = () => {
+        micBtn.classList.add("speaking");
+      };
+
+      // Khi kết thúc hoặc có lỗi: Xóa hiệu ứng
+      r.onend = () => micBtn.classList.remove("speaking");
+      r.onerror = () => micBtn.classList.remove("speaking");
+
+      r.onresult = e => {
+        text.value += e.results[0][0].transcript;
+        sendHeight();
+      }
+      r.start();
     };
 
     let mediaRecorder, chunks = [];
@@ -414,37 +460,23 @@ Quay lại khu rừng
       };
     });
 
-    // --- PHẦN SỬA ĐỂ GHI ÂM CHẠY TRÊN ĐIỆN THOẠI ---
-    function startRec(e) {
-      if(e) e.preventDefault(); // Quan trọng: Chặn menu trình duyệt
-      if (mediaRecorder && mediaRecorder.state === "inactive") {
-        mediaRecorder.start();
-        holdRec.innerText = "Ghi âm...";
-      }
-    }
-
-    function stopRec(e) {
-      if(e) e.preventDefault();
-      if (mediaRecorder && mediaRecorder.state !== "inactive") {
-        mediaRecorder.stop();
-        holdRec.innerText = "Giữ để nói";
-      }
-    }
-
-    // Sự kiện chuột (PC)
-    holdRec.addEventListener('mousedown', startRec);
-    holdRec.addEventListener('mouseup', stopRec);
-    // Sự kiện chạm (Điện thoại)
-    holdRec.addEventListener('touchstart', startRec, {passive: false});
-    holdRec.addEventListener('touchend', stopRec, {passive: false});
-    // ---------------------------------------------
+    function startRecording(e) { if (e.cancelable) e.preventDefault(); if (mediaRecorder && mediaRecorder.state === "inactive") { mediaRecorder.start(); holdRec.innerText = "Ghi âm..."; } }
+    function stopRecording(e) { if (e.cancelable) e.preventDefault(); if (mediaRecorder && mediaRecorder.state !== "inactive") { mediaRecorder.stop(); holdRec.innerText = "Giữ để nói"; } }
+    holdRec.oncontextmenu = (e) => { e.preventDefault(); return false; };
+    holdRec.onmousedown = startRecording; holdRec.onmouseup = stopRecording; holdRec.onmouseleave = stopRecording;
+    holdRec.addEventListener('touchstart', startRecording, { passive: false });
+    holdRec.addEventListener('touchend', stopRecording, { passive: false });
 
     window.skipPage = () => location.href = "../index.html";
 
     window.confirmSend = async function () {
       if (!auth.currentUser) return alert("Hãy đăng nhập trước nhé!");
+
+      if (!text.value.trim()) return alert("🍃 Bạn ơi, đừng để trống tâm sự nhé! Hãy viết vài lời với rừng xanh nào... ✨");
+      if (!imgInput.files[0]) return alert("📸 Rừng xanh muốn ngắm nhìn khoảnh khắc của bạn. Hãy gửi kèm một tấm ảnh nhé! 🌸");
+
       const moodEl = document.querySelector("input[name='mood']:checked");
-      if (!moodEl) return alert("Chọn tâm trạng trước khi gửi!");
+      if (!moodEl) return alert("🎭 Chọn một tâm trạng cho hôm nay nhé!");
 
       const btn = document.getElementById("submitEmotion");
       btn.innerText = "Đang gửi..."; btn.disabled = true;
@@ -456,7 +488,7 @@ Quay lại khu rừng
         const t = getTimeKeys();
         const folder = `emotion/${cleanText(username)}_${cleanText(role)}/${t.dayKey}_${t.timeKey}`;
 
-        let imgUrl = imgInput.files[0] ? await uploadCloudinary(imgInput.files[0], folder) : "";
+        let imgUrl = await uploadCloudinary(imgInput.files[0], folder);
         let audioUrl = audioPlayback.blob ? await uploadCloudinary(new File([audioPlayback.blob], "rec.ogg"), folder) : "";
 
         const data = {
@@ -467,7 +499,7 @@ Quay lại khu rừng
         };
 
         await setDoc(doc(db, "emotions", `${cleanText(username)}_${cleanText(role)}_${t.dayKey}_${t.timeKey}`), data);
-        alert("✨ Tâm sự đã được gửi vào mây trời!");
+        alert("✨ Tâm sự đã được gửi vào mây trời thành công!");
         location.reload();
       } catch (err) { alert("Lỗi: " + err.message); btn.disabled = false; btn.innerText = "Gửi vào mây trời ✨"; }
     };
