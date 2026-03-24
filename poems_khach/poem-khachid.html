@@ -97,6 +97,8 @@
             line-height: 1.8;
             font-size: 20px;
             text-align: center;
+          
+    white-space: pre-wrap; /* Giữ xuống dòng, khoảng trắng */
             /* font-style: italic;  <- Bỏ cố định cái này vì Quill đã có sẵn định dạng riêng */
             color: #2b1d1d;
         }
@@ -105,7 +107,10 @@
         .ql-align-center { text-align: center; }
         .ql-align-right { text-align: right; }
         .ql-align-justify { text-align: justify; }
-
+#poem-content p {
+    margin: 0 0 1em 0; /* Thêm khoảng cách giữa các dòng */
+    line-height: 1.6; /* Điều chỉnh cao dòng */
+}
         /* ===== IMAGE ===== */
 
         .poem-image {

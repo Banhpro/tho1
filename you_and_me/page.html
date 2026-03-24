@@ -162,6 +162,10 @@
       border-radius: 50px;
       cursor: pointer;
       font-family: inherit;
+      /* PHẦN SỬA: Chặn chọn văn bản trên điện thoại */
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
 
     .previewImg {
@@ -410,8 +414,30 @@ Quay lại khu rừng
       };
     });
 
-    holdRec.onmousedown = () => { if (mediaRecorder) { mediaRecorder.start(); holdRec.innerText = "Ghi âm..."; } };
-    holdRec.onmouseup = () => { if (mediaRecorder && mediaRecorder.state !== "inactive") { mediaRecorder.stop(); holdRec.innerText = "Giữ để nói"; } };
+    // --- PHẦN SỬA ĐỂ GHI ÂM CHẠY TRÊN ĐIỆN THOẠI ---
+    function startRec(e) {
+      if(e) e.preventDefault(); // Quan trọng: Chặn menu trình duyệt
+      if (mediaRecorder && mediaRecorder.state === "inactive") {
+        mediaRecorder.start();
+        holdRec.innerText = "Ghi âm...";
+      }
+    }
+
+    function stopRec(e) {
+      if(e) e.preventDefault();
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+        holdRec.innerText = "Giữ để nói";
+      }
+    }
+
+    // Sự kiện chuột (PC)
+    holdRec.addEventListener('mousedown', startRec);
+    holdRec.addEventListener('mouseup', stopRec);
+    // Sự kiện chạm (Điện thoại)
+    holdRec.addEventListener('touchstart', startRec, {passive: false});
+    holdRec.addEventListener('touchend', stopRec, {passive: false});
+    // ---------------------------------------------
 
     window.skipPage = () => location.href = "../index.html";
 
